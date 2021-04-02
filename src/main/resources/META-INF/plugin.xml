@@ -1,0 +1,12 @@
+<idea-plugin>
+    <id>org.jetbrains.research.ml.kotlinAnalysis</id>
+    <name>Kotlin Analysis</name>
+    <vendor>JetBrains Research</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+    </extensions>
+
+</idea-plugin>
