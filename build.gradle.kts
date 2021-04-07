@@ -27,6 +27,8 @@ dependencies {
             branch = "master"
         }
     }
+
+    implementation("com.xenomachina:kotlin-argparser:2.0.7")
 }
 
 intellij {
@@ -51,4 +53,17 @@ tasks {
     }
     withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
         .forEach { it.enabled = false }
+
+    runIde {
+        val inputPath: String? by project
+        args = listOfNotNull(
+            "kotlin-analysis",
+            inputPath?.let { "--input_path=$it" }
+        )
+        jvmArgs = listOf("-Djava.awt.headless=true")
+    }
+
+    register("cli") {
+        dependsOn(runIde)
+    }
 }
