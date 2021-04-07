@@ -21,7 +21,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-//
+//  TODO: psiminer dependency caused an error because of different versions of kotlin and intellij
 //    implementation("org.jetbrains.research.psiminer:psiminer") {
 //        version {
 //            branch = "master"
@@ -43,7 +43,7 @@ ktlint {
     enableExperimentalRules.set(true)
 }
 
-open class SimpleCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Input directory with kotlin files
     @get:Input
     val input: String? by project
@@ -66,7 +66,7 @@ tasks {
     withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
         .forEach { it.enabled = false }
 
-    register<SimpleCliTask>("cli") {
+    register<KotlinAnalysisCliTask>("cli") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "kotlin-analysis",
