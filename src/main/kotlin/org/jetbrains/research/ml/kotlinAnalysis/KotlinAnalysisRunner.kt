@@ -4,7 +4,6 @@ import com.intellij.openapi.application.ApplicationStarter
 import com.intellij.openapi.diagnostic.Logger
 import com.xenomachina.argparser.ArgParser
 import java.io.File
-import java.nio.file.NotDirectoryException
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 
