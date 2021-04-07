@@ -16,17 +16,17 @@ repositories {
     mavenCentral()
     jcenter()
     // Necessary for psiMiner
-    maven(url = "https://dl.bintray.com/egor-bogomolov/astminer")
+//    maven(url = "https://dl.bintray.com/egor-bogomolov/astminer")
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-
-    implementation("org.jetbrains.research.psiminer:psiminer") {
-        version {
-            branch = "master"
-        }
-    }
+//
+//    implementation("org.jetbrains.research.psiminer:psiminer") {
+//        version {
+//            branch = "master"
+//        }
+//    }
 
     implementation("com.xenomachina:kotlin-argparser:2.0.7")
 }
@@ -60,7 +60,9 @@ tasks {
             "kotlin-analysis",
             inputPath?.let { "--input_path=$it" }
         )
-        jvmArgs = listOf("-Djava.awt.headless=true")
+        jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+        standardInput = System.`in`
+        standardOutput = System.`out`
     }
 
     register("cli") {

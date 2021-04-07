@@ -6,7 +6,6 @@ import com.xenomachina.argparser.ArgParser
 import java.io.File
 import kotlin.system.exitProcess
 
-
 object Runner : ApplicationStarter {
     private lateinit var inputDir: File
 
