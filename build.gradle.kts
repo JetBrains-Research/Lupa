@@ -43,6 +43,18 @@ ktlint {
     enableExperimentalRules.set(true)
 }
 
+open class SimpleCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+    // Input directory with kotlin files
+    @get:Input
+    val input: String? by project
+
+    init {
+        jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+        standardInput = System.`in`
+        standardOutput = System.`out`
+    }
+}
+
 tasks {
     withType<JavaCompile> {
         sourceCompatibility = "11"
@@ -54,18 +66,11 @@ tasks {
     withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
         .forEach { it.enabled = false }
 
-    runIde {
-        val inputPath: String? by project
+    register<SimpleCliTask>("cli") {
+        dependsOn("buildPlugin")
         args = listOfNotNull(
             "kotlin-analysis",
-            inputPath?.let { "--input_path=$it" }
+            input?.let { "--input=$it" }
         )
-        jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
-        standardInput = System.`in`
-        standardOutput = System.`out`
-    }
-
-    register("cli") {
-        dependsOn(runIde)
     }
 }

@@ -16,7 +16,7 @@ object Runner : ApplicationStarter {
     class PluginRunnerArgs(parser: ArgParser) {
         val input by parser.storing(
             "-i",
-            "--input_path",
+            "--input",
             help = "Input directory with kotlin files"
         ) { File(this) }
     }
