@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("reflect"))
 //  TODO: psiminer dependency caused an error because of different versions of kotlin and intellij
 //    implementation("org.jetbrains.research.psiminer:psiminer") {
 //        version {
