@@ -10,7 +10,7 @@ import java.nio.file.Path
 
 class PsiProvider {
 
-    fun extractMethodsFromProject(projectPath : Path) {
+    fun extractMethodsFromProject(projectPath: Path) {
         val project = ProjectUtil.openOrImport(projectPath, null, true) ?: return
         val ktFiles = extractPsiFiles(project)
 
@@ -21,12 +21,12 @@ class PsiProvider {
         }
     }
 
-    private fun extractPsiFiles(project : Project): MutableList<KtFile> {
+    private fun extractPsiFiles(project: Project): MutableList<KtFile> {
         val projectPsiFiles = mutableListOf<KtFile>()
         ProjectRootManager.getInstance(project).contentRoots.mapNotNull { root ->
             VfsUtilCore.iterateChildrenRecursively(root, null) { virtualFile ->
-                if ((virtualFile.extension != "kt" && virtualFile.extension != "kts")
-                    || virtualFile.canonicalPath == null) {
+                if ((virtualFile.extension != "kt" && virtualFile.extension != "kts") ||
+                    virtualFile.canonicalPath == null) {
                     return@iterateChildrenRecursively true
                 }
                 val psi =
@@ -37,13 +37,12 @@ class PsiProvider {
         return projectPsiFiles
     }
 
-    private fun collectPsiMethods(ktFile: KtFile) : MutableList<KtNamedFunction> {
+    private fun collectPsiMethods(ktFile: KtFile): MutableList<KtNamedFunction> {
         val filePsiMethods = mutableListOf<KtNamedFunction>()
         ktFile.accept(object : KtTreeVisitorVoid() {
             override fun visitNamedFunction(function: KtNamedFunction) {
                 super.visitNamedFunction(function)
                 filePsiMethods.add(function)
-
             }
         })
         return filePsiMethods
