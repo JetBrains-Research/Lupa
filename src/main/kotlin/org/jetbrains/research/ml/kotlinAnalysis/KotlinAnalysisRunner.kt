@@ -36,6 +36,7 @@ object KotlinAnalysisRunner : ApplicationStarter {
                 outputDir = output
             }
             require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
+            outputDir.toFile().mkdirs()
 
             val pipeline = Pipeline(outputDir)
             pipeline.extractMethodsToCloneDetectionFormat(inputDir)
