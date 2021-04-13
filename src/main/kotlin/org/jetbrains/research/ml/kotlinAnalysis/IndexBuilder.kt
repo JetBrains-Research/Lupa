@@ -1,8 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.core.util.end
-import org.jetbrains.kotlin.idea.core.util.start
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import java.io.PrintWriter
 
@@ -17,8 +16,12 @@ class IndexBuilder {
 
     fun indexMethod(function: KtNamedFunction, projectId: Int, methodIndexWriter: PrintWriter): Int {
         val filePath = function.containingKtFile.virtualFilePath
-        val range = function.textRange
-        methodIndexWriter.println("$lastMethodId,$projectId,$filePath,${range.start},${range.end}")
+        val doc = PsiDocumentManager.getInstance(function.project).getDocument(function.containingFile)
+        val startLine = doc?.getLineNumber(function.textRange.startOffset)
+        val endLine = doc?.getLineNumber(function.textRange.endOffset)
+        methodIndexWriter.println(
+            "$lastMethodId,$projectId,$filePath,$startLine,$endLine"
+        )
         return lastMethodId++
     }
 }

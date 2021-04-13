@@ -22,8 +22,10 @@ class Pipeline(private val outputDir: Path) {
                 val project = ProjectUtil.openOrImport(projectPath as Path, null, true) ?: return@forEach
                 val projectIndex = indexer.indexProject(project, projectIndexWriter)
                 val methods = psiProvider.extractMethodsFromProject(project)
-                methods.forEach { method ->
-                    val methodIndex = indexer.indexMethod(method, projectIndex, methodIndexWriter)
+                val methodsIndexed = methods.associateWith { method ->
+                    indexer.indexMethod(method, projectIndex, methodIndexWriter)
+                }
+                methodsIndexed.forEach { (method, methodIndex) ->
                     val methodFormatted = adapter.format(method, projectIndex, methodIndex)
                     methodDataWriter.println(methodFormatted)
                 }

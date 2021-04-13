@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,7 +18,6 @@ class PsiProvider {
         val ktMethods = mutableListOf<KtNamedFunction>()
         val ktFiles = extractPsiFiles(project)
         ktFiles.forEach { ktFile ->
-            deleteComments(ktFile)
             collectPsiMethods(ktFile).forEach { function ->
                 ktMethods.add(function)
             }
@@ -53,8 +53,8 @@ class PsiProvider {
         return filePsiMethods
     }
 
-    private fun deleteComments(ktFile: KtFile) {
-        val comments = PsiTreeUtil.collectElementsOfType(ktFile, PsiComment::class.java)
+    fun deleteComments(element: PsiElement) {
+        val comments = PsiTreeUtil.collectElementsOfType(element, PsiComment::class.java)
         comments.forEach {
             WriteCommandAction.runWriteCommandAction(it.project) {
                 it.delete()

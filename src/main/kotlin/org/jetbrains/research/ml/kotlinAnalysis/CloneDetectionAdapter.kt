@@ -5,8 +5,10 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 class CloneDetectionAdapter {
+    private val psiProvider = PsiProvider()
 
     fun format(function: KtNamedFunction, projectId: Int, methodId: Int): String {
+        psiProvider.deleteComments(function)
         val tokens: List<String> = tokenize(function.text)
         val totalTokens = tokens.size
         val tokensCounter: Map<String, Int> = tokens.groupingBy { it }
