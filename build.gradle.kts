@@ -49,6 +49,10 @@ open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     @get:Input
     val input: String? by project
 
+    // Output directory to store indexes and methods data
+    @get:Input
+    val output: String? by project
+
     init {
         jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
         standardInput = System.`in`
@@ -71,7 +75,8 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "kotlin-analysis",
-            input?.let { "--input=$it" }
+            input?.let { "--input=$it" },
+            output?.let { "--output=$it" }
         )
     }
 }

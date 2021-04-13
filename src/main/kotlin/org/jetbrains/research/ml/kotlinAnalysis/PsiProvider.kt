@@ -1,24 +1,28 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
-import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.psi.*
-import java.nio.file.Path
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
 class PsiProvider {
 
-    fun extractMethodsFromProject(projectPath: Path) {
-        val project = ProjectUtil.openOrImport(projectPath, null, true) ?: return
+    fun extractMethodsFromProject(project: Project): MutableList<KtNamedFunction> {
+        val ktMethods = mutableListOf<KtNamedFunction>()
         val ktFiles = extractPsiFiles(project)
-
         ktFiles.forEach { ktFile ->
+            deleteComments(ktFile)
             collectPsiMethods(ktFile).forEach { function ->
-                println("${project.name}, ${ktFile.virtualFilePath}, ${function.name}, ${function.textRange}")
+                ktMethods.add(function)
             }
         }
+        return ktMethods
     }
 
     private fun extractPsiFiles(project: Project): MutableList<KtFile> {
@@ -26,7 +30,8 @@ class PsiProvider {
         ProjectRootManager.getInstance(project).contentRoots.mapNotNull { root ->
             VfsUtilCore.iterateChildrenRecursively(root, null) { virtualFile ->
                 if ((virtualFile.extension != "kt" && virtualFile.extension != "kts") ||
-                    virtualFile.canonicalPath == null) {
+                    virtualFile.canonicalPath == null
+                ) {
                     return@iterateChildrenRecursively true
                 }
                 val psi =
@@ -46,5 +51,14 @@ class PsiProvider {
             }
         })
         return filePsiMethods
+    }
+
+    private fun deleteComments(ktFile: KtFile) {
+        val comments = PsiTreeUtil.collectElementsOfType(ktFile, PsiComment::class.java)
+        comments.forEach {
+            WriteCommandAction.runWriteCommandAction(it.project) {
+                it.delete()
+            }
+        }
     }
 }
