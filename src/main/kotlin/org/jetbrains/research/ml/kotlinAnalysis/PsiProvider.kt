@@ -6,45 +6,41 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
-class PsiProvider {
+/**
+ * Provides methods based on interaction with PSI, for example, extraction of all methods from project.
+ */
+object PsiProvider {
 
-    fun extractMethodsFromProject(project: Project): MutableList<KtNamedFunction> {
-        val ktMethods = mutableListOf<KtNamedFunction>()
-        val ktFiles = extractPsiFiles(project)
-        ktFiles.forEach { ktFile ->
-            collectPsiMethods(ktFile).forEach { function ->
-                ktMethods.add(function)
-            }
-        }
-        return ktMethods
+    fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
+        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten()
     }
 
-    private fun extractPsiFiles(project: Project): MutableList<KtFile> {
-        val projectPsiFiles = mutableListOf<KtFile>()
-        ProjectRootManager.getInstance(project).contentRoots.mapNotNull { root ->
+    private fun extractPsiFiles(project: Project): MutableList<PsiFile> {
+        val projectPsiFiles = mutableListOf<PsiFile>()
+        val projectRootManager = ProjectRootManager.getInstance(project)
+        val psiManager = PsiManager.getInstance(project)
+
+        projectRootManager.contentRoots.mapNotNull { root ->
             VfsUtilCore.iterateChildrenRecursively(root, null) { virtualFile ->
-                if ((virtualFile.extension != "kt" && virtualFile.extension != "kts") ||
-                    virtualFile.canonicalPath == null
-                ) {
+                if (!virtualFile.isKotlinRelatedFile() || virtualFile.canonicalPath == null) {
                     return@iterateChildrenRecursively true
                 }
-                val psi =
-                    PsiManager.getInstance(project).findFile(virtualFile) ?: return@iterateChildrenRecursively true
-                projectPsiFiles.add(psi as KtFile)
+                val psi = psiManager.findFile(virtualFile) ?: return@iterateChildrenRecursively true
+                projectPsiFiles.add(psi)
             }
         }
         return projectPsiFiles
     }
 
-    private fun collectPsiMethods(ktFile: KtFile): MutableList<KtNamedFunction> {
+    private fun collectPsiMethods(psiFile: PsiFile): MutableList<KtNamedFunction> {
         val filePsiMethods = mutableListOf<KtNamedFunction>()
-        ktFile.accept(object : KtTreeVisitorVoid() {
+        psiFile.accept(object : KtTreeVisitorVoid() {
             override fun visitNamedFunction(function: KtNamedFunction) {
                 super.visitNamedFunction(function)
                 filePsiMethods.add(function)

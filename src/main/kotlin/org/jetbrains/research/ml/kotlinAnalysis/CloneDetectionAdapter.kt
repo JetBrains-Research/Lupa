@@ -4,11 +4,13 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import java.math.BigInteger
 import java.security.MessageDigest
 
-class CloneDetectionAdapter {
-    private val psiProvider = PsiProvider()
+/**
+ * Adapter from Kotlin function to SourcererCC format.
+ */
+object CloneDetectionAdapter {
 
     fun format(function: KtNamedFunction, projectId: Int, methodId: Int): String {
-        psiProvider.deleteComments(function)
+        PsiProvider.deleteComments(function)
         val tokens: List<String> = tokenize(function.text)
         val totalTokens = tokens.size
         val tokensCounter: Map<String, Int> = tokens.groupingBy { it }
@@ -36,6 +38,7 @@ class CloneDetectionAdapter {
     }
 
     private fun md5Hash(input: String): String {
+        // https://stackoverflow.com/questions/64171624/what-is-the-best-way-to-generate-an-md5-hash-in-kotlin
         val md = MessageDigest.getInstance("MD5")
         return BigInteger(1, md.digest(input.toByteArray()))
             .toString(16)
