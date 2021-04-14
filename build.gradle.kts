@@ -11,7 +11,6 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply true
 }
 
-
 allprojects {
     apply {
         plugin("java")
