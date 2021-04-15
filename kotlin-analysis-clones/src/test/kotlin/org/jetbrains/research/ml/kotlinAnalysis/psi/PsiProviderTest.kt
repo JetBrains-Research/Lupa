@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.psi
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest

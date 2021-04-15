@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.ide.impl.ProjectUtil
+import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import java.nio.file.Path
 
 /**

@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import java.math.BigInteger
 import java.security.MessageDigest
 
