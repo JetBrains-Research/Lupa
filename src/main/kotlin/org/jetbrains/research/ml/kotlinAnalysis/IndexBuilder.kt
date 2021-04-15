@@ -12,7 +12,7 @@ import java.nio.file.Path
 class IndexBuilder(outputDir: Path) : AutoCloseable {
     private var lastProjectId = 0
     private var lastMethodId = 0
-    private val projectIndexWriter = printWriter(outputDir, "project_index.txt")
+    private val projectIndexWriter = printWriter(outputDir, "project_index.csv")
     private val methodIndexWriter = printWriter(outputDir, "method_index.csv")
 
     fun indexProject(project: Project): Int {

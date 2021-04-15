@@ -24,6 +24,10 @@ class FormattedMethodMiner(outputDir: Path) {
                 }
             }
         }
+        close()
+    }
+
+    private fun close() {
         indexer.close()
         methodDataWriter.close()
     }

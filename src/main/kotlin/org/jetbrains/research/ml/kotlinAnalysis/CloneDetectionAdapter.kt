@@ -39,9 +39,10 @@ object CloneDetectionAdapter {
 
     private fun md5Hash(input: String): String {
         // https://stackoverflow.com/questions/64171624/what-is-the-best-way-to-generate-an-md5-hash-in-kotlin
+        // md5 hash is typically represented as a sequence of 32 hexadecimal digits
         val md = MessageDigest.getInstance("MD5")
         return BigInteger(1, md.digest(input.toByteArray()))
-            .toString(16)
-            .padStart(32, '0')
+            .toString(16) // hexadecimal system
+            .padStart(32, '0') // hash length has to be 32
     }
 }
