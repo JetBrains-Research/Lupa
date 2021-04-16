@@ -19,10 +19,11 @@ open class ParametrizedBaseTest(private val testDataRoot: String) : BasePlatform
         fun getInAndOutArray(
             cls: KFunction<ParametrizedBaseTest>,
             resourcesRootName: String = resourcesRoot,
+            outExtension: Extension = Extension.Kt
         ): List<Array<File>> {
             val inAndOutFilesMap = FileTestUtil.getInAndOutFilesMap(
                 getResourcesRootPath(cls, resourcesRootName),
-                outFormat = TestFileFormat("out", Extension.Kt, Type.Output)
+                outFormat = TestFileFormat("out", outExtension, Type.Output)
             )
             return inAndOutFilesMap.entries.map { (inFile, outFile) -> arrayOf(inFile, outFile!!) }
         }

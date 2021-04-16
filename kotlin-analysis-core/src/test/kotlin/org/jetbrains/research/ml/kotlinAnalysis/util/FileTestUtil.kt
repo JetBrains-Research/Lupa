@@ -3,7 +3,8 @@ package org.jetbrains.research.ml.kotlinAnalysis.util
 import java.io.File
 
 enum class Extension(val value: String) {
-    Kt(".kt")
+    Kt(".kt"),
+    Txt(".txt")
 }
 
 enum class Type {
