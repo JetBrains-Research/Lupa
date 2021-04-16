@@ -1,11 +1,8 @@
 package org.jetbrains.research.ml.kotlinAnalysis.util
 
+import com.intellij.psi.PsiFile
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import java.io.File
-
-enum class Extension(val value: String) {
-    Kt(".kt"),
-    Txt(".txt")
-}
 
 enum class Type {
     Input, Output
@@ -15,7 +12,7 @@ class TestFileFormat(private val prefix: String, private val extension: Extensio
     data class TestFile(val file: File, val type: Type, val number: Number)
 
     fun check(file: File): TestFile? {
-        val number = "(?<=${prefix}_)\\d+(?=(_.*)?${extension.value})".toRegex().find(file.name)?.value?.toInt()
+        val number = "(?<=${prefix}_)\\d+(?=(_.*)?\\.${extension.value})".toRegex().find(file.name)?.value?.toInt()
         return number?.let { TestFile(file, type, number) }
     }
 
@@ -39,7 +36,7 @@ object FileTestUtil {
      */
     fun getInAndOutFilesMap(
         folder: String,
-        inFormat: TestFileFormat = TestFileFormat("in", Extension.Kt, Type.Input),
+        inFormat: TestFileFormat = TestFileFormat("in", Extension.KT, Type.Input),
         outFormat: TestFileFormat? = null
     ): Map<File, File?> {
         val (files, folders) = File(folder).listFiles().orEmpty().partition { it.isFile }
@@ -69,4 +66,8 @@ object FileTestUtil {
         return folders.sortedBy { it.name }.map { getInAndOutFilesMap(it.absolutePath, inFormat, outFormat) }
             .fold(inAndOutFilesMap, { a, e -> a.plus(e) })
     }
+}
+
+fun getPsiFile(file: File, fixture: CodeInsightTestFixture): PsiFile {
+    return fixture.configureByFile(file.path)
 }

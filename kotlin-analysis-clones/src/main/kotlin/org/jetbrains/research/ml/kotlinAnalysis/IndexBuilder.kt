@@ -3,6 +3,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
 import java.nio.file.Path
 
 /**
@@ -12,8 +13,8 @@ import java.nio.file.Path
 class IndexBuilder(outputDir: Path) : AutoCloseable {
     private var lastProjectId = 0
     private var lastMethodId = 0
-    private val projectIndexWriter = printWriter(outputDir, "project_index.csv")
-    private val methodIndexWriter = printWriter(outputDir, "method_index.csv")
+    private val projectIndexWriter = getPrintWriter(outputDir, "project_index.csv")
+    private val methodIndexWriter = getPrintWriter(outputDir, "method_index.csv")
 
     fun indexProject(project: Project): Int {
         projectIndexWriter.println("$lastProjectId,${project.basePath}")

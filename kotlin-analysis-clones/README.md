@@ -1,3 +1,3 @@
-# Kotlin-Analysis patterns
+# Kotlin-Analysis code clones
 
-Functionality related to pattern analysis in Kotlin projects
+Functionality related to code clones analysis in Kotlin projects

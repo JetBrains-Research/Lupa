@@ -6,7 +6,7 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 /**
- * Adapter from Kotlin function to SourcererCC format.
+ * Adapter from Kotlin function to [SourcererCC](https://github.com/JetBrains-Research/SourcererCC/) format.
  */
 object CloneDetectionAdapter {
 

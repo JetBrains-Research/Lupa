@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.util
 
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
@@ -7,13 +7,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.streams.toList
 
-enum class Extension(val ext: String) {
+enum class Extension(val value: String) {
     KT("kt"),
-    KTS("kts")
+    KTS("kts"),
+    TXT("txt")
 }
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
-    return this.extension == Extension.KT.ext || this.extension == Extension.KTS.ext
+    return this.extension == Extension.KT.value || this.extension == Extension.KTS.value
 }
 
 fun getSubdirectories(path: Path): List<Path> {
@@ -22,6 +23,6 @@ fun getSubdirectories(path: Path): List<Path> {
         .toList()
 }
 
-fun printWriter(directory: Path, fileName: String): PrintWriter {
+fun getPrintWriter(directory: Path, fileName: String): PrintWriter {
     return File(directory.toFile(), fileName).printWriter()
 }

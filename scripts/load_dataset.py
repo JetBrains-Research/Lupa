@@ -22,7 +22,7 @@ def main():
         p.wait()
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv_path", help="Path to csv file with github repositories data")
     parser.add_argument("--output", help="Output directory")

@@ -10,8 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-import org.jetbrains.research.ml.kotlinAnalysis.isKotlinRelatedFile
+import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 
 /**
  * Provides methods based on interaction with PSI, for example, extraction of all methods from project.
@@ -39,15 +38,8 @@ object PsiProvider {
         return projectPsiFiles
     }
 
-    private fun collectPsiMethods(psiFile: PsiFile): MutableList<KtNamedFunction> {
-        val filePsiMethods = mutableListOf<KtNamedFunction>()
-        psiFile.accept(object : KtTreeVisitorVoid() {
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                super.visitNamedFunction(function)
-                filePsiMethods.add(function)
-            }
-        })
-        return filePsiMethods
+    private fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
+        return PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
     }
 
     fun deleteComments(element: PsiElement) {
