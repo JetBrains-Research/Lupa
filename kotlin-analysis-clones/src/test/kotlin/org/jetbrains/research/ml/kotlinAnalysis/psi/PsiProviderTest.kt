@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
-import com.intellij.psi.PsiFile
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
+import org.jetbrains.research.ml.kotlinAnalysis.util.getPsiFile
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,13 +27,9 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
 
     @Test
     fun testDeleteComments() {
-        val psiFile1 = getPsiFile(inFile!!)
-        val psiFile2 = getPsiFile(outFile!!)
-        PsiProvider.deleteComments(psiFile1)
-        Assert.assertEquals(psiFile1.text, psiFile2.text)
-    }
-
-    private fun getPsiFile(file: File): PsiFile {
-        return myFixture.configureByFile(file.path)
+        val inPsiFile = getPsiFile(inFile!!, myFixture)
+        val outPsiFile = getPsiFile(outFile!!, myFixture)
+        PsiProvider.deleteComments(inPsiFile)
+        Assert.assertEquals(inPsiFile.text, outPsiFile.text)
     }
 }

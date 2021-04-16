@@ -7,13 +7,13 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.system.exitProcess
 
-object KotlinAnalysisRunner : ApplicationStarter {
+object KotlinClonesAnalysisRunner : ApplicationStarter {
     private lateinit var inputDir: Path
     private lateinit var outputDir: Path
 
     private val logger = Logger.getInstance(javaClass)
 
-    override fun getCommandName(): String = "kotlin-analysis"
+    override fun getCommandName(): String = "kotlin-clones-analysis"
 
     class PluginRunnerArgs(parser: ArgParser) {
         val input by parser.storing(
@@ -31,15 +31,15 @@ object KotlinAnalysisRunner : ApplicationStarter {
 
     override fun main(args: List<String>) {
         try {
-            ArgParser(args.drop(1).toTypedArray()).parseInto(KotlinAnalysisRunner::PluginRunnerArgs).run {
+            ArgParser(args.drop(1).toTypedArray()).parseInto(KotlinClonesAnalysisRunner::PluginRunnerArgs).run {
                 inputDir = input
                 outputDir = output
             }
             require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
             outputDir.toFile().mkdirs()
 
-            val pipeline = FormattedMethodMiner(outputDir)
-            pipeline.extractMethodsToCloneDetectionFormat(inputDir)
+            val methodMiner = FormattedMethodMiner(outputDir)
+            methodMiner.extractMethodsToCloneDetectionFormat(inputDir)
         } catch (ex: Exception) {
             logger.error(ex)
         } finally {

@@ -10,7 +10,7 @@ repositories {
 //    maven(url = "https://dl.bintray.com/egor-bogomolov/astminer")
 }
 
-open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+open class KotlinClonesAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Input directory with kotlin files
     @get:Input
     val input: String? by project
@@ -41,10 +41,10 @@ dependencies {
 }
 
 tasks {
-    register<KotlinAnalysisCliTask>("cli") {
+    register<KotlinClonesAnalysisCliTask>("cli") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
-            "kotlin-analysis",
+            "kotlin-clones-analysis",
             input?.let { "--input=$it" },
             output?.let { "--output=$it" }
         )

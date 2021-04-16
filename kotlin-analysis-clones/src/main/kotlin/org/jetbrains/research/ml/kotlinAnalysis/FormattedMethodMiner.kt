@@ -2,14 +2,17 @@ package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.ide.impl.ProjectUtil
 import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
+import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
+import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 
 /**
- * Extracts all methods from projects in the dataset and saves methods in Clone Detection Tool format.
+ * Extracts all methods from projects in the dataset and saves methods in Clone Detection Tool
+ * ([SourcererCC](https://github.com/JetBrains-Research/SourcererCC/)) format.
  */
 class FormattedMethodMiner(outputDir: Path) {
     private val indexer = IndexBuilder(outputDir)
-    private val methodDataWriter = printWriter(outputDir, "method_data.txt")
+    private val methodDataWriter = getPrintWriter(outputDir, "method_data.txt")
 
     fun extractMethodsToCloneDetectionFormat(inputDir: Path) {
         getSubdirectories(inputDir).forEach { projectPath ->
