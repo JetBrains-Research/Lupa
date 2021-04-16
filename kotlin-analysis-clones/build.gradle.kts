@@ -3,5 +3,5 @@ version = rootProject.version
 
 dependencies {
     implementation(project(":kotlin-analysis-core"))
-    testImplementation(project(":kotlin-analysis-core", "tests"))
+    implementation(project(":kotlin-analysis-test"))
 }
