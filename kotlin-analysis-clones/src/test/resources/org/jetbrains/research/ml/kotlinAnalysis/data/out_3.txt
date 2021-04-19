@@ -1,0 +1,1 @@
+0,0,9,9,308efe0a92b23b459a02027fc52eb892@#@fun@@::@@1,String@@::@@1,isEvenLength@@::@@1,Boolean@@::@@1,return@@::@@1,this@@::@@1,length@@::@@1,2@@::@@1,0@@::@@1
