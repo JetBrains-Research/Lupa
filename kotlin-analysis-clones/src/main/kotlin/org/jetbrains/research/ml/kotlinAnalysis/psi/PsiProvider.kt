@@ -21,8 +21,8 @@ object PsiProvider {
         return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten()
     }
 
-    private fun extractPsiFiles(project: Project): MutableList<PsiFile> {
-        val projectPsiFiles = mutableListOf<PsiFile>()
+    private fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
+        val projectPsiFiles = mutableSetOf<PsiFile>()
         val projectRootManager = ProjectRootManager.getInstance(project)
         val psiManager = PsiManager.getInstance(project)
 
