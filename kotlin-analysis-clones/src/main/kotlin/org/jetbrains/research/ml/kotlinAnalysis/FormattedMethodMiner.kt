@@ -20,6 +20,7 @@ class FormattedMethodMiner(outputDir: Path) {
             ApplicationManager.getApplication().runReadAction {
                 ProjectUtil.openOrImport(projectPath, null, true).let { project ->
                     val projectIndex = indexer.indexProject(project)
+                    println("Start processing project ${project.name} (index $projectIndex)")
                     val methods = PsiProvider.extractMethodsFromProject(project)
                     val methodsIndexed = methods.associateWith { method ->
                         indexer.indexMethod(method, projectIndex)

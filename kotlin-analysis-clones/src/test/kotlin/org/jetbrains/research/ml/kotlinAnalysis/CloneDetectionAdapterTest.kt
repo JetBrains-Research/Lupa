@@ -33,7 +33,7 @@ open class CloneDetectionAdapterTest : ParametrizedBaseTest(getResourcesRootPath
         val psiFile = getPsiFile(inFile!!, myFixture)
         val result = outFile!!.readLines()[0]
         val methods = PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
-        Assert.assertEquals(methods.size, 1)
+        Assert.assertEquals(1, methods.size)
         methods.forEach {
             val formattedMethod = CloneDetectionAdapter.format(it, 0, 0)
             assertStatsEquals(formattedMethod, result)
@@ -44,13 +44,13 @@ open class CloneDetectionAdapterTest : ParametrizedBaseTest(getResourcesRootPath
     private fun assertStatsEquals(formattedMethod: String, result: String) {
         val statsIn = statsFromAdapterOutput(formattedMethod)
         val statsOut = statsFromAdapterOutput(result)
-        Assert.assertEquals(statsIn, statsOut)
+        Assert.assertEquals(statsOut, statsIn)
     }
 
     private fun assertTokensEquals(formattedMethod: String, result: String) {
         val counterIn = counterFromAdapterOutput(formattedMethod)
         val counterOut = counterFromAdapterOutput(result)
-        Assert.assertEquals(counterIn, counterOut)
+        Assert.assertEquals(counterOut, counterIn)
     }
 
     private fun statsFromAdapterOutput(methodStr: String): String {
