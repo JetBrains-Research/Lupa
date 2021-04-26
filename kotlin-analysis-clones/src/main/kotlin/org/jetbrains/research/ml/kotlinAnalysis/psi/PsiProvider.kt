@@ -44,7 +44,10 @@ object PsiProvider {
 
     fun deleteComments(element: PsiElement) {
         val comments = PsiTreeUtil.collectElementsOfType(element, PsiComment::class.java)
-        comments.forEach {
+        // If we do not change the order of the elements, then a parent can invalidate
+        // the child element, but it can also be a comment and an exception will be thrown,
+        // so we must delete the found comments in the reverse order
+        comments.reversed().forEach {
             WriteCommandAction.runWriteCommandAction(it.project) {
                 it.delete()
             }
