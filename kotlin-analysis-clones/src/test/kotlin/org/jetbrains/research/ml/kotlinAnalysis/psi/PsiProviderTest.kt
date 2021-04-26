@@ -30,6 +30,6 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
         val inPsiFile = getPsiFile(inFile!!, myFixture)
         val outPsiFile = getPsiFile(outFile!!, myFixture)
         PsiProvider.deleteComments(inPsiFile)
-        Assert.assertEquals(inPsiFile.text, outPsiFile.text)
+        Assert.assertEquals(outPsiFile.text, inPsiFile.text)
     }
 }
