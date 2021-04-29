@@ -2,12 +2,11 @@ package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
 import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
-import com.intellij.openapi.project.ex.ProjectManagerEx
-
 
 /**
  * Extracts all methods from projects in the dataset and saves methods in Clone Detection Tool
