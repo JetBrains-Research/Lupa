@@ -7,7 +7,7 @@ It accepts
     * path to csv file --  dataset, f.e. downloaded from https://seart-ghs.si.usi.ch/
     * path to output directory
     * optional parameter to save metadata
-    * index to start from
+    * index to start from (default 0)
 """
 
 import json
@@ -26,7 +26,7 @@ from requests.packages.urllib3.util.retry import Retry
 def main():
     logging.basicConfig(level=logging.DEBUG)
     args = parse_args()
-    jsons_dir_path, results_path = create_output_directories(args.output, args.save_metadata)
+    jsons_dir_path, results_path = create_output_paths(args.output, args.save_metadata)
 
     dataset = pd.read_csv(args.csv_path)
     os.environ['GIT_TERMINAL_PROMPT'] = '0'
@@ -39,7 +39,8 @@ def main():
     s.mount('https://', HTTPAdapter(max_retries=retries))
 
     with open(results_path, 'a') as results_fout:
-        results_fout.write("id,full_name\n")
+        if args.start_from == 0:
+            results_fout.write("full_name\n")
         unique_names = set()
         for index, project in enumerate(dataset.name[args.start_from:]):
             username, project_name = project.split('/')
@@ -52,18 +53,18 @@ def main():
                     logging.info(f"Repository {username}#{project_name} moved permanently, redirecting")
                     r = s.get(r.url, headers=headers)
                     response_json = r.json()
-            else:
-                logging.info(f"Request failed with status code: {r.status_code}. Message: {response_json['message']}")
-                continue
+                else:
+                    logging.info(f"Request failed with status code: {r.status_code}. Message: {response_json['message']}")
+                    continue
 
             save_full_name(response_json["full_name"], unique_names, results_fout)
             if args.save_metadata:
                 save_project_json(response_json, jsons_dir_path, f"{username}#{project_name}.json")
 
-            logging.info(f"Last processed project: {index}")
+            logging.info(f"Last processed project: {args.start_from + index}")
 
 
-def create_output_directories(output_directory: str, save_metadata: bool = False) -> Tuple[str, str]:
+def create_output_paths(output_directory: str, save_metadata: bool = False) -> Tuple[str, str]:
     create_directory(output_directory)
     jsons_dir_path = os.path.join(output_directory, "jsons/")
     if save_metadata:
@@ -74,7 +75,7 @@ def create_output_directories(output_directory: str, save_metadata: bool = False
 
 def save_full_name(full_name: str, unique_names: Set[str], file_to_write: TextIO):
     if full_name not in unique_names:
-        file_to_write.write(f"{len(unique_names)},{full_name}\n")
+        file_to_write.write(f"{full_name}\n")
         unique_names.add(full_name)
 
 
