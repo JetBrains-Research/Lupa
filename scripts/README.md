@@ -1,6 +1,6 @@
 ## Description
 
-Module contains script for downloading repositories from GitHub.
+Module contains scripts for downloading repositories from GitHub and cleaning duplicated repositories.
 
 ### Usage
 
