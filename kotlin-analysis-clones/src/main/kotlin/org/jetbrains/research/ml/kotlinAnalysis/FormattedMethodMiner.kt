@@ -21,6 +21,8 @@ class FormattedMethodMiner(outputDir: Path) {
             getSubdirectories(inputDir).forEach { projectPath ->
                 ApplicationManager.getApplication().runReadAction {
                     ProjectUtil.openOrImport(projectPath, null, true).let { project ->
+                        // there can be some internal IDE errors during project processing (especially opening),
+                        // but anyway the project has to be closed
                         try {
                             val projectIndex = indexer.indexProject(project)
                             println("Start processing project ${project.name} (index $projectIndex)")
