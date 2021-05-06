@@ -21,6 +21,7 @@ open class KotlinClonesAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask
 
     init {
         jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+        maxHeapSize = "20g"
         standardInput = System.`in`
         standardOutput = System.`out`
     }

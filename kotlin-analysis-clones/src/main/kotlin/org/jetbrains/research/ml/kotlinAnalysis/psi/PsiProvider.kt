@@ -17,12 +17,12 @@ import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
  */
 object PsiProvider {
 
-    fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
-        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten()
+    fun extractMethodsFromProject(project: Project): Set<KtNamedFunction> {
+        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten().toSet()
     }
 
-    private fun extractPsiFiles(project: Project): MutableList<PsiFile> {
-        val projectPsiFiles = mutableListOf<PsiFile>()
+    private fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
+        val projectPsiFiles = mutableSetOf<PsiFile>()
         val projectRootManager = ProjectRootManager.getInstance(project)
         val psiManager = PsiManager.getInstance(project)
 
