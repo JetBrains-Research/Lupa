@@ -5,6 +5,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Builds incremental index of given project or method.
@@ -17,18 +18,23 @@ class IndexBuilder(outputDir: Path) : AutoCloseable {
     private val methodIndexWriter = getPrintWriter(outputDir, "method_index.csv")
 
     fun indexProject(project: Project): Int {
-        projectIndexWriter.println("$lastProjectId,${project.basePath}")
+        projectIndexWriter.println("$lastProjectId,${project.name}")
         return lastProjectId++
     }
 
     fun indexMethod(function: KtNamedFunction, projectId: Int): Int {
-        val filePath = function.containingKtFile.virtualFilePath
+        val filePath = Paths.get(function.containingKtFile.virtualFilePath)
+        val projectPath = function.project.basePath
+            ?: throw IllegalArgumentException("Cannot find path to the project containing function ${function.name}")
+        val projectPathParent = Paths.get(projectPath).parent
+        val fileRelativePath = projectPathParent.relativize(filePath)
+
         val doc = PsiDocumentManager.getInstance(function.project).getDocument(function.containingFile)
             ?: throw IllegalArgumentException("Cannot find document containing function ${function.name}")
         val startLine = doc.getLineNumber(function.textRange.startOffset)
         val endLine = doc.getLineNumber(function.textRange.endOffset)
         methodIndexWriter.println(
-            "$lastMethodId,$projectId,$filePath,$startLine,$endLine"
+            "$lastMethodId,$projectId,$fileRelativePath,$startLine,$endLine"
         )
         return lastMethodId++
     }
