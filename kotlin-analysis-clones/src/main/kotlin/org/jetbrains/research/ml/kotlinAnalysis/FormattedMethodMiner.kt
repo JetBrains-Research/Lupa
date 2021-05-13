@@ -20,6 +20,7 @@ class FormattedMethodMiner(outputDir: Path) {
         try {
             getSubdirectories(inputDir).forEach { projectPath ->
                 ApplicationManager.getApplication().runReadAction {
+                    println("Opening project $projectPath")
                     ProjectUtil.openOrImport(projectPath, null, true).let { project ->
                         // there can be some internal IDE errors during project processing (especially opening),
                         // but anyway the project has to be closed
@@ -38,7 +39,7 @@ class FormattedMethodMiner(outputDir: Path) {
                             println(ex.message)
                         } finally {
                             ApplicationManager.getApplication().invokeAndWait {
-                                ProjectManagerEx.getInstanceEx().closeAndDispose(project)
+                                ProjectManagerEx.getInstanceEx().forceCloseProject(project)
                             }
                         }
                     }
