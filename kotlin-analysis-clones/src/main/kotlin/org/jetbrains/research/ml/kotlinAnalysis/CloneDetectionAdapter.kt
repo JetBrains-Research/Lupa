@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -10,8 +10,15 @@ import java.security.MessageDigest
  */
 object CloneDetectionAdapter {
 
-    fun format(function: KtNamedFunction, projectId: Int, methodId: Int): String {
-        PsiProvider.deleteComments(function)
+    fun format(
+        function: KtNamedFunction,
+        projectId: Int,
+        methodId: Int,
+        formatter: ((PsiElement) -> Unit)? = null
+    ): String {
+        formatter?.let {
+            it(function)
+        }
         val tokens: List<String> = tokenize(function.text)
         val totalTokens = tokens.size
         val tokensCounter: Map<String, Int> = tokens.groupingBy { it }

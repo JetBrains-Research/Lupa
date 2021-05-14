@@ -31,14 +31,19 @@ class FormattedMethodMiner(outputDir: Path) {
                                 indexer.indexMethod(method, projectIndex)
                             }
                             methodsIndexed.forEach { (method, methodIndex) ->
-                                val methodFormatted = CloneDetectionAdapter.format(method, projectIndex, methodIndex)
+                                val methodFormatted = CloneDetectionAdapter.format(
+                                    method,
+                                    projectIndex,
+                                    methodIndex,
+                                    PsiProvider::deleteComments
+                                )
                                 methodDataWriter.println(methodFormatted)
                             }
                         } catch (ex: Exception) {
                             println(ex.message)
                         } finally {
                             ApplicationManager.getApplication().invokeAndWait {
-                                ProjectManagerEx.getInstanceEx().closeAndDispose(project)
+                                ProjectManagerEx.getInstanceEx().forceCloseProject(project)
                             }
                         }
                     }
