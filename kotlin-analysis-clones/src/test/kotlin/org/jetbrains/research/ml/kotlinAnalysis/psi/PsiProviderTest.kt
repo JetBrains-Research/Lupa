@@ -26,10 +26,24 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
     }
 
     @Test
-    fun testDeleteComments() {
+    fun testDeleteCommentsInWholeFile() {
         val inPsiFile = getPsiFile(inFile!!, myFixture)
         val outPsiFile = getPsiFile(outFile!!, myFixture)
         PsiProvider.deleteComments(inPsiFile)
         Assert.assertEquals(outPsiFile.text, inPsiFile.text)
+    }
+
+    @Test
+    fun testDeleteCommentsInMethods() {
+        val inPsiFile = getPsiFile(inFile!!, myFixture)
+        val outPsiFile = getPsiFile(outFile!!, myFixture)
+        val inMethods = PsiProvider.collectPsiMethods(inPsiFile)
+        val outMethods = PsiProvider.collectPsiMethods(outPsiFile)
+        Assert.assertEquals(outMethods.size, inMethods.size)
+        inMethods.zip(outMethods).forEach { (inMethod, outMethod) ->
+            PsiProvider.deleteComments(inMethod)
+            PsiProvider.deleteComments(outMethod)
+            Assert.assertEquals(inMethod.text, outMethod.text)
+        }
     }
 }

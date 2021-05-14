@@ -14,8 +14,10 @@ import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
  */
 object PsiProvider {
 
-    fun extractMethodsFromProject(project: Project): Set<KtNamedFunction> {
-        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten().toSet()
+    fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
+        // We should reverse the list with method since we handle all methods separately
+        // and we can invalidate the previous one
+        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten().reversed()
     }
 
     private fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
@@ -35,7 +37,7 @@ object PsiProvider {
         return projectPsiFiles
     }
 
-    private fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
+    fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
         return PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
     }
 
