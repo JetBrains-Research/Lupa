@@ -1,6 +1,5 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
-import org.jetbrains.research.ml.kotlinAnalysis.CloneDetectionAdapter
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPsiFile
 import org.junit.Assert
@@ -41,13 +40,10 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
         val inMethods = PsiProvider.collectPsiMethods(inPsiFile)
         val outMethods = PsiProvider.collectPsiMethods(outPsiFile)
         Assert.assertEquals(outMethods.size, inMethods.size)
-        val projectIndex = 0
-        inMethods.zip(outMethods).forEachIndexed { index, (inMethod, outMethod) ->
-            val inMethodFormatted =
-                CloneDetectionAdapter.format(inMethod, projectIndex, index, PsiProvider::deleteComments)
-            val outMethodFormatted =
-                CloneDetectionAdapter.format(outMethod, projectIndex, index, PsiProvider::deleteComments)
-            Assert.assertEquals(outMethodFormatted, inMethodFormatted)
+        inMethods.zip(outMethods).forEach { (inMethod, outMethod) ->
+            PsiProvider.deleteComments(inMethod)
+            PsiProvider.deleteComments(outMethod)
+            Assert.assertEquals(inMethod.text, outMethod.text)
         }
     }
 }
