@@ -1,3 +1,11 @@
+"""
+This script allows to extract methods from kotlin projects using batch processing and IntelliJ IDEA plugin
+It accepts
+    * path to input directory containing kotlin projects
+    * path to the output directory, where all methods extracted from input projects will be saved
+    * batch size (default is 300)
+    * index of batch to start from
+"""
 import argparse
 import logging
 import os
@@ -96,7 +104,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("--batch_size", help="Batch size for the method extraction plugin ", nargs='?', const=500,
+    parser.add_argument("--batch_size", help="Batch size for the method extraction plugin ", nargs='?', const=300,
                         type=int)
     parser.add_argument("--start_from", help="Index of batch to start processing from", nargs='?', const=0, type=int)
     return parser.parse_args()
