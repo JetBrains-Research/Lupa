@@ -1,15 +1,16 @@
 import os
+import pandas as pd
 from pygments import highlight
 from pygments.lexers import KotlinLexer
 from pygments.formatters import HtmlFormatter
 
 
-def add_code_features(df, dataset_path):
+def add_code_features(df: pd.DataFrame, dataset_path: str):
     df['method_text'] = df.apply(lambda row: get_method_text(row, dataset_path), axis=1)
     df['highlighted_code'] = df['method_text'].apply(lambda code: highlight_code(code))
 
 
-def highlight_code(code):
+def highlight_code(code: str) -> str:
     formatter = HtmlFormatter(cssclass='pygments')
     html_code = highlight(code, KotlinLexer(), formatter)
     css = formatter.get_style_defs('.pygments')
@@ -21,7 +22,7 @@ def highlight_code(code):
     return template.format(css, html_code).strip()
 
 
-def clean_indents(text):
+def clean_indents(text: str) -> str:
     lines = text.split('\n')
     line_length = len(lines[0])
     lines[0] = lines[0].lstrip()
@@ -32,13 +33,13 @@ def clean_indents(text):
     return "\n".join(lines)
 
 
-def get_method_text(row, dataset_path):
+def get_method_text(row: pd.Series, dataset_path: str) -> str:
     with open(os.path.join(dataset_path, row.file)) as fin:
         method_lines = fin.readlines()[row.start_line:row.end_line + 1]
     return clean_indents(''.join(method_lines))
 
 
-def is_method_empty(text):
+def is_method_empty(text: str) -> bool:
     first_opened = text.find("{")
     first_closed = text.find("}")
     if first_opened == -1 or first_closed == -1:

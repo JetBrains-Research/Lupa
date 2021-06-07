@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+from typing import Dict
 
 
 def main():
@@ -16,7 +17,7 @@ def main():
     logging.info("Saved clones")
 
 
-def read_pairs(clone_adjacency_list, path_to_pairs, closeness):
+def read_pairs(clone_adjacency_list: Dict[int, str], path_to_pairs: str, closeness: int):
     cnt = 0
     with open(path_to_pairs, 'r') as fin:
         for line in fin:
@@ -26,20 +27,21 @@ def read_pairs(clone_adjacency_list, path_to_pairs, closeness):
                 logging.info(f"Finished processing {cnt} clone (closeness {closeness})")
 
 
-def add_clone(clone_adjacency_list, line, closeness):
+def add_clone(clone_adjacency_list: Dict[int, str], line: str, closeness: int):
     project1_id, method1_id, project2_id, method2_id = line.split(",")
     add_edge(clone_adjacency_list, project1_id, method1_id, project2_id, method2_id, closeness)
     add_edge(clone_adjacency_list, project2_id, method2_id, project1_id, method1_id, closeness)
 
 
-def add_edge(clone_adjacency_list, project1, method1, project2, method2, closeness):
+def add_edge(clone_adjacency_list: Dict[int, str], project1: int, method1: int, project2: int, method2: int,
+             closeness: int):
     if method1 not in clone_adjacency_list:
         clone_adjacency_list[method1] = f"{project1}:{method2},{project2},{closeness}"
     else:
         clone_adjacency_list[method1] += f";{method2},{project2},{closeness}"
 
 
-def save_clones(clone_adjacency_list, path):
+def save_clones(clone_adjacency_list: Dict[int, str], path: str):
     with open(os.path.join(path, "clones_adjacency_test.txt"), 'w+') as fout:
         for method_id, data in clone_adjacency_list.items():
             line = ",".join([str(method_id), data]) + "\n"

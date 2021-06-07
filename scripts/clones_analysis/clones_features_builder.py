@@ -1,4 +1,8 @@
-def add_number_of_clones_features(methods_df, graph=None):
+import networkx as nx
+import pandas as pd
+
+
+def add_number_of_clones_features(methods_df: pd.DataFrame, graph: nx.Graph = None):
     methods_df['n_clones'] = methods_df['method_id'].apply(lambda id: number_of_clones(id, graph))
     methods_df['n_inter_clones'] = methods_df['method_id'].apply(
         lambda id: number_of_clones(id, graph, only_inter=True))
@@ -8,7 +12,8 @@ def add_number_of_clones_features(methods_df, graph=None):
         lambda id: number_of_clones(id, graph, only_inter=True, only_100_closeness=True))
 
 
-def number_of_clones(method_id, graph, only_inter=False, only_100_closeness=False):
+def number_of_clones(method_id: int, graph: nx.Graph, only_inter: bool = False,
+                     only_100_closeness: bool = False) -> int:
     if method_id not in graph:
         return 0
 
@@ -25,13 +30,13 @@ def number_of_clones(method_id, graph, only_inter=False, only_100_closeness=Fals
     return result
 
 
-def add_number_of_projects_features(methods_df, graph=None):
+def add_number_of_projects_features(methods_df: pd.DataFrame, graph: nx.Graph = None):
     methods_df['n_unique_projects'] = methods_df['method_id'].apply(lambda id: get_projects_amount(id, graph))
     methods_df['n_unique_100_projects'] = methods_df['method_id'].apply(
         lambda id: get_projects_amount(id, graph, only_exact=True))
 
 
-def get_projects_amount(node_start, graph, only_exact=False):
+def get_projects_amount(node_start: int, graph: nx.Graph, only_exact: bool = False) -> int:
     if node_start not in graph:
         return 1
 

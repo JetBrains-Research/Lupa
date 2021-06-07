@@ -1,8 +1,9 @@
 import pandas as pd
 import os
+import networkx as nx
 
 
-def get_methods_df(folder):
+def get_methods_df(folder: str) -> pd.DataFrame:
     methods_columns = ['project_id', 'method_id', 'file', 'start_line', 'end_line']
     methods_df = pd.read_csv(os.path.join(folder, 'method_index.csv'), sep='\t', header=None, names=methods_columns)
     methods_tokens = {}
@@ -14,11 +15,11 @@ def get_methods_df(folder):
     return methods_df
 
 
-def get_projects_df(folder):
+def get_projects_df(folder: str) -> pd.DataFrame:
     return pd.read_csv(os.path.join(folder, 'project_index.csv'), header=None, names=['project_id', 'project_name'])
 
 
-def get_clones_df(path80, path100):
+def get_clones_df(path80: str, path100: str) -> pd.DataFrame:
     columns = ['project1_id', 'method1_id', 'project2_id', 'method2_id']
     clones80df = pd.read_csv(path80, header=None, names=columns)
     clones100df = pd.read_csv(path100, header=None, names=columns)
@@ -29,7 +30,7 @@ def get_clones_df(path80, path100):
     return clones
 
 
-def get_unique_clones_df(methods_df, graph):
+def get_unique_clones_df(methods_df: pd.DataFrame, graph: nx.Graph) -> pd.DataFrame:
     methods_records = methods_df.sort_values(by=['n_unique_projects'], ascending=False)[
         ['method_id', 'n_unique_projects']][methods_df.n_unique_projects > 1].to_dict('records')
 
@@ -48,4 +49,3 @@ def get_unique_clones_df(methods_df, graph):
 
     unique_clones = methods_df[methods_df['method_id'].isin(ordered_methods)]
     return unique_clones
-
