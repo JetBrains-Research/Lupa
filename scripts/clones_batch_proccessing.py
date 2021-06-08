@@ -93,7 +93,7 @@ def move_indexes_line(line: str, project_offset: int, method_offset: int, sep: s
 
 def move_indexes_file(batch_output_path: str, output_path: str, filename: str, project_offset: int,
                       method_offset: int, sep: str = ','):
-    with open(os.path.join(batch_output_path, filename), 'r') as batch_output:
+    with open(os.path.join(batch_output_path, filename)) as batch_output:
         lines = list(map(lambda line: move_indexes_line(line, project_offset, method_offset, sep),
                          batch_output.readlines()))
     with open(os.path.join(output_path, filename), "a") as final_output:
@@ -104,7 +104,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("--batch_size", help="Batch size for the method extraction plugin ", nargs='?', const=300,
+    parser.add_argument("--batch_size", help="Batch size for the method extraction plugin", nargs='?', const=300,
                         type=int)
     parser.add_argument("--start_from", help="Index of batch to start processing from", nargs='?', const=0, type=int)
     return parser.parse_args()
