@@ -18,7 +18,7 @@ class IndexBuilder(outputDir: Path) : AutoCloseable {
     private val methodIndexWriter = getPrintWriter(outputDir, "method_index.csv")
 
     fun indexProject(project: Project): Int {
-        projectIndexWriter.println("$lastProjectId,${project.name}")
+        projectIndexWriter.println("$lastProjectId\t${project.name}")
         return lastProjectId++
     }
 
@@ -34,7 +34,7 @@ class IndexBuilder(outputDir: Path) : AutoCloseable {
         val startLine = doc.getLineNumber(function.textRange.startOffset)
         val endLine = doc.getLineNumber(function.textRange.endOffset)
         methodIndexWriter.println(
-            "$lastMethodId,$projectId,$fileRelativePath,$startLine,$endLine"
+            "$projectId\t$lastMethodId\t$fileRelativePath\t$startLine\t$endLine"
         )
         return lastMethodId++
     }
