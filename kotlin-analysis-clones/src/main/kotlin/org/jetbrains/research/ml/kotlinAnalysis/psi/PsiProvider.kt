@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 
+
 /**
  * Provides methods based on interaction with PSI, for example, extraction of all methods from project.
  */
@@ -43,17 +44,11 @@ object PsiProvider {
 
     fun deleteComments(element: PsiElement) {
         val comments = PsiTreeUtil.collectElementsOfType(element, PsiComment::class.java)
-        // We should handle each group of elements with same parent separately
-        // since if we delete the first item in this group we invalidate
-        // other elements with the same parent
-        comments.toList().groupBy { it.parent }.entries.forEach {
-            // If we do not change the order of the elements, then a parent can invalidate
-            // the child element, but it can also be a comment and an exception will be thrown,
-            // so we must delete the found comments in the reverse order
-            it.value.reversed().forEach { comment ->
-                WriteCommandAction.runWriteCommandAction(comment.project) {
-                    comment.delete()
-                }
+        val manager = SmartPointerManager.getInstance(element.project)
+        val commentsPointers = comments.map(manager::createSmartPsiElementPointer)
+        commentsPointers.forEach {
+            WriteCommandAction.runWriteCommandAction(it.project) {
+                it.element?.delete()
             }
         }
     }
