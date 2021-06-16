@@ -20,6 +20,7 @@ class MethodsColumn(str, enum.Enum):
     TOKENS = "tokens"
     METHOD_TEXT = "method_text"
     HIGHLIGHTED_CODE = "highlighted_code"
+    IS_EMPTY = "is_empty"
 
     LEADER_METHOD_ID = "leader_method_id"
     COMPONENT_SIZE = "component_size"
