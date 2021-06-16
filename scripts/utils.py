@@ -16,6 +16,6 @@ def get_subdirectories(path: str) -> List[str]:
     return dirs
 
 
-def get_file_lines(path: str):
+def get_file_lines(path: str) -> List[str]:
     with open(path) as fin:
         return fin.readlines()

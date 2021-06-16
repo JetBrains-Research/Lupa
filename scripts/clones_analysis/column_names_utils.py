@@ -1,35 +1,35 @@
 import enum
 
 
-class Methods_columns(str, enum.Enum):
-    method_id = "method_id"
-    project_id = "project_id"
+class MethodsColumn(str, enum.Enum):
+    METHOD_ID = "method_id"
+    PROJECT_ID = "project_id"
 
-    n_clones = "n_clones"
-    n_inter_clones = "n_inter_clones"
-    n_100_clones = "n_100_clones"
-    n_inter_100_clones = "n_inter_100_clones"
+    N_CLONES = "n_clones"
+    N_INTER_CLONES = "n_inter_clones"
+    N_100_CLONES = "n_100_clones"
+    N_INTER_100_CLONES = "n_inter_100_clones"
 
-    n_unique_projects = "n_unique_projects"
-    n_unique_100_projects = "n_unique_100_projects"
+    N_UNIQUE_PROJECTS = "n_unique_projects"
+    N_UNIQUE_100_PROJECTS = "n_unique_100_projects"
 
-    file = "file"
-    start_line = "start_line"
-    end_line = "end_line"
+    FILE = "file"
+    START_LINE = "start_line"
+    END_LINE = "end_line"
 
-    tokens = "tokens"
-    method_text = "method_text"
-    highlighted_code = "highlighted_code"
+    TOKENS = "tokens"
+    METHOD_TEXT = "method_text"
+    HIGHLIGHTED_CODE = "highlighted_code"
 
-    leader_method_id = "leader_method_id"
-    component_size = "component_size"
-    n_unique_projects_component = "n_unique_projects_component"
+    LEADER_METHOD_ID = "leader_method_id"
+    COMPONENT_SIZE = "component_size"
+    N_UNIQUE_PROJECTS_COMPONENT = "n_unique_projects_component"
 
 
-class Clones_columns(str, enum.Enum):
-    project1_id = "project1_id"
-    project2_id = "project2_id"
-    method1_id = "method1_id"
-    method2_id = "method2_id"
-    is_in_project = "is_in_project"
-    closeness = "closeness"
+class ClonesColumn(str, enum.Enum):
+    PROJECT1_ID = "project1_id"
+    PROJECT2_ID = "project2_id"
+    METHOD1_ID = "method1_id"
+    METHOD2_ID = "method2_id"
+    IS_IN_PROJECT = "is_in_project"
+    CLOSENESS = "closeness"

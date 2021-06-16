@@ -2,7 +2,7 @@ import networkx as nx
 import pandas as pd
 from typing import Callable, Dict, List
 
-from column_names_utils import Clones_columns, Methods_columns
+from column_names_utils import ClonesColumn, MethodsColumn
 
 
 class EdgeFilter:
@@ -13,18 +13,18 @@ class EdgeFilter:
         return self.predicate(edge)
 
 
-is_clone_inter_project: EdgeFilter = EdgeFilter(lambda edge: not edge[Clones_columns.is_in_project.value])
-is_clone_exact: EdgeFilter = EdgeFilter(lambda edge: edge[Clones_columns.closeness.value] == 100)
+is_clone_inter_project: EdgeFilter = EdgeFilter(lambda edge: not edge[ClonesColumn.IS_IN_PROJECT.value])
+is_clone_exact: EdgeFilter = EdgeFilter(lambda edge: edge[ClonesColumn.CLOSENESS.value] == 100)
 
 
 def add_number_of_clones_features(methods_df: pd.DataFrame, clones_graph: nx.Graph = None) -> None:
-    methods_df[Methods_columns.n_clones.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_CLONES.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: number_of_clones(id, clones_graph, []))
-    methods_df[Methods_columns.n_inter_clones.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_INTER_CLONES.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: number_of_clones(id, clones_graph, [is_clone_inter_project]))
-    methods_df[Methods_columns.n_100_clones.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_100_CLONES.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: number_of_clones(id, clones_graph, [is_clone_exact]))
-    methods_df[Methods_columns.n_inter_100_clones.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_INTER_100_CLONES.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: number_of_clones(id, clones_graph, [is_clone_inter_project, is_clone_exact]))
 
 
@@ -37,9 +37,9 @@ def number_of_clones(method_id: int, clones_graph: nx.Graph, predicates: List[Ed
 
 
 def add_number_of_projects_features(methods_df: pd.DataFrame, clones_graph: nx.Graph = None) -> None:
-    methods_df[Methods_columns.n_unique_projects.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_UNIQUE_PROJECTS.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: get_projects_amount(id, clones_graph, []))
-    methods_df[Methods_columns.n_unique_100_projects.value] = methods_df[Methods_columns.method_id.value].apply(
+    methods_df[MethodsColumn.N_UNIQUE_100_PROJECTS.value] = methods_df[MethodsColumn.METHOD_ID.value].apply(
         lambda id: get_projects_amount(id, clones_graph, [is_clone_exact]))
 
 
@@ -48,10 +48,10 @@ def get_projects_amount(node_start: int, clones_graph: nx.Graph, predicates: Lis
         return 1
 
     all_projects = set()
-    project_start = clones_graph.nodes[node_start][Methods_columns.project_id.value]
+    project_start = clones_graph.nodes[node_start][MethodsColumn.PROJECT_ID.value]
     all_projects.add(project_start)
     for node_end in clones_graph[node_start]:
-        project_end = clones_graph.nodes[node_end][Methods_columns.project_id.value]
+        project_end = clones_graph.nodes[node_end][MethodsColumn.PROJECT_ID.value]
         edge = clones_graph[node_start][node_end]
         if all(map(lambda predicate: predicate.apply(edge), predicates)):
             all_projects.add(project_end)

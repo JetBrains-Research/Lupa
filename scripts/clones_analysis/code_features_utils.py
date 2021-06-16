@@ -4,13 +4,13 @@ from pygments import highlight
 from pygments.lexers import KotlinLexer
 from pygments.formatters import HtmlFormatter
 
-from column_names_utils import Methods_columns
+from column_names_utils import MethodsColumn
 from utils import get_file_lines
 
 
 def add_code_features(df: pd.DataFrame, dataset_path: str):
-    df[Methods_columns.method_text.value] = df.apply(lambda row: get_method_text(row, dataset_path), axis=1)
-    df[Methods_columns.highlighted_code.value] = df[Methods_columns.method_text.value].apply(
+    df[MethodsColumn.METHOD_TEXT.value] = df.apply(lambda row: get_method_text(row, dataset_path), axis=1)
+    df[MethodsColumn.HIGHLIGHTED_CODE.value] = df[MethodsColumn.METHOD_TEXT.value].apply(
         lambda code: highlight_code(code))
 
 

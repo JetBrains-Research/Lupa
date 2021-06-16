@@ -2,15 +2,15 @@ from typing import List, Set, Tuple, Dict
 import networkx as nx
 import pandas as pd
 
-from column_names_utils import Clones_columns, Methods_columns
+from column_names_utils import ClonesColumn, MethodsColumn
 
 
 def add_edge(clones_graph: nx.Graph, row: pd.Series) -> Tuple[int, int, Dict]:
-    clones_graph.add_node(row[Clones_columns.method1_id.value], project_id=row[Clones_columns.project1_id.value])
-    clones_graph.add_node(row[Clones_columns.method2_id.value], project_id=row[Clones_columns.project2_id.value])
-    return row[Clones_columns.method1_id.value], row[Clones_columns.method2_id.value], {
-        Clones_columns.is_in_project.value: row[Clones_columns.is_in_project.value],
-        Clones_columns.closeness.value: row[Clones_columns.closeness.value]}
+    clones_graph.add_node(row[ClonesColumn.METHOD1_ID.value], project_id=row[ClonesColumn.PROJECT1_ID.value])
+    clones_graph.add_node(row[ClonesColumn.METHOD2_ID.value], project_id=row[ClonesColumn.PROJECT2_ID.value])
+    return row[ClonesColumn.METHOD1_ID.value], row[ClonesColumn.METHOD2_ID.value], {
+        ClonesColumn.IS_IN_PROJECT.value: row[ClonesColumn.IS_IN_PROJECT.value],
+        ClonesColumn.CLOSENESS.value: row[ClonesColumn.CLOSENESS.value]}
 
 
 def get_graph(clones: pd.DataFrame) -> nx.Graph:
@@ -32,12 +32,12 @@ def add_graph_features(methods_df: pd.DataFrame, components: List[Set[int]]) -> 
             method_to_repr[method] = representative
             method_to_component_size[method] = len(component)
 
-    methods_df[Methods_columns.leader_method_id.value] = methods_df.index.map(
+    methods_df[MethodsColumn.LEADER_METHOD_ID.value] = methods_df.index.map(
         lambda id: method_to_repr[id] if id in method_to_repr else id)
-    methods_df[Methods_columns.component_size.value] = methods_df.index.map(
+    methods_df[MethodsColumn.COMPONENT_SIZE.value] = methods_df.index.map(
         lambda id: method_to_component_size[id] if id in method_to_component_size else 1)
 
-    grouped = methods_df.groupby([Methods_columns.leader_method_id.value])[
-        Methods_columns.project_id.value].nunique().to_dict()
-    methods_df[Methods_columns.n_unique_projects_component.value] = methods_df[
-        Methods_columns.leader_method_id.value].map(lambda id: grouped[id])
+    grouped = methods_df.groupby([MethodsColumn.LEADER_METHOD_ID.value])[
+        MethodsColumn.PROJECT_ID.value].nunique().to_dict()
+    methods_df[MethodsColumn.N_UNIQUE_PROJECTS_COMPONENT.value] = methods_df[
+        MethodsColumn.LEADER_METHOD_ID.value].map(lambda id: grouped[id])
