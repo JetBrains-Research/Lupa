@@ -14,3 +14,8 @@ def get_subdirectories(path: str) -> List[str]:
         if os.path.isdir(fullname):
             dirs.append(fullname)
     return dirs
+
+
+def get_file_lines(path: str):
+    with open(path) as fin:
+        return fin.readlines()

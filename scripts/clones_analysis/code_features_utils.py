@@ -4,10 +4,14 @@ from pygments import highlight
 from pygments.lexers import KotlinLexer
 from pygments.formatters import HtmlFormatter
 
+from column_names_utils import Methods_columns
+from utils import get_file_lines
+
 
 def add_code_features(df: pd.DataFrame, dataset_path: str):
-    df['method_text'] = df.apply(lambda row: get_method_text(row, dataset_path), axis=1)
-    df['highlighted_code'] = df['method_text'].apply(lambda code: highlight_code(code))
+    df[Methods_columns.method_text.value] = df.apply(lambda row: get_method_text(row, dataset_path), axis=1)
+    df[Methods_columns.highlighted_code.value] = df[Methods_columns.method_text.value].apply(
+        lambda code: highlight_code(code))
 
 
 def highlight_code(code: str) -> str:
@@ -34,8 +38,7 @@ def clean_indents(text: str) -> str:
 
 
 def get_method_text(row: pd.Series, dataset_path: str) -> str:
-    with open(os.path.join(dataset_path, row.file)) as fin:
-        method_lines = fin.readlines()[row.start_line:row.end_line + 1]
+    method_lines = get_file_lines(os.path.join(dataset_path, row.file))[row.start_line:row.end_line + 1]
     return clean_indents(''.join(method_lines))
 
 

@@ -3,14 +3,17 @@ import logging
 import os
 from typing import Dict
 
+CLOSENESS_NEAR_MISS = 80
+CLOSENESS_EXACT = 100
+
 
 def main():
     args = parse_args()
     logging.getLogger().setLevel(logging.INFO)
 
     clone_adjacency_list = {}
-    read_pairs(clone_adjacency_list, args.path80, 80)
-    read_pairs(clone_adjacency_list, args.path100, 100)
+    read_pairs(clone_adjacency_list, args.path80, CLOSENESS_NEAR_MISS)
+    read_pairs(clone_adjacency_list, args.path100, CLOSENESS_EXACT)
     logging.info("Constructed dict with adjacency list")
 
     save_clones(clone_adjacency_list, args.output)

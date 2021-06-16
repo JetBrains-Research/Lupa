@@ -3,9 +3,14 @@ import pandas as pd
 
 
 # one pass over adjacency list to count all statistics
+from column_names_utils import Methods_columns
+
+
 def count_clones_statistics(file_path: str, min_projects: int = 10) -> Tuple[Dict, Dict]:
-    methods_stats = {"method_id": [], "n_clones": [], "n_inter_clones": [], "n_100_clones": [],
-                     "n_inter_100_clones": [], "n_unique_projects": [], "n_unique_100_projects": []}
+    methods_stats = {Methods_columns.method_id.value: [], Methods_columns.n_clones.value: [],
+                     Methods_columns.n_inter_clones.value: [], Methods_columns.n_100_clones.value: [],
+                     Methods_columns.n_inter_100_clones.value: [], Methods_columns.n_unique_projects.value: [],
+                     Methods_columns.n_unique_100_projects.value: []}
     clones_adjacency_top = {}
 
     with open(file_path, 'r') as fin:
@@ -37,13 +42,13 @@ def count_clones_statistics(file_path: str, min_projects: int = 10) -> Tuple[Dic
             if len(projects) > min_projects:
                 clones_adjacency_top[method_id] = clones_ids
 
-            methods_stats["method_id"].append(method_id)
-            methods_stats["n_clones"].append(len(clones_list))
-            methods_stats["n_inter_clones"].append(n_inter_clones)
-            methods_stats["n_100_clones"].append(n_100_clones)
-            methods_stats["n_inter_100_clones"].append(n_inter_100_clones)
-            methods_stats["n_unique_projects"].append(len(projects))
-            methods_stats["n_unique_100_projects"].append(len(projects_100))
+            methods_stats[Methods_columns.method_id.value].append(method_id)
+            methods_stats[Methods_columns.n_clones.value].append(len(clones_list))
+            methods_stats[Methods_columns.n_inter_clones.value].append(n_inter_clones)
+            methods_stats[Methods_columns.n_100_clones.value].append(n_100_clones)
+            methods_stats[Methods_columns.n_inter_100_clones.value].append(n_inter_100_clones)
+            methods_stats[Methods_columns.n_unique_projects.value].append(len(projects))
+            methods_stats[Methods_columns.n_unique_100_projects.value].append(len(projects_100))
     return methods_stats, clones_adjacency_top
 
 
@@ -61,10 +66,10 @@ def get_unique_clones_df_large(methods_df: pd.DataFrame, clones_adjacency_top: D
 
             for method_clone, _, _ in clones_adjacency_top[method_id]:
                 visited[method_clone] = True
-    unique_clones = methods_df[methods_df['method_id'].isin(ordered_unique_methods)]
+    unique_clones = methods_df[methods_df[Methods_columns.method_id.value].isin(ordered_unique_methods)]
     return unique_clones
 
 
 def add_features_from_stats(methods_df: pd.DataFrame, methods_stats: Dict) -> pd.DataFrame:
     methods_stats_df = pd.DataFrame.from_dict(methods_stats)
-    return pd.merge(methods_df, methods_stats_df, on="method_id", how="inner")
+    return pd.merge(methods_df, methods_stats_df, on=Methods_columns.method_id.value, how="inner")

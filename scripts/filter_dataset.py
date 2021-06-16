@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Input directory")
     parser.add_argument("output", help="Output directory")
-    parser.add_argument("--extension_list", help="Allowed file extensions", nargs="+", default=["kt"])
+    parser.add_argument("--extension-list", help="Allowed file extensions", nargs="+", default=["kt"])
     return parser.parse_args()
 
 
