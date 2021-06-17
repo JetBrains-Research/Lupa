@@ -28,8 +28,10 @@ def main():
         username, project_name = project.split('/')
         project_directory_name = f"{username}#{project_name}"
         project_directory_name_tmp = f"{project_directory_name}_tmp"
+        project_directory = os.path.join(args.output, project_directory_name)
         project_directory_tmp = os.path.join(args.output, project_directory_name_tmp)
         create_directory(project_directory_tmp)
+
         p = subprocess.Popen(
             ["git", "clone", f"https://github.com/{project}.git", project_directory_name_tmp, "--depth", "1"],
             cwd=args.output)
@@ -37,7 +39,6 @@ def main():
         if return_code != 0:
             logging.info(f"Error while cloning {project}, skipping..")
         elif args.allowed_extensions is not None:
-            project_directory = os.path.join(args.output, project_directory_name)
             filter_files(project_directory_tmp, project_directory, args.allowed_extensions)
         else:
             shutil.copytree(project_directory_tmp, project_directory)
@@ -46,7 +47,7 @@ def main():
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("csv-path", help="Path to csv file with github repositories data")
+    parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
     parser.add_argument("--allowed-extensions", help=" optional Allowed file extensions", nargs="+")
     parser.add_argument("--start-from", help="Index of repository to start from", nargs='?', const=0, type=int)

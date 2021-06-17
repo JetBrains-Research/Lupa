@@ -87,7 +87,7 @@ def save_project_json(project_json: dict, jsons_dir_path: str, file_name: str):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("csv-path", help="Path to csv file with github repositories data")
+    parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
     parser.add_argument('--save-metadata', help="Enable saving jsons containing project metadata", action='store_true')
     parser.add_argument("--start-from", help="Index of the project to start from", nargs='?', const=0, type=int)
