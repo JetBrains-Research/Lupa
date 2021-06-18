@@ -31,17 +31,16 @@ def main():
         project_directory = os.path.join(args.output, project_directory_name)
         project_directory_tmp = os.path.join(args.output, project_directory_name_tmp)
         create_directory(project_directory_tmp)
+        directory_to_clone = project_directory_name if args.allowed_extensions is None else project_directory_name_tmp
 
         p = subprocess.Popen(
-            ["git", "clone", f"https://github.com/{project}.git", project_directory_name_tmp, "--depth", "1"],
+            ["git", "clone", f"https://github.com/{project}.git", directory_to_clone, "--depth", "1"],
             cwd=args.output)
         return_code = p.wait()
         if return_code != 0:
             logging.info(f"Error while cloning {project}, skipping..")
         elif args.allowed_extensions is not None:
             filter_files(project_directory_tmp, project_directory, args.allowed_extensions)
-        else:
-            shutil.copytree(project_directory_tmp, project_directory)
         shutil.rmtree(project_directory_tmp)
 
 
