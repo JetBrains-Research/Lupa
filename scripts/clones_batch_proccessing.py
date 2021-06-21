@@ -37,7 +37,7 @@ def main():
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
         with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.txt")), "w+") as fout:
-            process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli", f"-Pinput={batch_path}",
+            process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cliClones", f"-Pinput={batch_path}",
                                         f"-Poutput={batch_output_path}"], stdout=fout, stderr=fout, cwd=PROJECT_DIR)
         process.wait()
         logging.info(f"Finished batch {index} processing")
