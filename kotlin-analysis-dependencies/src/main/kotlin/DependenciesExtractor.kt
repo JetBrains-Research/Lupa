@@ -25,14 +25,18 @@ class DependenciesExtractor {
         getSubdirectories(inputDir).forEach { projectPath ->
             ApplicationManager.getApplication().runReadAction {
                 println("Opening project $projectPath")
-                val project = setUpProject(projectPath.toString())
+                var project: Project? = null
+                ApplicationManager.getApplication().invokeAndWait {
+                    project = setUpProject(projectPath.toString())
+                }
+                require(project != null) { "Did not set up the project with the path $inputDir" }
                 // there can be some internal IDE errors during project processing (especially opening),
                 // but anyway the project has to be closed
                 try {
                     var flag = false
                     n++
 
-                    ModuleManager.getInstance(project).modules.forEach {
+                    ModuleManager.getInstance(project!!).modules.forEach {
                         println("Module name: " + it.name)
                         println("Module's libs")
                         ModuleRootManager.getInstance(it).orderEntries().forEachLibrary { lib ->
@@ -49,7 +53,7 @@ class DependenciesExtractor {
                     println(ex.message)
                 } finally {
                     ApplicationManager.getApplication().invokeAndWait {
-                        ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                        ProjectManagerEx.getInstanceEx().forceCloseProject(project!!)
                     }
                 }
             }
