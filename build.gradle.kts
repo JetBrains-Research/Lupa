@@ -33,7 +33,7 @@ allprojects {
         type = "IC"
         version = "2020.3.3"
         downloadSources = false
-        setPlugins("com.intellij.java", "org.jetbrains.kotlin")
+        setPlugins("java", "Kotlin", "maven", "gradle", "Groovy")
         updateSinceUntilBuild = true
     }
 

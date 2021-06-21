@@ -27,6 +27,19 @@ open class KotlinClonesAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask
     }
 }
 
+open class KotlinDependenciesAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+    // Input directory with kotlin files
+    @get:Input
+    val input: String? by project
+
+    init {
+        jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+        maxHeapSize = "20g"
+        standardInput = System.`in`
+        standardOutput = System.`out`
+    }
+}
+
 dependencies {
     implementation(project(":kotlin-analysis-core"))
     implementation(project(":kotlin-analysis-clones"))
@@ -42,12 +55,20 @@ dependencies {
 }
 
 tasks {
-    register<KotlinClonesAnalysisCliTask>("cli") {
+    register<KotlinClonesAnalysisCliTask>("cliClones") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "kotlin-clones-analysis",
             input?.let { "--input=$it" },
             output?.let { "--output=$it" }
+        )
+    }
+
+    register<KotlinDependenciesAnalysisCliTask>("cliDependencies") {
+        dependsOn("buildPlugin")
+        args = listOfNotNull(
+            "kotlin-dependencies-analysis",
+            input?.let { "--input=$it" }
         )
     }
 }
