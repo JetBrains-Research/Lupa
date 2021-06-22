@@ -37,9 +37,9 @@ def get_clones_df(path80: str, path100: str) -> pd.DataFrame:
 
 
 def get_unique_clones_df(methods_df: pd.DataFrame, graph: nx.Graph) -> pd.DataFrame:
-    methods_records = methods_df.sort_values(by=[MethodsColumn.N_UNIQUE_PROJECTS.value], ascending=False)[
-        [MethodsColumn.METHOD_ID.value, MethodsColumn.N_UNIQUE_PROJECTS.value]][methods_df.n_unique_projects > 1]. \
-        to_dict('records')
+    methods_records = methods_df[[MethodsColumn.METHOD_ID.value, MethodsColumn.N_UNIQUE_PROJECTS.value]][
+        methods_df.n_unique_projects > 1].sort_values(by=[MethodsColumn.N_UNIQUE_PROJECTS.value],
+                                                      ascending=False).to_dict('records')
 
     visited = {}
     for node in graph.nodes:
