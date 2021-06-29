@@ -26,7 +26,7 @@ interface PsiSecondaryAnalyzer<P : PsiElement, R> {
  * @param R the type of the analysis result.
  * @param T the type of the cache key.
  */
-abstract class PsiSecondaryAnalyzerWithCache<P : PsiElement, R, T: Any>: PsiSecondaryAnalyzer<P, R> {
+abstract class PsiSecondaryAnalyzerWithCache<P : PsiElement, R, T : Any> : PsiSecondaryAnalyzer<P, R> {
     abstract val cache: MutableMap<T, R>
 
     /**
@@ -52,7 +52,6 @@ abstract class PsiSecondaryAnalyzerWithCache<P : PsiElement, R, T: Any>: PsiSeco
     abstract fun analyzeIfNotCached(psiElement: P): R
 }
 
-
 /**
  * Classes that extend this abstract class are used to compound the results of different secondary analyzers.
  *
@@ -67,7 +66,6 @@ abstract class AnalyzersAggregator<P : PsiElement, R, T> {
      */
     abstract fun aggregate(analyzerToStat: AnalyzerToStat<P, R>): T
 }
-
 
 /**
  * The main analyzer accepts a list of secondary analyzers and an aggregator to compound the analysis results.
@@ -98,7 +96,6 @@ open class PsiMainAnalyzer<P : PsiElement, R, T>(
     }
 }
 
-
 /**
  * Recursive visitor, that accepts the list of secondary analyzers, performs analysis of PSI element
  * using all [analyzers]. Saves the results to [analyzerToStat].
@@ -107,7 +104,8 @@ open class PsiMainAnalyzer<P : PsiElement, R, T>(
  * @param R the type of the analysis result.
  * @property analyzerToStat mapping from the analyzer to its computed results.
  */
-class Visitor<P : PsiElement, R>(private val analyzers: List<PsiSecondaryAnalyzer<P, R>>) : PsiRecursiveElementVisitor() {
+class Visitor<P : PsiElement, R>(private val analyzers: List<PsiSecondaryAnalyzer<P, R>>) :
+    PsiRecursiveElementVisitor() {
     val analyzerToStat: AnalyzerToStat<P, R> = analyzers.associateBy({ it }, { mutableMapOf() })
 
     override fun visitElement(element: PsiElement) {
