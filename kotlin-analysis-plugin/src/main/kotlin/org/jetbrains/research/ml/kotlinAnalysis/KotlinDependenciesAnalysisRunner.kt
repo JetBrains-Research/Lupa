@@ -9,6 +9,7 @@ import kotlin.system.exitProcess
 
 object KotlinDependenciesAnalysisRunner : ApplicationStarter {
     private lateinit var inputDir: Path
+    private lateinit var outputDir: Path
 
     private val logger = Logger.getInstance(javaClass)
 
@@ -20,17 +21,24 @@ object KotlinDependenciesAnalysisRunner : ApplicationStarter {
             "--input",
             help = "Input directory with kotlin projects"
         ) { Paths.get(this) }
+
+        val output by parser.storing(
+            "-o",
+            "--output",
+            help = "Output directory"
+        ) { Paths.get(this) }
     }
 
     override fun main(args: List<String>) {
         try {
             ArgParser(args.drop(1).toTypedArray()).parseInto(KotlinDependenciesAnalysisRunner::PluginRunnerArgs).run {
                 inputDir = input
+                outputDir = output
             }
             require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
 
             val dependenciesExtractor = DependenciesExtractor()
-            dependenciesExtractor.extractDependencies(inputDir)
+            dependenciesExtractor.extractDependencies(inputDir, outputDir)
         } catch (ex: Exception) {
             logger.error(ex)
         } finally {

@@ -32,6 +32,10 @@ open class KotlinDependenciesAnalysisCliTask : org.jetbrains.intellij.tasks.RunI
     @get:Input
     val input: String? by project
 
+    // Output directory to store dependencies
+    @get:Input
+    val output: String? by project
+
     init {
         jvmArgs = listOf("-Djava.awt.headless=true", "--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
         maxHeapSize = "20g"
@@ -68,7 +72,8 @@ tasks {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             "kotlin-dependencies-analysis",
-            input?.let { "--input=$it" }
+            input?.let { "--input=$it" },
+            output?.let { "--output=$it" }
         )
     }
 }
