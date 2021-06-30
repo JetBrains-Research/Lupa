@@ -104,9 +104,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("--batch_size", help="Batch size for the method extraction plugin", nargs='?', const=300,
+    parser.add_argument("--batch-size", help="Batch size for the method extraction plugin", nargs='?', const=300,
                         type=int)
-    parser.add_argument("--start_from", help="Index of batch to start processing from", nargs='?', const=0, type=int)
+    parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', const=0, type=int)
     return parser.parse_args()
 
 
