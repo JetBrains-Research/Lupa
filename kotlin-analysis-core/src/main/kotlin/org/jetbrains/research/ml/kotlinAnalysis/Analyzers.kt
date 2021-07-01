@@ -10,7 +10,7 @@ typealias AnalyzerToStat<P, R> = Map<PsiAnalyzer<P, R>, MutableMap<P, R>>
  * For example, for the task "get fully qualified names for classes" [P] will be [PsiClass] and [R] will be [String]
  * or any type that represents a fully qualified name.
 
- * @param P the type of PSI elements, that can be analyzed.
+ * @param P the type of PSI elements that can be analyzed.
  * @param R the type of the analysis result.
  */
 interface PsiAnalyzer<P : PsiElement, R> {
@@ -29,7 +29,7 @@ interface PsiAnalyzer<P : PsiElement, R> {
  * and the type of all fields is also immutable" we can cache the result of this analysis.
  * It allows to avoid analyzing the same objects twice if the class has several fields with the same type.
 
- * @param P the type of PSI elements, that can be analyzed.
+ * @param P the type of PSI elements that can be analyzed.
  * @param R the type of the analysis result.
  * @param T the type of the cache key.
  */
@@ -37,7 +37,7 @@ abstract class PsiAnalyzerWithCache<P : PsiElement, R, T : Any> : PsiAnalyzer<P,
     abstract val cache: MutableMap<T, R>
 
     /**
-     * Method to compute key by PSI element. This key would be used for memorization of the analysis result
+     * Method to compute the key by PSI element. This key would be used to memorize of the analysis result
      * for the corresponding PSI element.
      */
     abstract fun PsiElement.cacheKey(): T
@@ -65,7 +65,7 @@ abstract class PsiAnalyzerWithCache<P : PsiElement, R, T : Any> : PsiAnalyzer<P,
 /**
  * Classes that extend this abstract class are used to compound the results of different analyzers.
  *
- * @param P the type of PSI elements, that were analyzed by analyzers.
+ * @param P the type of PSI elements that were analyzed by analyzers.
  * @param R the type of the analysis result.
  * @param T the type of aggregator result.
  */
@@ -79,12 +79,12 @@ abstract class AnalyzersAggregator<P : PsiElement, R, T> {
 
 /**
  * The main analyzer accepts a list of analyzers and an aggregator to compound the analysis results.
- * It implements analysis using one-pass of the recursive PSI visitor.
+ * It implements analysis using a single pass of the recursive PSI visitor.
  *
  * For example, for a class, we can analyze all functions in this class and for each function aggregate
  * the results of this analysis, e.g. count arguments or types of arguments and so on.
  *
- * @param P the type of PSI elements, that can be analyzed.
+ * @param P the type of PSI elements that can be analyzed.
  * @param R the type of the analysis result.
  * @param T the type of the aggregator result.
  * @param analyzers list containing secondary analyzers of PSI elements with type [P].
@@ -110,10 +110,10 @@ open class PsiMainAnalyzer<P : PsiElement, R, T>(
 }
 
 /**
- * Recursive visitor, that accepts the list of secondary analyzers, performs analysis of PSI element
+ * Recursive visitor that accepts the list of secondary analyzers, performs analysis of PSI element
  * using all [analyzers]. Saves the results to [analyzerToStat].
  *
- * @param P the type of PSI elements, that can be analyzed.
+ * @param P the type of PSI elements that can be analyzed.
  * @param R the type of the analysis result.
  * @property analyzerToStat mapping from the analyzer to its computed results.
  */
