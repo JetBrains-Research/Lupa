@@ -4,8 +4,12 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.psi.*
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 
@@ -15,12 +19,20 @@ import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 object PsiProvider {
 
     fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
-        // We should reverse the list with method since we handle all methods separately
-        // and we can invalidate the previous one
-        return extractPsiFiles(project).map { collectPsiMethods(it) }.flatten().reversed()
+        return extractElementsOfTypeFromProject(project, KtNamedFunction::class.java)
     }
 
-    private fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
+    fun extractImportDirectiveFromProject(project: Project): List<KtImportDirective> {
+        return extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
+    }
+
+    private fun <T : PsiElement> extractElementsOfTypeFromProject(project: Project, psiElementClass: Class<T>): List<T> {
+        // We should reverse the list with method since we handle all elements separately
+        // and we can invalidate the previous one
+        return extractPsiFiles(project).map { collectElementsOfType(it, psiElementClass) }.flatten().reversed()
+    }
+
+    fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
         val projectPsiFiles = mutableSetOf<PsiFile>()
         val projectRootManager = ProjectRootManager.getInstance(project)
         val psiManager = PsiManager.getInstance(project)
@@ -38,7 +50,15 @@ object PsiProvider {
     }
 
     fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
-        return PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
+        return collectElementsOfType(psiFile, KtNamedFunction::class.java)
+    }
+
+    fun collectPsiImportDirectives(psiFile: PsiFile): MutableCollection<KtImportDirective> {
+        return collectElementsOfType(psiFile, KtImportDirective::class.java)
+    }
+
+    private fun <T : PsiElement> collectElementsOfType(psiFile: PsiFile, psiElementClass: Class<T>): MutableCollection<T> {
+        return PsiTreeUtil.collectElementsOfType(psiFile, psiElementClass)
     }
 
     fun deleteComments(element: PsiElement) {
