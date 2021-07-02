@@ -30,7 +30,7 @@ python3 scripts/load_dataset.py /path/to/cleaned/data/dir/results.csv /path/to/d
 #### 4. Extract methods from dataset
 
 ``` 
-python3 scripts/clones_batch_processing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
+python3 scripts/clones_batch_proccessing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
 ```
 
 You can use ```--batch-size n``` option (default value is 300). 
