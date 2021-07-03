@@ -14,7 +14,7 @@ import subprocess
 import argparse
 import os
 
-from filter_dataset import filter_files
+from data_collection.filter_dataset import filter_files
 from utils import create_directory
 
 

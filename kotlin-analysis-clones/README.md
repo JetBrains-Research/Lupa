@@ -14,7 +14,7 @@ containing repositories' names in the following format: ```username/project_name
 
 Run script for cleaning all duplicated repositories with different names: 
 ``` shell script
-python3 scripts/clean_duplicates.py /path/to/csv_file/results.csv /path/to/cleaned/data/dir
+python3 scripts/data_collection/clean_duplicates.py /path/to/csv_file/results.csv /path/to/cleaned/data/dir
 ```
    You can use ```--save-metadata``` flag to download metadata about all projects. Metadata includes information about repository's full name, owner, etc.
    This script makes requests to GitHub API, so you should add your GitHub Token to environment variables (variable name is ```GITHUB_TOKEN```).
@@ -24,13 +24,13 @@ python3 scripts/clean_duplicates.py /path/to/csv_file/results.csv /path/to/clean
 Run the following command to download the dataset:
 
 ``` 
-python3 scripts/load_dataset.py /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
+python3 scripts/data_collection/load_dataset.py /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
 ```
 
 #### 4. Extract methods from dataset
 
 ``` 
-python3 scripts/clones_batch_processing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
+python3 scripts/plugin_runner/clones_batch_processing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
 ```
 
 You can use ```--batch-size n``` option (default value is 300). 
@@ -52,7 +52,7 @@ If the number of clones is large, clone detection tool output has to be preproce
 (converted from list of edges to adjacency list).
 
 ``` 
-python3 scripts/clones_analysis/save_adjacency_list.py  /path/to/clones/dir/clones80.pairs /path/to/clones/dir/clones100.pairs /path/to/clones/dir
+python3 scripts/analysis/clones/save_adjacency_list.py  /path/to/clones/dir/clones80.pairs /path/to/clones/dir/clones100.pairs /path/to/clones/dir
 ```
 
 #### 7. Clones Analysis
