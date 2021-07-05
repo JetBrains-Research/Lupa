@@ -26,15 +26,6 @@ object PsiProvider {
         return extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
     }
 
-    private fun <T : PsiElement> extractElementsOfTypeFromProject(
-        project: Project,
-        psiElementClass: Class<T>
-    ): List<T> {
-        // We should reverse the list with method since we handle all elements separately
-        // and we can invalidate the previous one
-        return extractPsiFiles(project).map { collectElementsOfType(it, psiElementClass) }.flatten().reversed()
-    }
-
     fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
         val projectPsiFiles = mutableSetOf<PsiFile>()
         val projectRootManager = ProjectRootManager.getInstance(project)
@@ -60,15 +51,27 @@ object PsiProvider {
         return collectElementsOfType(psiFile, KtImportDirective::class.java)
     }
 
+    private fun <T : PsiElement> extractElementsOfTypeFromProject(
+        project: Project,
+        psiElementClass: Class<T>
+    ): List<T> {
+        // We should reverse the list with method since we handle all elements separately
+        // and we can invalidate the previous one
+        return extractPsiFiles(project)
+            .map { collectElementsOfType(it, psiElementClass) }
+            .flatten()
+            .reversed()
+    }
+
     private fun <T : PsiElement> collectElementsOfType(
-        psiFile: PsiFile,
+        psiElement: PsiElement,
         psiElementClass: Class<T>
     ): MutableCollection<T> {
-        return PsiTreeUtil.collectElementsOfType(psiFile, psiElementClass)
+        return PsiTreeUtil.collectElementsOfType(psiElement, psiElementClass)
     }
 
     fun deleteComments(element: PsiElement) {
-        val comments = PsiTreeUtil.collectElementsOfType(element, PsiComment::class.java)
+        val comments = collectElementsOfType(element, PsiComment::class.java)
         // We should handle each group of elements with same parent separately
         // since if we delete the first item in this group we invalidate
         // other elements with the same parent

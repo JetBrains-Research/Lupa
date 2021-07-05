@@ -2,28 +2,35 @@ package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
-import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
 import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 
 /**
- * Extracts all import directives from projects in the dataset and saves them to output file.
+ * Abstract class for analysis executor which provides interface for execution analysis
+ * for each project in given dataset.
  */
-class ImportDirectivesMiner(outputDir: Path) {
-    private val methodDataWriter = getPrintWriter(outputDir, "import_directives_data.txt")
+abstract class AnalysisExecutor {
 
-    fun extractImportDirectives(inputDir: Path) {
+    /** Executes the analysis of the given [project][Project]. */
+    abstract fun analyse(project: Project)
+
+    /**
+     * Finishes the task execution. Should contain close functions of all writers and readers
+     * and called after all project analysis execution finished.
+     */
+    abstract fun finish()
+
+    /** Execute analysis for all projects in [given directory][projectsDir]. */
+    fun execute(projectsDir: Path) {
         try {
-            getSubdirectories(inputDir).forEach { projectPath ->
+            getSubdirectories(projectsDir).forEach { projectPath ->
                 ApplicationManager.getApplication().runReadAction {
                     println("Opening project $projectPath")
                     ProjectUtil.openOrImport(projectPath, null, true).let { project ->
                         try {
-                            val importDirectives = PsiProvider.extractImportDirectiveFromProject(project)
-                            val results = importDirectives.map { ImportDirectiveAnalyzer.analyze(it) }
-                            methodDataWriter.println(results.joinToString(separator = "\n"))
+                            analyse(project)
                         } catch (ex: Exception) {
                             println(ex.message)
                         } finally {
@@ -35,11 +42,7 @@ class ImportDirectivesMiner(outputDir: Path) {
                 }
             }
         } finally {
-            close()
+            finish()
         }
-    }
-
-    private fun close() {
-        methodDataWriter.close()
     }
 }

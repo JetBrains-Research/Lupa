@@ -38,8 +38,7 @@ object KotlinDependenciesAnalysisRunner : ApplicationStarter {
             require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
             outputDir.toFile().mkdirs()
 
-            val importDirectivesMiner = ImportDirectivesMiner(outputDir)
-            importDirectivesMiner.extractImportDirectives(inputDir)
+            ImportDirectivesAnalysisExecutor(outputDir).execute(inputDir)
         } catch (ex: Exception) {
             logger.error(ex)
         } finally {
