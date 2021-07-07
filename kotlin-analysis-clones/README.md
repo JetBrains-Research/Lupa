@@ -12,11 +12,11 @@ containing repositories' names in the following format: ```username/project_name
 
 #### 2. Clean duplicated repositories
 
-Run script for cleaning all duplicated repositories with different names: 
+Run the script for cleaning all duplicated repositories with different names: 
 ``` shell script
 python3 scripts/data_collection/clean_duplicates.py /path/to/csv_file/results.csv /path/to/cleaned/data/dir
 ```
-   You can use ```--save-metadata``` flag to download metadata about all projects. Metadata includes information about repository's full name, owner, etc.
+   You can use the ```--save-metadata``` flag to download metadata about all projects. Metadata includes the information about repository's full name, owner, etc.
    This script makes requests to GitHub API, so you should add your GitHub Token to environment variables (variable name is ```GITHUB_TOKEN```).
 
 #### 3. Load dataset 
@@ -33,7 +33,7 @@ python3 scripts/data_collection/load_dataset.py /path/to/cleaned/data/dir/result
 python3 scripts/plugin_runner/clones_batch_processing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
 ```
 
-You can use ```--batch-size n``` option (default value is 300). 
+You can use the ```--batch-size n``` option (default value is 300). 
 Also there is ```--start-from n``` option to start from batch with given number.
 
 Known issues:
