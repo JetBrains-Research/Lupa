@@ -19,7 +19,9 @@ import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 object PsiProvider {
 
     fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
-        return extractElementsOfTypeFromProject(project, KtNamedFunction::class.java)
+        // We should reverse the list with method since we handle all elements separately
+        // and we can invalidate the previous one
+        return extractElementsOfTypeFromProject(project, KtNamedFunction::class.java).reversed()
     }
 
     fun extractImportDirectiveFromProject(project: Project): List<KtImportDirective> {
@@ -44,34 +46,24 @@ object PsiProvider {
     }
 
     fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
-        return collectElementsOfType(psiFile, KtNamedFunction::class.java)
+        return PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
     }
 
     fun collectPsiImportDirectives(psiFile: PsiFile): MutableCollection<KtImportDirective> {
-        return collectElementsOfType(psiFile, KtImportDirective::class.java)
+        return PsiTreeUtil.collectElementsOfType(psiFile, KtImportDirective::class.java)
     }
 
     private fun <T : PsiElement> extractElementsOfTypeFromProject(
         project: Project,
         psiElementClass: Class<T>
     ): List<T> {
-        // We should reverse the list with method since we handle all elements separately
-        // and we can invalidate the previous one
         return extractPsiFiles(project)
-            .map { collectElementsOfType(it, psiElementClass) }
+            .map { PsiTreeUtil.collectElementsOfType(it, psiElementClass) }
             .flatten()
-            .reversed()
-    }
-
-    private fun <T : PsiElement> collectElementsOfType(
-        psiElement: PsiElement,
-        psiElementClass: Class<T>
-    ): MutableCollection<T> {
-        return PsiTreeUtil.collectElementsOfType(psiElement, psiElementClass)
     }
 
     fun deleteComments(element: PsiElement) {
-        val comments = collectElementsOfType(element, PsiComment::class.java)
+        val comments = PsiTreeUtil.collectElementsOfType(element, PsiComment::class.java)
         // We should handle each group of elements with same parent separately
         // since if we delete the first item in this group we invalidate
         // other elements with the same parent
