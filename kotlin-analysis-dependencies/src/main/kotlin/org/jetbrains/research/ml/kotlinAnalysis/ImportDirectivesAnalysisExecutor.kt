@@ -11,7 +11,7 @@ import java.nio.file.Path
  */
 class ImportDirectivesAnalysisExecutor(outputDir: Path) : AnalysisExecutor() {
 
-    private val dependenciesDataWriter = PrintWriterRecourseManager(outputDir, "import_directives_data.csv")
+    private val dependenciesDataWriter = PrintWriterResourceManager(outputDir, "import_directives_data.csv")
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
