@@ -1,5 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPsiFile
 import org.junit.Assert
@@ -37,8 +39,8 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
     fun testDeleteCommentsInMethods() {
         val inPsiFile = getPsiFile(inFile!!, myFixture)
         val outPsiFile = getPsiFile(outFile!!, myFixture)
-        val inMethods = PsiProvider.collectPsiMethods(inPsiFile)
-        val outMethods = PsiProvider.collectPsiMethods(outPsiFile)
+        val inMethods = PsiTreeUtil.collectElementsOfType(inPsiFile, KtNamedFunction::class.java)
+        val outMethods = PsiTreeUtil.collectElementsOfType(outPsiFile, KtNamedFunction::class.java)
         Assert.assertEquals(outMethods.size, inMethods.size)
         inMethods.zip(outMethods).forEach { (inMethod, outMethod) ->
             PsiProvider.deleteComments(inMethod)

@@ -9,6 +9,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinClonesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinDependenciesAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>
