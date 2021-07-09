@@ -44,7 +44,10 @@ object IORunnerArgsParser : RunnerArgsParser<IORunnerArgs> {
     }
 }
 
-/** Base class for all analysis runners. This class process command line arguments from cli and runs analysis process.
+/**
+ * Base class for all analysis runners. This class process command line arguments from cli and runs analysis process.
+ * To create new analysis runner implements object which extends [KotlinAnalysisRunner] and specify it's name, arguments,
+ * arguments parser and [analysis invocation method][run].
  *
  * @param A the type of command line arguments data class.
  * @param P the type of the command line arguments parser.
