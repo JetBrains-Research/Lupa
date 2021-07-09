@@ -12,7 +12,12 @@ class TestFileFormat(private val prefix: String, private val extension: Extensio
     data class TestFile(val file: File, val type: Type, val number: Number)
 
     fun check(file: File): TestFile? {
-        val number = "(?<=${prefix}_)\\d+(?=(_.*)?\\.${extension.value})".toRegex().find(file.name)?.value?.toInt()
+        val regex = if (extension == Extension.DIR) {
+            "(?<=${prefix}_)\\d+(?=(_.*)?)".toRegex()
+        } else {
+            "(?<=${prefix}_)\\d+(?=(_.*)?\\.${extension.value})".toRegex()
+        }
+        val number = regex.find(file.name)?.value?.toInt()
         return number?.let { TestFile(file, type, number) }
     }
 
@@ -39,7 +44,7 @@ object FileTestUtil {
         inFormat: TestFileFormat = TestFileFormat("in", Extension.KT, Type.Input),
         outFormat: TestFileFormat? = null
     ): Map<File, File?> {
-        val (files, folders) = File(folder).listFiles().orEmpty().partition { it.isFile }
+        val files = File(folder).listFiles().orEmpty()
 
         // Process files in the given folder
         val inAndOutFilesGrouped = files.mapNotNull { inFormat.check(it) ?: outFormat?.check(it) }.groupBy { it.number }
@@ -62,9 +67,7 @@ object FileTestUtil {
             require(inAndOutFilesMap.values.mapNotNull { it }.size == inAndOutFilesMap.values.size) { "Output tests" }
         }
 
-        // Process all other nested files
-        return folders.sortedBy { it.name }.map { getInAndOutFilesMap(it.absolutePath, inFormat, outFormat) }
-            .fold(inAndOutFilesMap, { a, e -> a.plus(e) })
+        return inAndOutFilesMap
     }
 }
 
