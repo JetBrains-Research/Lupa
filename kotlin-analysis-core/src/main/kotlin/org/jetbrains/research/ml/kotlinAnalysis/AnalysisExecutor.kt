@@ -25,12 +25,12 @@ abstract class AnalysisExecutor {
     /** Executes the analysis of the given [project][Project]. */
     abstract fun analyse(project: Project)
 
-    /** Runs before analysis execution process. Contains all controlled recourses initialization. */
+    /** Runs before analysis execution process. Contains all controlled resources initialization. */
     private fun init() {
         controlledResourceManagers.forEach { it.init() }
     }
 
-    /** Runs after analysis execution process. Closes all controlled recourses. */
+    /** Runs after analysis execution process. Closes all controlled resource. */
     private fun close() {
         controlledResourceManagers.forEach { it.close() }
     }
