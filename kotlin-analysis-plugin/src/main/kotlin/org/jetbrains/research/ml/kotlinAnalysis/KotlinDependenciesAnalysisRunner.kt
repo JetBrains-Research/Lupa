@@ -4,6 +4,6 @@ package org.jetbrains.research.ml.kotlinAnalysis
 object KotlinDependenciesAnalysisRunner : KotlinAnalysisRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-dependencies-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ImportDirectivesAnalysisExecutor(args.outputDir).execute(openOrImportSetup, args.inputDir)
+        ImportDirectivesAnalysisExecutor(args.outputDir).execute(args.inputDir)
     }
 }

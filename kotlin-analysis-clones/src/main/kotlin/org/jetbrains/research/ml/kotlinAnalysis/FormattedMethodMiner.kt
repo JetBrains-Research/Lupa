@@ -11,9 +11,9 @@ import java.nio.file.Path
  */
 class FormattedMethodMiner(outputDir: Path) : AnalysisExecutor() {
 
-    private val methodDataWriter = PrintWriterRecourse(outputDir, "method_data.txt")
+    private val methodDataWriter = PrintWriterRecourseManager(outputDir, "method_data.txt")
     private val indexer = IndexBuilder(outputDir)
-    override val controlledResources: Set<Resource> = setOf(methodDataWriter, indexer)
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(methodDataWriter, indexer)
 
     override fun analyse(project: Project) {
         val projectIndex = indexer.indexProject(project)

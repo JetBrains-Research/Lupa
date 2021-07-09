@@ -5,15 +5,15 @@ import java.io.PrintWriter
 import java.nio.file.Path
 
 /** Interface for any recourse, which must been initialized before and closed after use. **/
-interface Resource : AutoCloseable {
+interface ResourceManager : AutoCloseable {
     fun init()
 }
 
 /**
- * Recourse wrap for [file writer][PrintWriter]. For given [directory][directory] and [file name][fileName]
+ * Recourse manager for [file writer][PrintWriter]. For given [directory][directory] and [file name][fileName]
  * it gets new instance of [print writer][PrintWriter] in [init][init] method and [close][close] it in close method.
  **/
-class PrintWriterRecourse(private val directory: Path, private val fileName: String) : Resource {
+class PrintWriterRecourseManager(private val directory: Path, private val fileName: String) : ResourceManager {
     lateinit var writer: PrintWriter
 
     override fun init() {

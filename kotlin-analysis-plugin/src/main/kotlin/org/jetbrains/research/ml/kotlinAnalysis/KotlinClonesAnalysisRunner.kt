@@ -4,6 +4,6 @@ package org.jetbrains.research.ml.kotlinAnalysis
 object KotlinClonesAnalysisRunner : KotlinAnalysisRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-clones-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        FormattedMethodMiner(args.outputDir).execute(openOrImportSetup, args.inputDir)
+        FormattedMethodMiner(args.outputDir).execute(args.inputDir)
     }
 }

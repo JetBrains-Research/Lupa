@@ -11,8 +11,8 @@ import java.nio.file.Path
  */
 class ImportDirectivesAnalysisExecutor(outputDir: Path) : AnalysisExecutor() {
 
-    private val dependenciesDataWriter = PrintWriterRecourse(outputDir, "import_directives_data.csv")
-    override val controlledResources: Set<Resource> = setOf(dependenciesDataWriter)
+    private val dependenciesDataWriter = PrintWriterRecourseManager(outputDir, "import_directives_data.csv")
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
         val importDirectives = PsiProvider.extractElementsOfTypeFromProject(project, KtImportDirective::class.java)

@@ -10,11 +10,11 @@ import java.nio.file.Paths
  * Builds incremental index of given project or method.
  * Index is printed to file in output directory.
  */
-class IndexBuilder(outputDir: Path) : Resource {
+class IndexBuilder(outputDir: Path) : ResourceManager {
     private var lastProjectId = 0
     private var lastMethodId = 0
-    private val projectIndexWriter = PrintWriterRecourse(outputDir, "project_index.csv")
-    private val methodIndexWriter = PrintWriterRecourse(outputDir, "method_index.csv")
+    private val projectIndexWriter = PrintWriterRecourseManager(outputDir, "project_index.csv")
+    private val methodIndexWriter = PrintWriterRecourseManager(outputDir, "method_index.csv")
 
     fun indexProject(project: Project): Int {
         projectIndexWriter.writer.println("$lastProjectId\t${project.name}")
