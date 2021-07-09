@@ -9,51 +9,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 
 /**
- * Provides methods based on interaction with PSI, for example, extraction of all methods from project.
+ * Provides methods based on interaction with PSI, for example, extraction of all psi elements of specific
+ * type from project or deleting comments.
  */
 object PsiProvider {
 
-    fun extractMethodsFromProject(project: Project): List<KtNamedFunction> {
-        // We should reverse the list with method since we handle all elements separately
-        // and we can invalidate the previous one
-        return extractElementsOfTypeFromProject(project, KtNamedFunction::class.java).reversed()
-    }
-
-    fun extractImportDirectiveFromProject(project: Project): List<KtImportDirective> {
-        return extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
-    }
-
-    fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
-        val projectPsiFiles = mutableSetOf<PsiFile>()
-        val projectRootManager = ProjectRootManager.getInstance(project)
-        val psiManager = PsiManager.getInstance(project)
-
-        projectRootManager.contentRoots.mapNotNull { root ->
-            VfsUtilCore.iterateChildrenRecursively(root, null) { virtualFile ->
-                if (!virtualFile.isKotlinRelatedFile() || virtualFile.canonicalPath == null) {
-                    return@iterateChildrenRecursively true
-                }
-                val psi = psiManager.findFile(virtualFile) ?: return@iterateChildrenRecursively true
-                projectPsiFiles.add(psi)
-            }
-        }
-        return projectPsiFiles
-    }
-
-    fun collectPsiMethods(psiFile: PsiFile): MutableCollection<KtNamedFunction> {
-        return PsiTreeUtil.collectElementsOfType(psiFile, KtNamedFunction::class.java)
-    }
-
-    fun collectPsiImportDirectives(psiFile: PsiFile): MutableCollection<KtImportDirective> {
-        return PsiTreeUtil.collectElementsOfType(psiFile, KtImportDirective::class.java)
-    }
-
-    private fun <T : PsiElement> extractElementsOfTypeFromProject(
+    fun <T : PsiElement> extractElementsOfTypeFromProject(
         project: Project,
         psiElementClass: Class<T>
     ): List<T> {
@@ -77,5 +41,22 @@ object PsiProvider {
                 }
             }
         }
+    }
+
+    private fun extractPsiFiles(project: Project): MutableSet<PsiFile> {
+        val projectPsiFiles = mutableSetOf<PsiFile>()
+        val projectRootManager = ProjectRootManager.getInstance(project)
+        val psiManager = PsiManager.getInstance(project)
+
+        projectRootManager.contentRoots.mapNotNull { root ->
+            VfsUtilCore.iterateChildrenRecursively(root, null) { virtualFile ->
+                if (!virtualFile.isKotlinRelatedFile() || virtualFile.canonicalPath == null) {
+                    return@iterateChildrenRecursively true
+                }
+                val psi = psiManager.findFile(virtualFile) ?: return@iterateChildrenRecursively true
+                projectPsiFiles.add(psi)
+            }
+        }
+        return projectPsiFiles
     }
 }

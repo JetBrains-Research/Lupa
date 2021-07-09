@@ -3,6 +3,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPrintWriter
 import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
@@ -27,7 +28,11 @@ class FormattedMethodMiner(outputDir: Path) {
                         try {
                             val projectIndex = indexer.indexProject(project)
                             println("Start processing project ${project.name} (index $projectIndex)")
-                            val methods = PsiProvider.extractMethodsFromProject(project)
+                            // We should reverse the list with method since we handle all elements separately
+                            // and we can invalidate the previous one
+                            val methods = PsiProvider
+                                .extractElementsOfTypeFromProject(project, KtNamedFunction::class.java)
+                                .reversed()
                             val methodsIndexed = methods.associateWith { method ->
                                 indexer.indexMethod(method, projectIndex)
                             }

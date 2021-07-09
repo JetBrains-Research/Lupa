@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import java.nio.file.Path
 
@@ -14,7 +15,7 @@ class ImportDirectivesAnalysisExecutor(outputDir: Path) : AnalysisExecutor() {
     override val controlledResources: Set<Resource> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        val importDirectives = PsiProvider.extractImportDirectiveFromProject(project)
+        val importDirectives = PsiProvider.extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
         val results = importDirectives.map { ImportDirectivePsiAnalyzer.analyze(it) }
         dependenciesDataWriter.writer.println(results.joinToString(separator = "\n"))
     }
