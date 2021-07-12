@@ -31,7 +31,7 @@ allprojects {
 
     intellij {
         type = "IC"
-        version = "2020.3.3"
+        version = "212.4037.9-EAP-SNAPSHOT"
         downloadSources = false
         setPlugins("com.intellij.java", "org.jetbrains.kotlin")
         updateSinceUntilBuild = true
