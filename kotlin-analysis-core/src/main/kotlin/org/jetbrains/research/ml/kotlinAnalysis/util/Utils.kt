@@ -11,7 +11,7 @@ enum class Extension(val value: String) {
     KT("kt"),
     KTS("kts"),
     TXT("txt"),
-    DIR("")
+    EMPTY("")
 }
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {

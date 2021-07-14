@@ -35,9 +35,6 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
             .map { it.importedFqName.toString() }.sorted()
         val expectedImportDirectiveFqNames = outFile!!.readLines().sorted()
 
-        Assert.assertEquals(expectedImportDirectiveFqNames.size, actualImportDirectiveFqNames.size)
-        expectedImportDirectiveFqNames.zip(actualImportDirectiveFqNames).forEach { (expectedFqName, actualFqName) ->
-            Assert.assertEquals(expectedFqName, actualFqName)
-        }
+        Assert.assertEquals(expectedImportDirectiveFqNames, actualImportDirectiveFqNames)
     }
 }

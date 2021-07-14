@@ -26,27 +26,24 @@ open class ImportDirectiveAnalysisExecutorTest :
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::ImportDirectiveAnalysisExecutorTest,
-            inExtension = Extension.DIR,
+            inExtension = Extension.EMPTY,
             outExtension = Extension.TXT
         )
     }
 
     @Test
     fun testImportDirectiveFqNamesInProject() {
-        val outputDir = Paths.get(getResourcesRootPath(::ImportDirectiveAnalysisExecutorTest))
-        val outputFileName = "expected.txt"
-        val outputFile = File(outputDir.toFile(), outputFileName)
+        val resultDir = Paths.get(getResourcesRootPath(::ImportDirectiveAnalysisExecutorTest))
+        val resultFileName = "result.txt"
+        val resultFile = File(resultDir.toFile(), resultFileName)
 
-        val analysisExecutor = ImportDirectivesAnalysisExecutor(outputDir, outputFileName)
+        val analysisExecutor = ImportDirectivesAnalysisExecutor(resultDir, resultFileName)
         analysisExecutor.execute(inFile!!.toPath())
 
         val expectedImportDirectiveFqNames = outFile!!.readLines().sorted()
-        val actualImportDirectiveFqNames = outputFile.readLines().sorted()
-        outputFile.delete()
+        val actualImportDirectiveFqNames = resultFile.readLines().sorted()
+        resultFile.delete()
 
-        Assert.assertEquals(expectedImportDirectiveFqNames.size, actualImportDirectiveFqNames.size)
-        expectedImportDirectiveFqNames.zip(actualImportDirectiveFqNames).forEach { (expectedFqName, actualFqName) ->
-            Assert.assertEquals(expectedFqName, actualFqName)
-        }
+        Assert.assertEquals(expectedImportDirectiveFqNames, actualImportDirectiveFqNames)
     }
 }

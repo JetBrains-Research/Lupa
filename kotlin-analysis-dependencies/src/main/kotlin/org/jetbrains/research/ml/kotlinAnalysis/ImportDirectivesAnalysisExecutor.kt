@@ -19,7 +19,9 @@ class ImportDirectivesAnalysisExecutor(outputDir: Path, filename: String = "impo
         val importDirectives = PsiProvider.extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
         val results = importDirectives.map { ImportDirectivePsiAnalyzer.analyze(it) }
         if (results.isNotEmpty()) {
-            dependenciesDataWriter.writer.println(results.joinToString(separator = "\n"))
+            dependenciesDataWriter.writer.println(
+                results.joinToString(separator = System.getProperty("line.separator"))
+            )
         }
     }
 }

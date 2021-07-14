@@ -12,7 +12,7 @@ class TestFileFormat(private val prefix: String, private val extension: Extensio
     data class TestFile(val file: File, val type: Type, val number: Number)
 
     fun check(file: File): TestFile? {
-        val regex = if (extension == Extension.DIR) {
+        val regex = if (extension == Extension.EMPTY) {
             "(?<=${prefix}_)\\d+(?=(_.*)?)".toRegex()
         } else {
             "(?<=${prefix}_)\\d+(?=(_.*)?\\.${extension.value})".toRegex()
