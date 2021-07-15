@@ -16,7 +16,7 @@ from shutil import copytree
 from typing import List
 from utils import get_subdirectories, create_directory
 
-PROJECT_DIR = Path(__file__).parent.parent
+PROJECT_DIR = Path(__file__).parent.parent.parent
 METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
@@ -37,8 +37,9 @@ def main():
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
         with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.txt")), "w+") as fout:
-            process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli", f"-Pinput={batch_path}",
-                                        f"-Poutput={batch_output_path}"], stdout=fout, stderr=fout, cwd=PROJECT_DIR)
+            process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli", "-Prunner=kotlin-clones-analysis",
+                                        f"-Pinput={batch_path}", f"-Poutput={batch_output_path}"],
+                                       stdout=fout, stderr=fout, cwd=PROJECT_DIR)
         process.wait()
         logging.info(f"Finished batch {index} processing")
 
