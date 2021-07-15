@@ -42,9 +42,10 @@ abstract class AnalysisExecutor {
     ) {
         init()
         try {
+            var i = 0
             getSubdirectories(projectsDir).forEach { projectPath ->
                 ApplicationManager.getApplication().invokeAndWait {
-                    println("Opening project $projectPath")
+                    println("Opening project $projectPath (index ${i++})")
                     setupProject(projectPath).let { project ->
                         try {
                             analyse(project)

@@ -10,10 +10,17 @@ import argparse
 import logging
 import os
 import subprocess
+import sys
 import pandas as pd
 from pathlib import Path
 from shutil import copytree
 from typing import List
+
+module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
+print(module_path)
+if module_path not in sys.path:
+    sys.path.append(module_path)
+
 from utils import get_subdirectories, create_directory
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
@@ -106,9 +113,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("--batch-size", help="Batch size for the method extraction plugin", nargs='?', const=300,
+    parser.add_argument("--batch-size", help="Batch size for the method extraction plugin", nargs='?', default=300,
                         type=int)
-    parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', const=0, type=int)
+    parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
     return parser.parse_args()
 
 
