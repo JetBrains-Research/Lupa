@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":multi-import-module")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.0'
+}
+
+test {
+    useJUnitPlatform()
+}

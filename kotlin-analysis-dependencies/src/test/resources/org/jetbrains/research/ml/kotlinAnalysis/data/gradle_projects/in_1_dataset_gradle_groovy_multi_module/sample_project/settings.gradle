@@ -1,0 +1,7 @@
+package org.jetbrains.research.ml.kotlinAnalysis.data.in_1_dataset_gradle_groovy_multi_module.sample_project
+
+rootProject.name = 'gradle-multi-module'
+
+include "one-import-module"
+include "multi-import-module"
+include "inner-import-module"
