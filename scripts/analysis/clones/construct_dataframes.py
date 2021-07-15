@@ -3,14 +3,15 @@ import os
 import networkx as nx
 
 from column_names_utils import ClonesColumn, MethodsColumn
+from utils import Extensions
 
 
 def get_methods_df(folder: str) -> pd.DataFrame:
     methods_columns = [MethodsColumn.PROJECT_ID.value, MethodsColumn.METHOD_ID.value, MethodsColumn.FILE.value,
                        MethodsColumn.START_LINE.value, MethodsColumn.END_LINE.value]
-    methods_df = pd.read_csv(os.path.join(folder, 'method_index.csv'), sep='\t', header=None, names=methods_columns)
+    methods_df = pd.read_csv(os.path.join(folder, f'method_index.{Extensions.CSV}'), sep='\t', header=None, names=methods_columns)
     methods_tokens = {}
-    with open(os.path.join(folder, 'method_data.txt'), 'r') as fp:
+    with open(os.path.join(folder, f'method_data.{Extensions.TXT}'), 'r') as fp:
         for line in fp:
             _, method_id, tokens_amount, _ = line.split(',', maxsplit=3)
             methods_tokens[int(method_id)] = int(tokens_amount)
@@ -20,7 +21,7 @@ def get_methods_df(folder: str) -> pd.DataFrame:
 
 
 def get_projects_df(folder: str) -> pd.DataFrame:
-    return pd.read_csv(os.path.join(folder, 'project_index.csv'), header=None, names=['project_id', 'project_name'])
+    return pd.read_csv(os.path.join(folder, f'project_index.{Extensions.CSV}'), header=None, names=['project_id', 'project_name'])
 
 
 def get_clones_df(path80: str, path100: str) -> pd.DataFrame:

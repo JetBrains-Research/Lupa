@@ -14,12 +14,12 @@ import pandas as pd
 from pathlib import Path
 from shutil import copytree
 from typing import List
-from utils import get_subdirectories, create_directory
+from utils import get_subdirectories, create_directory, Extensions
 
 PROJECT_DIR = Path(__file__).parent.parent
-METHOD_DATA = "method_data.txt"
-PROJECT_INDEX = "project_index.csv"
-METHOD_INDEX = "method_index.csv"
+METHOD_DATA = f"method_data.{Extensions.TXT}"
+PROJECT_INDEX = f"project_index.{Extensions.CSV}"
+METHOD_INDEX = f"method_index.{Extensions.CSV}"
 
 
 def main():
@@ -36,7 +36,7 @@ def main():
         batch_output_path = os.path.join(args.output, f"output/batch_{index}")
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
-        with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.txt")), "w+") as fout:
+        with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.{Extensions.TXT}")), "w+") as fout:
             process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli", f"-Pinput={batch_path}",
                                         f"-Poutput={batch_output_path}"], stdout=fout, stderr=fout, cwd=PROJECT_DIR)
         process.wait()

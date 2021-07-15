@@ -1,5 +1,13 @@
+import enum
 import os
 from typing import List
+
+
+class Extensions(str, enum.Enum):
+    CSV = "csv"
+    TXT = "txt"
+    JSON = "json"
+    ONG = "png"
 
 
 def create_directory(path: str):

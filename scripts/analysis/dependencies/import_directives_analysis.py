@@ -6,30 +6,31 @@ import sys
 from collections import Counter
 from typing import Tuple, Dict, List
 
-from fq_name_tree import build_fq_name_tree, save_to_txt, delete_rare_nodes, delete_extra_child_nodes, \
-    merge_single_child_nodes, save_to_png, split_to_subtrees
-from import_directives_analysis.column_names_utils import ImportDirectivesColumn
+from column_names_utils import ImportDirectivesColumn
+from fq_names_tree import build_fq_name_tree, save_to_txt, delete_rare_nodes, delete_extra_child_nodes, \
+    merge_single_child_nodes, save_to_png, split_to_subtrees, FqNamesDict
+from utils import Extensions, get_file_lines, create_directory
 from visualization.diagram import show_bar_plot
 
 """
 This script process mined imports directive list and runs analysis and visualization.
-Usage: analysis.py [-h] [--input INPUT] [--ignore IGNORE] 
+Usage: import_directives_analysis.py [-h] [--input INPUT] [--ignore IGNORE] 
                            [--max-package-len MAX_PACKAGE_LEN] [--max-subpackages MAX_SUBPACKAGES]
                            [--max-leaf-subpackages MAX_LEAF_SUBPACKAGES] [--min-occurrence MIN_OCCURRENCE] 
                            [--max-occurrence MAX_OCCURRENCE] [--max-u-occurrence MAX_U_OCCURRENCE]
 Run with -h flag to get the description of the above flags.
 The results will be placed in result directory.
 Output: 
-1. "total.csv" and plotly bar chart with raw import directives fq names occurrence statistics
-2. "total_by_prefix.csv" and plotly bar chart with import directives fq names occurrence statistics grouped by package 
+1. "total.csv" and plotly bar chart with raw import dependencies fq names occurrence statistics
+2. "total_by_prefix.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by package 
    -- name's prefix MAX_PACKAGE_LEN length
-3. "total_by_package.csv" and plotly bar chart with import directives fq names occurrence statistics grouped by package 
+3. "total_by_package.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by package 
    prefix got by building fq names tree and detecting
-   import directives packages names
-4. "root_small.png" - dot packages tree with occurrence on edges, build from import directives names according to 
+   import dependencies packages names
+4. "root_small.png" - dot packages tree with occurrence on edges, build from import dependencies names according to 
    filters and simplifications with selected parameters (MAX_SUBPACKAGES, MAX_LEAF_SUBPACKAGES, MIN_OCCURRENCE, 
    MAX_OCCURRENCE, MAX_U_OCCURRENCE)
-5. "root_{package_name}.png" - dot import directives fq names subtrees with occurrence on edges for each package
+5. "root_{package_name}.png" - dot import dependencies fq names subtrees with occurrence on edges for each package
 6. "fq_names_tree.txt" - file with text fq names tree representation
 7. "fq_names_tree.json" - file with json fq names tree representation
 """
@@ -39,11 +40,11 @@ def stat_to_row(stat: Tuple) -> str:
     return ",".join([stat[0], str(stat[1])]) + "\n"
 
 
-def write_stats_to_csv(path_to_dir: str, filename: str, fq_names_count: Dict):
+def write_stats_to_csv(path_to_dir: str, filename: str, fq_names_dict: FqNamesDict):
     csv_file_path = os.path.join(path_to_dir, filename)
     with open(csv_file_path, 'w+') as csv_file:
         csv_file.write(stat_to_row((ImportDirectivesColumn.FQ_NAME.value, ImportDirectivesColumn.COUNT.value)))
-        for fq_name_count in fq_names_count.items():
+        for fq_name_count in fq_names_dict.items():
             csv_file.write(stat_to_row(fq_name_count))
 
 
@@ -73,8 +74,8 @@ def get_longest_common_prefix(fq_names: List[str]) -> str:
 def fq_names_to_csv(fq_names: List[str],
                     path_to_result_dir: str):
     fq_names_count = Counter(fq_names)
-    write_stats_to_csv(path_to_result_dir, "total.csv", fq_names_count)
-    show_bar_plot(os.path.join(path_to_result_dir, "total.csv"),
+    write_stats_to_csv(path_to_result_dir, f"total.{Extensions.CSV}", fq_names_count)
+    show_bar_plot(os.path.join(path_to_result_dir, f"total.{Extensions.CSV}"),
                   ImportDirectivesColumn.FQ_NAME,
                   ImportDirectivesColumn.COUNT)
 
@@ -87,8 +88,8 @@ def fq_names_by_prefix_to_csv(fq_names: List[str],
 
     fq_names_by_prefix_count = {get_longest_common_prefix(prefix_fq_names): len(prefix_fq_names) for
                                 prefix, prefix_fq_names in fq_names_by_prefix.items()}
-    write_stats_to_csv(path_to_result_dir, "total_by_prefix.csv", fq_names_by_prefix_count)
-    show_bar_plot(os.path.join(path_to_result_dir, "total_by_prefix.csv"),
+    write_stats_to_csv(path_to_result_dir, f"total_by_prefix.{Extensions.CSV}", fq_names_by_prefix_count)
+    show_bar_plot(os.path.join(path_to_result_dir, f"total_by_prefix.{Extensions.CSV}"),
                   ImportDirectivesColumn.FQ_NAME,
                   ImportDirectivesColumn.COUNT)
 
@@ -100,8 +101,8 @@ def fq_names_by_packages_to_csv(fq_names: List[str],
     fq_names_by_package = {prefix: len(list(prefix_fq_names)) for prefix, prefix_fq_names in
                            itertools.groupby(sorted(fq_names),
                                              lambda fq_name: get_matched_package(fq_name, packages, prefix_len))}
-    write_stats_to_csv(path_to_result_dir, f"total_by_package.csv", fq_names_by_package)
-    show_bar_plot(os.path.join(path_to_result_dir, f"total_by_package.csv"),
+    write_stats_to_csv(path_to_result_dir, f"total_by_package.{Extensions.CSV}", fq_names_by_package)
+    show_bar_plot(os.path.join(path_to_result_dir, f"total_by_package.{Extensions.CSV}"),
                   ImportDirectivesColumn.FQ_NAME,
                   ImportDirectivesColumn.COUNT)
 
@@ -124,13 +125,13 @@ def fq_names_to_dict(fq_names: List[str]) -> Dict:
             itertools.groupby(sorted(fq_names), lambda fq_name: fq_name.split(".")[0])}
 
 
-def fq_names_to_json(fq_names_dict: Dict,
+def fq_names_to_json(fq_names_dict: FqNamesDict,
                      path_to_result_dir: str):
-    with open(os.path.join(path_to_result_dir, 'fq_names_tree.json'), 'w') as result_file:
+    with open(os.path.join(path_to_result_dir, f"fq_names_tree.{Extensions.JSON}"), 'w') as result_file:
         json.dump(fq_names_dict, result_file)
 
 
-def fq_names_to_tree(fq_names_dict: Dict, path_to_result_dir: str,
+def fq_names_to_tree(fq_names_dict: FqNamesDict, path_to_result_dir: str,
                      max_subpackages: int, max_leaf_subpackages: int,
                      min_occurrence: int, max_occurrence: int, max_u_occurrence: int) -> List[str]:
     root = build_fq_name_tree(fq_names_dict)
@@ -157,27 +158,25 @@ def analyze(path_to_fq_names: str, path_to_ignored_packages: str,
             max_package_len: int, max_subpackages: int, max_leaf_subpackages: int,
             min_occurrence: int, max_occurrence: int, max_u_occurrence: int,
             path_to_result_dir: str = "result"):
+    create_directory(path_to_result_dir)
+
     if path_to_ignored_packages is not None:
-        with open(path_to_ignored_packages, 'r') as ignored_packages_file:
-            ignored_packages = ignored_packages_file.read().split('\n')
+        ignored_packages = get_file_lines(path_to_ignored_packages)
     else:
         ignored_packages = []
 
-    with open(path_to_fq_names, 'r') as fq_names_file:
-        fq_names = fq_names_file.read().split('\n')
-        fq_names = filter_fq_names(fq_names, ignored_packages)
-        if not os.path.exists(path_to_result_dir):
-            os.mkdir(path_to_result_dir)
+    fq_names = get_file_lines(path_to_fq_names)
+    fq_names = filter_fq_names(fq_names, ignored_packages)
 
-        fq_names_dict = fq_names_to_dict(fq_names)
-        fq_names_to_csv(fq_names, path_to_result_dir)
-        fq_names_by_prefix_to_csv(fq_names, path_to_result_dir, max_package_len)
-        fq_names_to_json(fq_names_dict, path_to_result_dir)
+    fq_names_dict = fq_names_to_dict(fq_names)
+    fq_names_to_csv(fq_names, path_to_result_dir)
+    fq_names_by_prefix_to_csv(fq_names, path_to_result_dir, max_package_len)
+    fq_names_to_json(fq_names_dict, path_to_result_dir)
 
-        packages = fq_names_to_tree(fq_names_dict, path_to_result_dir,
-                                    max_subpackages, max_leaf_subpackages,
-                                    min_occurrence, max_occurrence, max_u_occurrence)
-        fq_names_by_packages_to_csv(fq_names, path_to_result_dir, packages, max_package_len)
+    packages = fq_names_to_tree(fq_names_dict, path_to_result_dir,
+                                max_subpackages, max_leaf_subpackages,
+                                min_occurrence, max_occurrence, max_u_occurrence)
+    fq_names_by_packages_to_csv(fq_names, path_to_result_dir, packages, max_package_len)
 
 
 if __name__ == '__main__':
