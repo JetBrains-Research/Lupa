@@ -11,11 +11,16 @@ enum class Extension(val value: String) {
     KT("kt"),
     KTS("kts"),
     TXT("txt"),
+    GRADLE("gradle"),
     EMPTY("")
 }
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == Extension.KT.value || this.extension == Extension.KTS.value
+}
+
+fun VirtualFile.isGradleRelatedFile(): Boolean {
+    return this.extension == Extension.GRADLE.value || this.extension == Extension.KTS.value
 }
 
 fun getSubdirectories(path: Path): List<Path> {

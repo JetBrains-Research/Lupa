@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.analysis.test.project
+package com.jetbrains.kotlin.analysis.test.project.one
 
 import kotlinx.coroutines.delay
 

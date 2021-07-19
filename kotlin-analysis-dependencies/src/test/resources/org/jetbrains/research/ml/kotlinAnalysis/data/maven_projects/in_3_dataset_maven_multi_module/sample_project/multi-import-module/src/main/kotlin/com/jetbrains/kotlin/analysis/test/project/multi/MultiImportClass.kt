@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.analysis.test.project
+package com.jetbrains.kotlin.analysis.test.project.multi
 
 import kotlinx.coroutines.delay
 import org.apache.commons.math3.random.JDKRandomGenerator

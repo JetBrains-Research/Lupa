@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 
@@ -38,14 +40,14 @@ abstract class AnalysisExecutor {
     /** Execute analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        setupProject: (Path) -> Project = { projectPath -> ProjectUtil.openOrImport(projectPath, null, true) }
+        setupProject: (Path) -> Project? = { projectPath -> ProjectUtil.openOrImport(projectPath, null, true) }
     ) {
         init()
         try {
             getSubdirectories(projectsDir).forEach { projectPath ->
                 ApplicationManager.getApplication().invokeAndWait {
                     println("Opening project $projectPath")
-                    setupProject(projectPath).let { project ->
+                    setupProject(projectPath)?.let { project ->
                         try {
                             analyse(project)
                         } catch (ex: Exception) {

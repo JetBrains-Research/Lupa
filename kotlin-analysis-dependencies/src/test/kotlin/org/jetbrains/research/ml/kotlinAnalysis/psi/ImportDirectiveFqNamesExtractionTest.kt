@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.ml.kotlinAnalysis.util.Extension
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
 import org.jetbrains.research.ml.kotlinAnalysis.util.getPsiFile
@@ -12,7 +12,8 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProviderTest)) {
+open class ImportDirectiveFqNamesExtractionTest :
+    ParametrizedBaseTest(getResourcesRootPath(::ImportDirectiveFqNamesExtractionTest)) {
 
     @JvmField
     @Parameterized.Parameter(0)
@@ -25,13 +26,13 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
-        fun getTestData() = getInAndOutArray(::PsiProviderTest, outExtension = Extension.TXT)
+        fun getTestData() = getInAndOutArray(::ImportDirectiveFqNamesExtractionTest, outExtension = Extension.TXT)
     }
 
     @Test
     fun testImportDirectiveFqNamesInFile() {
         val inPsiFile = getPsiFile(inFile!!, myFixture)
-        val actualImportDirectiveFqNames = PsiTreeUtil.collectElementsOfType(inPsiFile, KtImportDirective::class.java)
+        val actualImportDirectiveFqNames = inPsiFile.extractElementsOfType(KtImportDirective::class.java)
             .map { it.importedFqName.toString() }.sorted()
         val expectedImportDirectiveFqNames = outFile!!.readLines().sorted()
 

@@ -2,7 +2,7 @@ group = rootProject.group
 version = rootProject.version
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "5.2.0" apply true
+    id("com.github.johnrengelman.shadow") version "6.1.0" apply true
 }
 
 repositories {

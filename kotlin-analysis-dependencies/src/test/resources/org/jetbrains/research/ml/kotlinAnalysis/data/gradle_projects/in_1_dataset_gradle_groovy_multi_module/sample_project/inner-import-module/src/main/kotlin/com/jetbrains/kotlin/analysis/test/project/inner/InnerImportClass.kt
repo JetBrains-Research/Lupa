@@ -1,6 +1,6 @@
-package com.jetbrains.kotlin.analysis.test.project
+package com.jetbrains.kotlin.analysis.test.project.inner
 
-import com.jetbrains.kotlin.analysis.test.project.MultiImportClass
+import com.jetbrains.kotlin.analysis.test.project.multi.MultiImportClass
 import kotlinx.coroutines.delay
 
 class InnerImportClass {
