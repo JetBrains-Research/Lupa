@@ -38,7 +38,14 @@ abstract class AnalysisExecutor {
     /** Execute analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        setupProject: (Path) -> Project? = { projectPath -> ProjectUtil.openOrImport(projectPath, null, true) }
+        setupProject: (Path) -> Project? = { projectPath ->
+            try {
+                ProjectUtil.openOrImport(projectPath, null, true)
+            } catch (ex: Exception) {
+                logger.error(ex)
+                null
+            }
+        }
     ) {
         init()
         try {
@@ -51,8 +58,13 @@ abstract class AnalysisExecutor {
                         } catch (ex: Exception) {
                             logger.error(ex)
                         } finally {
-                            ApplicationManager.getApplication().invokeAndWait {
-                                ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                            try {
+                                ApplicationManager.getApplication().invokeAndWait {
+                                    val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                                    logger.info("Project ${project.name} is closed = $closeStatus")
+                                }
+                            } catch (ex: Exception) {
+                                logger.error("Can not close project", ex)
                             }
                         }
                     }

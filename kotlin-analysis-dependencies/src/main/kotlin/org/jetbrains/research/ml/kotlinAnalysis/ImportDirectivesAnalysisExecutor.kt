@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.isAndroidProject
 import java.nio.file.Path
 
 /**
@@ -17,7 +18,7 @@ class ImportDirectivesAnalysisExecutor(outputDir: Path, filename: String = "impo
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-//        project.isAndroidProject()
+        project.isAndroidProject()
         val packageDirectives = project.extractElementsOfType(KtPackageDirective::class.java)
             .filter { !it.isRoot }
         val projectPackageFqNames = packageDirectives.map { PackageDirectivePsiAnalyzer.analyze(it) }.toSet()

@@ -13,9 +13,9 @@ import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleFileManager
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 
 fun Project.isAndroidProject(): Boolean {
-    return GradleFileManager
-        .extractGradleFileFromModule(extractRootModule())
-        ?.extractBuildGradleDependencyByName("com.android.tools") != null
+    return extractRootModule()?.let {
+        GradleFileManager.extractGradleFileFromModule(it)?.extractBuildGradleDependencyByName("com.android.tools")
+    } != null
 }
 
 fun Project.extractPsiFiles(filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile):
@@ -48,6 +48,6 @@ fun Project.extractModules(): List<Module> {
     return ModuleManager.getInstance(this).modules.toList()
 }
 
-fun Project.extractRootModule(): Module {
-    return extractModules().first { it.name == this.name || it.name == this.name.replace(" ", "_") }
+fun Project.extractRootModule(): Module? {
+    return extractModules().firstOrNull() { it.name == this.name || it.name == this.name.replace(" ", "_") }
 }
