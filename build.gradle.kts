@@ -3,10 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "org.jetbrains.research.ml.kotlinAnalysis"
 version = "1.0"
 
+fun properties(key: String) = project.findProperty(key).toString()
+
 plugins {
     java
-    kotlin("jvm") version "1.4.32" apply true
-    id("org.jetbrains.intellij") version "0.7.2" apply true
+    kotlin("jvm") version "1.5.10" apply true
+    id("org.jetbrains.intellij") version "1.0" apply true
     id("org.jetbrains.dokka") version "1.4.30" apply true
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply true
 }
@@ -27,14 +29,15 @@ allprojects {
 
     dependencies {
         implementation(kotlin("stdlib-jdk8"))
+        implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
     }
 
     intellij {
-        type = "IC"
-        version = "212.4037.9-EAP-SNAPSHOT"
-        downloadSources = false
-        setPlugins("com.intellij.java", "org.jetbrains.kotlin")
-        updateSinceUntilBuild = true
+        version.set(properties("platformVersion"))
+        type.set(properties("platformType"))
+        downloadSources.set(properties("platformDownloadSources").toBoolean())
+        updateSinceUntilBuild.set(true)
+        plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
     }
 
     ktlint {

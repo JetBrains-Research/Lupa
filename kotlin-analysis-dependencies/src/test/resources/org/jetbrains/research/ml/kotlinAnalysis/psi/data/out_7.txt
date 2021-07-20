@@ -1,0 +1,14 @@
+android.content.Context
+android.os.Bundle
+android.view.LayoutInflater
+android.view.View
+android.view.ViewGroup
+androidx.fragment.app.Fragment
+androidx.lifecycle.ViewModelProvider
+androidx.recyclerview.widget
+com.drakeet.multitype.ItemViewDelegate
+com.drakeet.multitype.MultiTypeAdapter
+com.swensun.potato.R
+kotlinx.android.synthetic.main.item_recycler_view.view
+kotlinx.android.synthetic.main.load_more.view
+kotlinx.android.synthetic.main.recycler_view_fragment

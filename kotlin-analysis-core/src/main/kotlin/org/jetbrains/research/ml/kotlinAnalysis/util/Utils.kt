@@ -12,7 +12,8 @@ import kotlin.streams.toList
 enum class Extension(val value: String) {
     KT("kt"),
     KTS("kts"),
-    TXT("txt")
+    TXT("txt"),
+    EMPTY("")
 }
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
