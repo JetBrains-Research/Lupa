@@ -1,10 +1,8 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import kotlin.test.assertEquals
 
 object BinaryExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, RangeType> {
     override fun analyze(psiElement: KtBinaryExpression): RangeType {
@@ -14,7 +12,6 @@ object BinaryExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, Ran
         // 1..5 case
         val regex = Regex(RangeType.DOTS.fqName!!)
         if (regex.matches(expressionFqName)) {
-            assertEquals((psiElement.operationToken as KtSingleValueToken).value, "..")
             return RangeType.DOTS
         }
 
