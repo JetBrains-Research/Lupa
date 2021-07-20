@@ -24,4 +24,3 @@ object BinaryExpressionRangesPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, Range
         return this.operationToken.toString() == "RANGE"
     }
 }
-

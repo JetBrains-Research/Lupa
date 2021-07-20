@@ -10,7 +10,6 @@ import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import org.jetbrains.research.ml.kotlinAnalysis.util.getRelativePathToKtElement
 import java.nio.file.Path
 
-
 class RangesAnalysisExecutor(outputDir: Path) : AnalysisExecutor() {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()

@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import kotlin.test.assertEquals
 
 object BinaryExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, RangeType> {
-
     override fun analyze(psiElement: KtBinaryExpression): RangeType {
         val expressionFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull().toString()
         println(psiElement.text + (" ".repeat(40 - psiElement.text.length)) + expressionFqName)

@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.psi.*
 
 object RangesContextAnalyzer : PsiAnalyzer<PsiElement, ContextType> {
 
-
     override fun analyze(psiElement: PsiElement): ContextType {
         var curElement = psiElement.parent
         while (curElement !is KtFile) {
@@ -52,4 +51,3 @@ object RangesContextAnalyzer : PsiAnalyzer<PsiElement, ContextType> {
                 (this.selectorExpression as KtCallExpression).functionName().equals(functionName)
     }
 }
-

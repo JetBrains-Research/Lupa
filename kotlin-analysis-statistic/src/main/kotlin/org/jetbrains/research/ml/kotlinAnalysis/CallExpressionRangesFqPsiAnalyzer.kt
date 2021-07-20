@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
-
 object CallExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtCallExpression, RangeType> {
 
     override fun analyze(psiElement: KtCallExpression): RangeType {
