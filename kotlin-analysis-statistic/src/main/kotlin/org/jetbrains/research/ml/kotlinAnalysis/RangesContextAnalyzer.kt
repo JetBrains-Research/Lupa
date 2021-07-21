@@ -3,6 +3,10 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
 
+/**
+ * Analyzer that determines in which context the range is used.
+ * For example, a range can be used in for loop or in a conditional statement.
+ */
 object RangesContextAnalyzer : PsiAnalyzer<PsiElement, ContextType> {
 
     override fun analyze(psiElement: PsiElement): ContextType {

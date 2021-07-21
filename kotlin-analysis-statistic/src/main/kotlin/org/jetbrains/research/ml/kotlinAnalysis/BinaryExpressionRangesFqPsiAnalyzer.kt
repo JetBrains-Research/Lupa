@@ -4,6 +4,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
+/**
+ * Analyzer for binary expressions.
+ * Determines whether an expression is a range. If it is, determines the type of the range.
+ * This class uses fq names for analysis, so it works correctly only on projects with dependencies.
+ */
 object BinaryExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, RangeType> {
     override fun analyze(psiElement: KtBinaryExpression): RangeType {
         val expressionFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull().toString()

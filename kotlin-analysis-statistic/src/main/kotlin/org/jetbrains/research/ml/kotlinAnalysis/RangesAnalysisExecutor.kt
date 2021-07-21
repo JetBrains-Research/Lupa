@@ -10,13 +10,22 @@ import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
 import org.jetbrains.research.ml.kotlinAnalysis.util.getRelativePathToKtElement
 import java.nio.file.Path
 
-class RangesAnalysisExecutor(outputDir: Path) : AnalysisExecutor() {
+/**
+ * Executor for ranges analysis which collects range and context types of all ranges usages in projects
+ * and stores them to the file in [output directory][outputDir].
+ * Also, it stores information about ranges usage with undefined context.
+ */
+class RangesAnalysisExecutor(
+    outputDir: Path,
+    rangesFilename: String = "ranges_data.csv",
+    otherContextFilename: String = "other_context.csv",
+) : AnalysisExecutor() {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
 
-    private val rangesDataWriter = PrintWriterResourceManager(outputDir, "ranges_data.csv", getRangesHeader())
+    private val rangesDataWriter = PrintWriterResourceManager(outputDir, rangesFilename, getRangesHeader())
     private val otherContextDataWriter =
-        PrintWriterResourceManager(outputDir, "other_context.csv", getOtherContextHeader())
+        PrintWriterResourceManager(outputDir, otherContextFilename, getOtherContextHeader())
     override val controlledResourceManagers: Set<ResourceManager> = setOf(rangesDataWriter, otherContextDataWriter)
 
     override fun analyse(project: Project) {

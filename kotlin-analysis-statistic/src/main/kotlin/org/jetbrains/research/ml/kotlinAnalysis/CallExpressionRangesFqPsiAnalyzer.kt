@@ -4,6 +4,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
+/**
+ * Analyzer for call expressions.
+ * Determines whether an expression is a range. If it is, determines the type of the range.
+ * This class uses fq names for analysis, so it works correctly only on projects with dependencies.
+ */
 object CallExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtCallExpression, RangeType> {
 
     override fun analyze(psiElement: KtCallExpression): RangeType {
