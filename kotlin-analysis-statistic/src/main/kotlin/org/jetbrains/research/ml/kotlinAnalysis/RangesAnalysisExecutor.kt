@@ -1,13 +1,13 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.research.ml.kotlinAnalysis.psi.getRelativePathToKtElement
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
+import org.jetbrains.research.ml.kotlinAnalysis.psi.getRelativePathToKtElement
 import java.nio.file.Path
 
 /**
@@ -59,7 +59,7 @@ class RangesAnalysisExecutor(
             .joinToString(separator = "\t")
         rangesDataWriter.writer.println("${project.name}\t$rangesStats")
     }
-    
+
     /**
      * This method saves metadata about range usages with undefined context.
      *
