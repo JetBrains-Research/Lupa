@@ -18,13 +18,12 @@ sourceControl {
         producesModule("$utilitiesProjectName:plugin-utilities-core")
         producesModule("$utilitiesProjectName:plugin-utilities-test")
     }
-
 }
 
 pluginManagement {
     repositories {
         gradlePluginPortal()
         jcenter()
-        maven (url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
+        maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
     }
 }
