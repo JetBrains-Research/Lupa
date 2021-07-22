@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
-import org.jetbrains.research.ml.kotlinAnalysis.util.Extension
-import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
+import org.jetbrains.research.pluginUtilities.util.Extension
+import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

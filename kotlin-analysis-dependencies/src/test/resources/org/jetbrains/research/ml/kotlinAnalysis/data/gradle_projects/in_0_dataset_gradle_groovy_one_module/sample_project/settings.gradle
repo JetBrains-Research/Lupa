@@ -1,4 +1,2 @@
-package org.jetbrains.research.ml.kotlinAnalysis.data.in_0_dataset_gradle_groovy_one_module.sample_project
-
 rootProject.name = 'gradle-one-module'
 
