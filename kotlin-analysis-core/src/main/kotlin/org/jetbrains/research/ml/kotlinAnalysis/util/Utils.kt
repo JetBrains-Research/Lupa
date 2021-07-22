@@ -1,12 +1,10 @@
 package org.jetbrains.research.ml.kotlinAnalysis.util
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.psi.KtElement
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.streams.toList
 
 enum class Extension(val value: String) {

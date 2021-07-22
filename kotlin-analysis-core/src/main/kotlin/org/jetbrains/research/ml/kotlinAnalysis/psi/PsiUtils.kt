@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 /**
  * Returns the path to the file, containing given ktElement.
  * Path is relative from the ktElement's project directory. )

@@ -22,7 +22,7 @@ class PrintWriterResourceManager(
 
     override fun init() {
         writer = getPrintWriter(directory, fileName)
-        header?.let{ writer.println(header) }
+        header?.let { writer.println(header) }
     }
 
     override fun close() {
