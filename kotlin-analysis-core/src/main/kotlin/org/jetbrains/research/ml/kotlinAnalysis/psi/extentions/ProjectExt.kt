@@ -4,20 +4,48 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleFileManager
+import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleFileManager.Companion.extractRootGradleFileFromProject
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
+import java.nio.file.Paths
+import java.util.*
 
+/** File contains various extension methods for [com.intellij.openapi.project.Project] class. */
+
+/** Checks if [Project] is android by checking for "com.android.tools" dependency in root build gradle file. */
 fun Project.isAndroidProject(): Boolean {
-    return extractRootModule()?.let {
-        GradleFileManager.extractGradleFileFromModule(it)?.extractBuildGradleDependencyByName("com.android.tools")
-    } != null
+    return extractRootGradleFileFromProject(this)
+        ?.extractBuildGradleDependencyByName("com.android.tools") != null
 }
 
+/** Extracts all modules from project. */
+fun Project.extractModules(): List<Module> {
+    return ModuleManager.getInstance(this).modules.toList()
+}
+
+/** Extracts root module from project. */
+fun Project.extractRootModule(): Module? {
+    return extractModules().firstOrNull { it.name == this.name || it.name == this.name.replace(" ", "_") }
+}
+
+/** Extracts elements of given type from kotlin related files files in project. */
+fun <T : PsiElement> Project.extractElementsOfType(
+    psiElementClass: Class<T>
+): List<T> {
+    return extractPsiFiles()
+        .map { it.extractElementsOfType(psiElementClass) }
+        .flatten()
+}
+
+/**
+ * Extracts files from project matching given predicate.
+ * For example all kotlin related files.
+ */
 fun Project.extractPsiFiles(filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile):
         MutableSet<PsiFile> {
     val projectPsiFiles = mutableSetOf<PsiFile>()
@@ -36,18 +64,24 @@ fun Project.extractPsiFiles(filePredicate: (VirtualFile) -> Boolean = VirtualFil
     return projectPsiFiles
 }
 
-fun <T : PsiElement> Project.extractElementsOfType(
-    psiElementClass: Class<T>
-): List<T> {
-    return extractPsiFiles()
-        .map { it.extractElementsOfType(psiElementClass) }
-        .flatten()
-}
+/**
+ * Finds first file in breadth-first traversal order from project matching given predicate.
+ * Far example to find gradle or manifest files.
+ */
+fun Project.findPsiFile(filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile): PsiFile? {
+    var subFiles = basePath
+        ?.let { VfsUtil.findFile(Paths.get(it), false) }
+        ?.let { mutableListOf(it) } ?: return null
 
-fun Project.extractModules(): List<Module> {
-    return ModuleManager.getInstance(this).modules.toList()
-}
+    val psiManager = PsiManager.getInstance(this)
 
-fun Project.extractRootModule(): Module? {
-    return extractModules().firstOrNull() { it.name == this.name || it.name == this.name.replace(" ", "_") }
+    while (subFiles.isNotEmpty()) {
+        val file = subFiles.firstOrNull(filePredicate)
+        if (file != null) {
+            return psiManager.findFile(file)
+        } else {
+            subFiles = subFiles.flatMap { it.children.toList() }.toMutableList()
+        }
+    }
+    return null
 }

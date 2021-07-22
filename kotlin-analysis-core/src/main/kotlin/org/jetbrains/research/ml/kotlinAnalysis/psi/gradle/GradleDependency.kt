@@ -1,26 +1,36 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi.gradle
 
-/**
- * Dependency declaration configuration.
- */
+/** Dependency declaration configuration. */
 enum class GradleDependencyConfiguration(
-    val yamlKey: String
+    val key: String
 ) {
     KAPT("kapt"),
-    COMPILE_ONLY("compileOnly"),
-    IMPLEMENTATION("implementation"),
     API("api"),
+    CLASSPATH("classpath"),
+    COMPILE_ONLY("compileOnly"),
+    RUNTIME_ONLY("runtimeOnly"),
+    COMPILE("compile"),
+    IMPLEMENTATION("implementation"),
+    ANNOTATION_PROCESSOR("annotationProcessor"),
     TEST_IMPLEMENTATION("testImplementation"),
     TEST_RUNTIME_ONLY("testRuntimeOnly"),
+    TEST_RUNTIME("testRuntime"),
+    TEST_COMPILE("testCompile"),
     ANDROID_TEST_IMPLEMENTATION("androidTestImplementation");
 
     companion object {
-        fun fromYamlKey(yamlKey: String) = values().firstOrNull { it.yamlKey == yamlKey }
-        fun availableYamlKeys() = values().joinToString { "'${it.yamlKey}'" }
+        fun fromKey(yamlKey: String) = values().firstOrNull { it.key.equals(yamlKey, ignoreCase = true) }
+        fun availableKeys() = values().map { it.key }
     }
 }
 
-/**
- * Dependency for build.gradle files
- */
-data class GradleDependency(val name: String, val configuration: GradleDependencyConfiguration?)
+/** Dependency wrapper for gradle files, which holds [group] and [configuration].
+ *
+ * For example:
+ *     dependencies {
+ *          classpath "com.android.tools.build:gradle:4.1.1"
+ *     }
+ * [group] = "com.android.tools.build:gradle:4.1.1"
+ * [configuration] = [GradleDependencyConfiguration.CLASSPATH]
+ * */
+data class GradleDependency(val group: String, val name: String, val configuration: GradleDependencyConfiguration?)

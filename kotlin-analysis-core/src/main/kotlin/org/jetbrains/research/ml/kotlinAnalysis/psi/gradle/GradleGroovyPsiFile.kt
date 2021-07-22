@@ -4,24 +4,29 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyFileImpl
-import org.jetbrains.plugins.groovy.lang.psi.util.childrenOfType
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
+import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleDependenciesUtil.Companion.GRADLE_DEPENDENCIES_BLOCK_NAME
+import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleDependenciesUtil.Companion.parseGradleDependencyFromString
 
-class GradleGroovyPsiFile(private val psiFile: GroovyFileImpl) : GradlePsiFile(psiFile) {
+/**
+ * Wrap for Gradle file written on Groovy. Contains specific for it's format methods for extraction elements
+ * from build.gradle files.
+ */
+class GradleGroovyPsiFile(psiFile: GroovyFileImpl) : GradlePsiFile(psiFile) {
 
-    override fun extractBuildGradleDependencyByName(name: String): GradleDependency? {
-        return extractBuildGradleDependencies().firstOrNull { it.name == name }
-    }
-
+    /**
+     * In Groovy file dependency is stored inside
+     * [dependency][GrClosableBlock] block ->
+     * [implementation|api|complile|...][GrApplicationStatement] block ->
+     * as its arguments
+     */
     override fun extractBuildGradleDependencies(): List<GradleDependency> {
-        val dependenciesClosableBlock = extractElementsOfType(GrMethodCall::class.java)
+        return extractElementsOfType(GrMethodCall::class.java)
             .firstOrNull { it.text.startsWith(GRADLE_DEPENDENCIES_BLOCK_NAME) }
-            ?.childrenOfType<GrClosableBlock>()?.firstOrNull()
-
-        return dependenciesClosableBlock?.children?.filterIsInstance<GrApplicationStatement>()
-            ?.mapTo(mutableListOf()) { dependency ->
-                GradleDependency(dependency.argumentList.text,
-                    dependency.callReference?.let { GradleDependencyConfiguration.fromYamlKey(it.methodName) })
-            } ?: listOf()
+            ?.extractElementsOfType(GrClosableBlock::class.java)
+            ?.firstOrNull()
+            ?.extractElementsOfType(GrApplicationStatement::class.java)
+            ?.mapNotNullTo(mutableListOf()) { dependency -> parseGradleDependencyFromString(dependency.text) }
+            ?: listOf()
     }
 }

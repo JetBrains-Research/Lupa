@@ -5,11 +5,11 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 
-fun PsiElement.hasChildWithText(text: String): Boolean = children.any { child -> child.text.contains(text) }
-
+/** Extracts elements of given type from [PsiElement] subtree. */
 fun <T : PsiElement> PsiElement.extractElementsOfType(psiElementClass: Class<T>): MutableCollection<T> =
     PsiTreeUtil.collectElementsOfType(this, psiElementClass)
 
+/** Deletes comments [PsiComment] from from given [PsiElement]. */
 fun PsiElement.deleteComments() {
     val comments = this.extractElementsOfType(PsiComment::class.java)
     // We should handle each group of elements with same parent separately
