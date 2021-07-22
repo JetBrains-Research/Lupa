@@ -1,10 +1,10 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
-import org.jetbrains.research.ml.kotlinAnalysis.util.Extension
-import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedBaseTest
-import org.jetbrains.research.ml.kotlinAnalysis.util.getPsiFile
+import org.jetbrains.research.pluginUtilities.util.Extension
+import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
+import org.jetbrains.research.pluginUtilities.util.getPsiFile
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,8 +12,7 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)
-open class ImportDirectiveFqNamesExtractionTest :
-    ParametrizedBaseTest(getResourcesRootPath(::ImportDirectiveFqNamesExtractionTest)) {
+open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProviderTest)) {
 
     @JvmField
     @Parameterized.Parameter(0)
