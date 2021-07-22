@@ -3,7 +3,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.research.ml.kotlinAnalysis.util.getRelativePathToKtElement
+import org.jetbrains.research.ml.kotlinAnalysis.psi.getRelativePathToKtElement
 import java.nio.file.Path
 
 /**
@@ -22,7 +22,7 @@ class IndexBuilder(outputDir: Path) : ResourceManager {
     }
 
     fun indexMethod(function: KtNamedFunction, projectId: Int): Int {
-        val fileRelativePath = getRelativePathToKtElement(function)
+        val fileRelativePath = function.getRelativePathToKtElement()
 
         val doc = PsiDocumentManager.getInstance(function.project).getDocument(function.containingFile)
             ?: throw IllegalArgumentException("Cannot find document containing function ${function.name}")

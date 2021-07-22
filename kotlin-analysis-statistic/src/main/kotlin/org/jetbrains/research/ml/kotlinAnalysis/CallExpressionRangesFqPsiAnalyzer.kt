@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 object CallExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtCallExpression, RangeType> {
 
     override fun analyze(psiElement: KtCallExpression): RangeType {
-        val methodFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull().toString()
-        println(psiElement.text + (" ".repeat(40 - psiElement.text.length)) + methodFqName)
+        val methodFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull()
+            ?: throw error("Can't resolve the name of the expression: project opened incorrectly")
         val regex = Regex(RangeType.RANGE_TO.fqName!!)
-        if (regex.matches(methodFqName)) {
+        if (regex.matches(methodFqName.toString())) {
             return RangeType.RANGE_TO
         }
         return RangeType.NOT_RANGE

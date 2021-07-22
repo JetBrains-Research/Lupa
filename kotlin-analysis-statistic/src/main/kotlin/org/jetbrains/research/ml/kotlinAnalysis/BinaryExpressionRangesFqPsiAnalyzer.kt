@@ -11,18 +11,19 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
  */
 object BinaryExpressionRangesFqPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, RangeType> {
     override fun analyze(psiElement: KtBinaryExpression): RangeType {
-        val expressionFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull().toString()
-        println(psiElement.text + (" ".repeat(40 - psiElement.text.length)) + expressionFqName)
+        val expressionFqName = psiElement.resolveToCall()?.resultingDescriptor?.fqNameOrNull()
+            ?: throw error("Can't resolve the name of the expression: project opened incorrectly")
+        val expressionFqNameStr = expressionFqName.toString()
 
         // 1..5 case
         val regex = Regex(RangeType.DOTS.fqName!!)
-        if (regex.matches(expressionFqName)) {
+        if (regex.matches(expressionFqNameStr)) {
             return RangeType.DOTS
         }
 
         // downTo and until cases
-        if (expressionFqName == RangeType.UNTIL.fqName || expressionFqName == RangeType.DOWN_TO.fqName) {
-            return RangeType.fromFqName(expressionFqName)!!
+        if (expressionFqNameStr == RangeType.UNTIL.fqName || expressionFqNameStr == RangeType.DOWN_TO.fqName) {
+            return RangeType.fromFqName(expressionFqNameStr)!!
         }
 
         return RangeType.NOT_RANGE

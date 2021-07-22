@@ -11,17 +11,14 @@ object BinaryExpressionRangesPsiAnalyzer : PsiAnalyzer<KtBinaryExpression, Range
 
     override fun analyze(psiElement: KtBinaryExpression): RangeType {
         val operatorName = psiElement.operationReference.getReferencedName()
-        return when {
-            psiElement.isRangeDots() -> {
-                RangeType.DOTS
-            }
-            operatorName in arrayOf(RangeType.UNTIL.simpleName, RangeType.DOWN_TO.simpleName) -> {
-                RangeType.fromName(operatorName)!!
-            }
-            else -> {
-                RangeType.NOT_RANGE
-            }
+
+        if (psiElement.isRangeDots()) {
+            return RangeType.DOTS
+        } else if (operatorName in arrayOf(RangeType.UNTIL.simpleName, RangeType.DOWN_TO.simpleName)) {
+            return RangeType.fromName(operatorName)!!
         }
+
+        return RangeType.NOT_RANGE
     }
 
     private fun KtBinaryExpression.isRangeDots(): Boolean {

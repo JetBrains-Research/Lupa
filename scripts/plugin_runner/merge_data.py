@@ -1,7 +1,9 @@
+"""
+This class contains methods for merging analysis results from different batches into a single file.
+"""
 from typing import List
 import pandas as pd
 import os
-
 
 METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
