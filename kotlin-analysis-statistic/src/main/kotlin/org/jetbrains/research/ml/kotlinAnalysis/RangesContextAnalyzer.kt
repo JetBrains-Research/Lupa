@@ -16,14 +16,11 @@ object RangesContextAnalyzer : PsiAnalyzer<PsiElement, ContextType> {
 
             if (curElement.isFunctionWithName("forEach")) {
                 return ContextType.FOREACH
-            }
-            else if (curElement.isFunctionWithName("map")) {
+            } else if (curElement.isFunctionWithName("map")) {
                 return ContextType.MAP
-            }
-            else if (curElement.isFunctionWithName("toList")) {
+            } else if (curElement.isFunctionWithName("toList")) {
                 return ContextType.TOLIST
-            }
-            else if (curElement is KtCallExpression && curElement.functionName().equals("require")) {
+            } else if (curElement is KtCallExpression && curElement.functionName().equals("require")) {
                 return ContextType.REQUIRE
             }
             curElement = curElement.parent
