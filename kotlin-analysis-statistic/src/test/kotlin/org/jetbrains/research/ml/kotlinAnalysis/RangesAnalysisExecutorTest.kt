@@ -46,12 +46,9 @@ open class RangesAnalysisExecutorTest :
         analysisExecutor.controlledResourceManagers.forEach { it.close() }
 
         val expectedRangesStatistics = csvToMap(outFile!!)
-        val actualRangesStatistics = csvToMap(resultFile)
-
-        expectedRangesStatistics.keys.forEach { key ->
-            Assert.assertEquals("Assertion failed for '$key'",
-                expectedRangesStatistics[key], actualRangesStatistics[key])
-        }
+        val actualRangesStatistics = csvToMap(resultFile).toMutableMap()
+        actualRangesStatistics.remove("project")
+        Assert.assertEquals(expectedRangesStatistics, actualRangesStatistics)
     }
 
     private fun csvToMap(file: File, separator: String = "\t"): Map<String, MutableList<String>> {
