@@ -7,13 +7,16 @@ include(
     "kotlin-analysis-plugin",
     "kotlin-analysis-clones",
     "kotlin-analysis-dependencies",
-    "kotlin-analysis-statistic",
-    "kotlin-analysis-test"
+    "kotlin-analysis-statistic"
 )
 
+val utilitiesRepo = "https://github.com/JetBrains-Research/plugin-utilities.git"
+val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
+
 sourceControl {
-    gitRepository(URI.create("https://github.com/JetBrains-Research/psiminer.git")) {
-        producesModule("org.jetbrains.research.psiminer:psiminer")
+    gitRepository(URI.create(utilitiesRepo)) {
+        producesModule("$utilitiesProjectName:plugin-utilities-core")
+        producesModule("$utilitiesProjectName:plugin-utilities-test")
     }
 }
 
@@ -21,5 +24,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         jcenter()
+        maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
     }
 }

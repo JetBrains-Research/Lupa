@@ -55,9 +55,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: test-report
-          path: |
-            build/reports/tests/**/*
-
+          path: kotlin-analysis-*/build/reports/**
 
   test:
     needs: build

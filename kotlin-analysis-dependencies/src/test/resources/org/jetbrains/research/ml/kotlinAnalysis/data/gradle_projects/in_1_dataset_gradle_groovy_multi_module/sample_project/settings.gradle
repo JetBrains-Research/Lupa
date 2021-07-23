@@ -1,0 +1,5 @@
+rootProject.name = 'gradle-multi-module'
+
+include "one-import-module"
+include "multi-import-module"
+include "inner-import-module"
