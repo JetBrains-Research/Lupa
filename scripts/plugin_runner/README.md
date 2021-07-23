@@ -3,8 +3,10 @@
 #### Extract methods from dataset
 
 ``` 
-python3 scripts/plugin_runner/clones_batch_processing.py /path/to/dataset/dir /path/to/extracted_methods/dir 
+python3 scripts/plugin_runner/batch_processing.py data_to_analyze /path/to/dataset/dir /path/to/extracted_methods/dir 
 ```
+
+where ```data_to_analyze``` can be ```clones``` or ```ranges```
 
 You can use the ```--batch-size n``` option (default value is 300).
 Also, there is ```--start-from n``` option to start from batch with a given number.

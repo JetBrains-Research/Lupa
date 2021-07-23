@@ -13,11 +13,16 @@ interface ResourceManager : AutoCloseable {
  * Resource manager for [file writer][PrintWriter]. For given [directory][directory] and [file name][fileName]
  * it gets new instance of [print writer][PrintWriter] in [init][init] method and [close][close] it in close method.
  **/
-class PrintWriterResourceManager(private val directory: Path, private val fileName: String) : ResourceManager {
+class PrintWriterResourceManager(
+    private val directory: Path,
+    private val fileName: String,
+    private val header: String? = null
+) : ResourceManager {
     lateinit var writer: PrintWriter
 
     override fun init() {
         writer = getPrintWriter(directory, fileName)
+        header?.let { writer.println(header) }
     }
 
     override fun close() {
