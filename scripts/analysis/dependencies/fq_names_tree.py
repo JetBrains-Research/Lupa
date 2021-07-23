@@ -1,20 +1,19 @@
 import os
-from typing import Dict, List, Union
+from typing import List, Tuple
 
 from anytree import NodeMixin
 from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
 
-from analysis.dependencies.column_names_utils import ImportDirectivesColumn
-from utils import Extensions
+from column_names_utils import ImportDirectivesColumn
+from fq_names_types import FqNamesDict
+from utils import Extensions, write_to_file, create_directory
 
 """
 Script fow working with import dependencies fq name tree. 
 It contain methods for deleting nodes with small occurrence, merging single child nodes to one, splitting thee into 
 subtrees for showing it separately, if subtree is not large or meaning.
 """
-
-FqNamesDict = Dict[str, Union[Dict, int, str]]
 
 
 class FqNameNode(NodeMixin):
@@ -25,32 +24,27 @@ class FqNameNode(NodeMixin):
         self.parent = parent
         self.count = count
         self.unique_count = unique_count
+        self.full_name = name if parent is None or parent.is_root else f"{parent.full_name}.{name}"
 
     def __repr__(self):
         return str(f"{self.name} [{self.count}]")
-
-    def str_path(self, sep="_", with_root=True) -> str:
-        cut_index = 0 if with_root else 1
-        return sep.join([node_path.name for node_path in self.path[cut_index:]])
-
-    def is_huge(self, max_leaf_subpackages) -> bool:
-        children_count = len(self.children)
-        leaf_children_count = len(list(filter(lambda node: node.is_leaf, self.children)))
-        return children_count == 0 or leaf_children_count / children_count > max_leaf_subpackages
 
 
 def save_to_png(node: FqNameNode, path_to_result_dir: str):
     if len(node.children) == 0:
         return
-    path_to_node_tree = os.path.join(path_to_result_dir, f"{node.str_path()}.{Extensions.PNG}")
-    UniqueDotExporter(node,
-                      edgeattrfunc=lambda parent, child: "style=bold,label=%d" % (child.count or 0)).to_picture(
-        path_to_node_tree)
+    tree_dot_dir = os.path.join(path_to_result_dir, "tree_dot")
+    create_directory(tree_dot_dir)
+    filename = os.path.join(tree_dot_dir, f"{node.full_name}.{Extensions.PNG}")
+    UniqueDotExporter(node, edgeattrfunc=lambda parent, child: "style=bold,label=%d" % (child.count or 0)) \
+        .to_picture(filename)
 
 
-def save_to_txt(node: FqNameNode, path_to_result_dir: str, filename=f"fq_names_tree.{Extensions.TXT}"):
-    with open(os.path.join(path_to_result_dir, filename), "w") as tree_text_file:
-        tree_text_file.write(str(RenderTree(node)))
+def save_to_txt(node: FqNameNode, path_to_result_dir: str):
+    tree_txt_dir = os.path.join(path_to_result_dir, "tree_txt")
+    create_directory(tree_txt_dir)
+    filename = os.path.join(tree_txt_dir, f"{node.full_name}.{Extensions.TXT}")
+    write_to_file(filename, str(RenderTree(node)))
 
 
 def delete_extra_child_nodes(parent: FqNameNode, max_children: int):
@@ -89,7 +83,16 @@ def calc_unique_count(parent: FqNameNode) -> int:
     return parent.unique_count
 
 
-def split_to_subtrees(parent: FqNameNode, max_leaf_subpackages: int, max_occurrence: int, max_u_occurrence: int) \
+def is_huge(node: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, max_u_occurrence: int) -> bool:
+    """ Check is node huge to be considerate as package and show separately. """
+    if node.unique_count < max_u_occurrence or (not node.is_root and node.count < max_occurrence):
+        return True
+    children_count = len(node.children)
+    leaf_children_count = len(list(filter(lambda child: child.is_leaf, node.children)))
+    return children_count == 0 or leaf_children_count / children_count > max_leaf_subpackages
+
+
+def split_to_subtrees(parent: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, max_u_occurrence: int) \
         -> List[FqNameNode]:
     """ Recursively split tree into subtrees to make each subtree smaller and representative.
     :param parent: node to remove extra rare children
@@ -103,9 +106,8 @@ def split_to_subtrees(parent: FqNameNode, max_leaf_subpackages: int, max_occurre
     """
     if parent.unique_count is None:
         parent.unique_count = calc_unique_count(parent)
-    if parent.unique_count < max_u_occurrence or (not parent.is_root and parent.count < max_occurrence) or \
-            parent.is_huge(max_leaf_subpackages):
-        parent_root = FqNameNode(parent.name, None, parent.count, parent.unique_count)
+    if is_huge(parent, max_leaf_subpackages, max_occurrence, max_u_occurrence):
+        parent_root = FqNameNode(parent.full_name, None, parent.count, parent.unique_count)
         parent_root.children = parent.children
         parent.children = []
         return [parent_root]
@@ -119,6 +121,20 @@ def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:
     root = FqNameNode("root")
     recursive_build_fq_name_tree(root, fq_names_dict)
     return root
+
+
+def build_fq_name_tree_decomposition(fq_names_dict: FqNamesDict, max_subpackages: int, max_leaf_subpackages: int,
+                                     min_occurrence: int, max_occurrence: int, max_u_occurrence: int) \
+        -> Tuple[FqNameNode, List[FqNameNode]]:
+    root = build_fq_name_tree(fq_names_dict)
+
+    delete_rare_nodes(root, min_occurrence)
+    delete_extra_child_nodes(root, max_subpackages)
+    merge_single_child_nodes(root)
+
+    sub_roots = split_to_subtrees(root, max_leaf_subpackages, max_occurrence, max_u_occurrence)
+
+    return root, sub_roots
 
 
 def recursive_build_fq_name_tree(parent: FqNameNode, fq_names_dict: FqNamesDict):

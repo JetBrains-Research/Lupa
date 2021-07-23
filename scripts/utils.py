@@ -7,7 +7,7 @@ class Extensions(str, enum.Enum):
     CSV = "csv"
     TXT = "txt"
     JSON = "json"
-    ONG = "png"
+    PNG = "png"
 
 
 def create_directory(path: str):
@@ -27,3 +27,8 @@ def get_subdirectories(path: str) -> List[str]:
 def get_file_lines(path: str) -> List[str]:
     with open(path) as fin:
         return fin.readlines()
+
+
+def write_to_file(path: str, content: str):
+    with open(path, "w+") as file:
+        file.write(content)
