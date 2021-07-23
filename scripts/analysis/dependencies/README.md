@@ -50,36 +50,39 @@ Examples of import directives fq names analysis results visualization:
 * "{package_name}.png" - dot import dependencies fq names subtrees with occurrence on edges for each package
    
 * "root.txt" - txt packages tree with occurrence on edges 
-   
-├── org [14280] \
-│   ├── gradle [10104] \
-│   │   ├── api [8972] \
-│   │   ├── kotlin.dsl [1028] \
-│   │   ├── testkit.runner [18] \
-│   │   ├── work.InputChanges [17] \
-│   │   ├── plugins.signing [15] \
-│   ├── jetbrains [1708] \
-│   │   ├── kotlin [1684] \
-│   │   │   ├── psi [511] \
-│   │   │   ├── descriptors [131] \
-│   │   │   ├── com.intellij [56] \
-│   │   └── gradle.ext [8] \
-│   ├── junit [649] \
-│   ├── testng [633] \
-│   ├── springframework [406] \
+
+```
+├── org [14280]
+│   ├── gradle [10104] 
+│   │   ├── api [8972] 
+│   │   ├── kotlin.dsl [1028] 
+│   │   ├── testkit.runner [18] 
+│   │   ├── work.InputChanges [17] 
+│   │   ├── plugins.signing [15] 
+│   ├── jetbrains [1708] 
+│   │   ├── kotlin [1684] 
+│   │   │   ├── psi [511] 
+│   │   │   ├── descriptors [131] 
+│   │   │   ├── com.intellij [56] 
+│   │   └── gradle.ext [8] 
+│   ├── junit [649] 
+│   ├── testng [633] 
+│   ├── springframework [406] 
 ...
-
+```
 * "{package_name}.txt" - txt import dependencies fq names subtrees with occurrence on edges for each package
-
-org.springframework [406] \
-├── beans.factory [58] \
-│   ├── annotation.Autowired [43] \
-│   └── BeanFactory [15] \
-├── stereotype [53] \
-│   ├── Service [19] \
-│   ├── Repository [16] \
-│   └── Component [13] \
-├── web.bind [52] \
-│   └── annotation [42] \
-│       ├── GetMapping [8] \
-│       └── RequestMapping [6] \
+```
+org.springframework [406] 
+├── beans.factory [58] 
+│   ├── annotation.Autowired [43] 
+│   └── BeanFactory [15] 
+├── stereotype [53] 
+│   ├── Service [19] 
+│   ├── Repository [16] 
+│   └── Component [13] 
+├── web.bind [52] 
+│   └── annotation [42] 
+│       ├── GetMapping [8] 
+│       └── RequestMapping [6] 
+...
+```
