@@ -18,7 +18,7 @@ import pandas as pd
 import argparse
 import requests
 import logging
-from utils import create_directory
+from utils import create_directory, Extensions
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -59,7 +59,7 @@ def main():
 
             save_full_name(response_json["full_name"], unique_names, results_fout)
             if args.save_metadata:
-                save_project_json(response_json, jsons_dir_path, f"{username}#{project_name}.json")
+                save_project_json(response_json, jsons_dir_path, f"{username}#{project_name}.{Extensions.JSON}")
 
             logging.info(f"Last processed project: {args.start_from + index}")
 

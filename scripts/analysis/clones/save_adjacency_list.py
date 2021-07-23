@@ -3,6 +3,8 @@ import logging
 import os
 from typing import Dict
 
+from utils import Extensions
+
 CLOSENESS_NEAR_MISS = 80
 CLOSENESS_EXACT = 100
 
@@ -45,7 +47,7 @@ def add_edge(clone_adjacency_list: Dict[int, str], project1: int, method1: int, 
 
 
 def save_clones(clone_adjacency_list: Dict[int, str], path: str):
-    with open(os.path.join(path, "clones_adjacency_test.txt"), 'w+') as fout:
+    with open(os.path.join(path, f"clones_adjacency_test.{Extensions.TXT}"), 'w+') as fout:
         for method_id, data in clone_adjacency_list.items():
             line = ",".join([str(method_id), data]) + "\n"
             fout.write(line)
