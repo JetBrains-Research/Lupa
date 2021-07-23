@@ -9,10 +9,11 @@ Import directives analysis consists in processing collected from dataset of proj
 directives.
 
 ``` 
-python3 scripts/analysis/dependencies/import_directives_analysis.py [-h] --input INPUT --output OUTPUT [--ignore IGNORE] [--max-package-len MAX_PACKAGE_LEN] [--max-subpackages MAX_SUBPACKAGES]
-                                     [--max-leaf-subpackages MAX_LEAF_SUBPACKAGES] [--min-occurrence MIN_OCCURRENCE] [--max-occurrence MAX_OCCURRENCE]
-                                     [--max-u-occurrence MAX_U_OCCURRENCE] [--show-dot-trees SHOW_DOT_TREES] [--show-txt-trees SHOW_TXT_TREES]
-                                     [--show-bar-plots SHOW_BAR_PLOTS] [--show-csv SHOW_CSV] [--show-package-csv SHOW_PACKAGE_CSV]
+python3 scripts/analysis/dependencies/import_directives_analysis.py [-h] --input INPUT --output OUTPUT 
+    [--ignore IGNORE] [--max-package-len MAX_PACKAGE_LEN] [--max-subpackages MAX_SUBPACKAGES]
+    [--max-leaf-subpackages MAX_LEAF_SUBPACKAGES] [--min-occurrence MIN_OCCURRENCE] [--max-occurrence MAX_OCCURRENCE]
+    [--max-u-occurrence MAX_U_OCCURRENCE] [--show-dot-trees SHOW_DOT_TREES] [--show-txt-trees SHOW_TXT_TREES]
+    [--show-bar-plots SHOW_BAR_PLOTS] [--show-csv SHOW_CSV] [--show-package-csv SHOW_PACKAGE_CSV]
 ``` 
 
 Run to get the description of the above flags run:
@@ -33,6 +34,8 @@ Examples of import directives fq names analysis results visualization:
 | org.junit.Test  | 97  |
 | ...  | ...  |
 
+<img width="1440" alt="total_bar_plot" src="https://user-images.githubusercontent.com/31625351/126790004-e057863b-570c-4d93-863e-c6f564e22dae.png">
+
 * "total_by_package.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by a package prefix got by building fq names tree and detecting import dependencies packages names
 
 | fq_name  | count |
@@ -43,11 +46,20 @@ Examples of import directives fq names analysis results visualization:
 | org.junit  | 997  |
 | ...  | ...  |   
 
+<img width="1440" alt="total_by_package_bar_plot" src="https://user-images.githubusercontent.com/31625351/126789888-43bba161-c59e-4df0-a596-e1df4ad60cad.png">
+
+
 * "root.png" - dot packages tree with occurrence on edges, build from import dependencies names according to filters
    and simplifications with selected parameters (MAX_SUBPACKAGES, MAX_LEAF_SUBPACKAGES, MIN_OCCURRENCE, MAX_OCCURRENCE,
    MAX_U_OCCURRENCE)
-   
+
+![root](https://user-images.githubusercontent.com/31625351/126790347-f2519427-13cc-4a6b-bab4-de97a6d78e61.png)
+
+ 
 * "{package_name}.png" - dot import dependencies fq names subtrees with occurrence on edges for each package
+
+![org springframework](https://user-images.githubusercontent.com/31625351/126790465-bec3ae4a-81c7-47e7-9b7e-fc66b2a07484.png)
+
    
 * "root.txt" - txt packages tree with occurrence on edges 
 
