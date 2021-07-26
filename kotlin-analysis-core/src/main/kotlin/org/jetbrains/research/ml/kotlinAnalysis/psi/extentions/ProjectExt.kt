@@ -17,6 +17,15 @@ import java.util.*
 
 /** File contains various extension methods for [com.intellij.openapi.project.Project] class. */
 
+/** Extracts elements of given type from kotlin related files files in project. */
+fun <T : PsiElement> Project.extractElementsOfType(
+    psiElementClass: Class<T>
+): List<T> {
+    return extractPsiFiles()
+        .map { it.extractElementsOfType(psiElementClass) }
+        .flatten()
+}
+
 /** Checks if [Project] is android by checking for "com.android.tools" dependency in root build gradle file. */
 fun Project.isAndroidProject(): Boolean {
     return extractRootGradleFileFromProject(this)
@@ -31,15 +40,6 @@ fun Project.extractModules(): List<Module> {
 /** Extracts root module from project. */
 fun Project.extractRootModule(): Module? {
     return extractModules().firstOrNull { it.name == this.name || it.name == this.name.replace(" ", "_") }
-}
-
-/** Extracts elements of given type from kotlin related files files in project. */
-fun <T : PsiElement> Project.extractElementsOfType(
-    psiElementClass: Class<T>
-): List<T> {
-    return extractPsiFiles()
-        .map { it.extractElementsOfType(psiElementClass) }
-        .flatten()
 }
 
 /**

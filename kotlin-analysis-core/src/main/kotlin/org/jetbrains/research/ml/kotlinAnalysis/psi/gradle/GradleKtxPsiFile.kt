@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleDependenciesUtil.Companion.GRADLE_DEPENDENCIES_BLOCK_NAME
 import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleDependenciesUtil.Companion.parseGradleDependencyFromString

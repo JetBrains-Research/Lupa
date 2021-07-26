@@ -19,7 +19,8 @@ class GradleFileManager {
     companion object {
 
         private val BUILD_GRADLE_SCRIPT_NAMES = listOf(
-            GradleConstants.DEFAULT_SCRIPT_NAME, GradleConstants.KOTLIN_DSL_SCRIPT_NAME
+            GradleConstants.DEFAULT_SCRIPT_NAME,
+            GradleConstants.KOTLIN_DSL_SCRIPT_NAME
         )
 
         /** Converts [PsiFile] to [GradleKtxPsiFile] or [GradleGroovyPsiFile] according to type. */

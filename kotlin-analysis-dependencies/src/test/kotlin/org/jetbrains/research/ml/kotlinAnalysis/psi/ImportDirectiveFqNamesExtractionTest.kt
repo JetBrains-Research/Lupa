@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi
 
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile
@@ -25,7 +25,7 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
-        fun getTestData() = getInAndOutArray(::ImportDirectiveFqNamesExtractionTest, outExtension = Extension.TXT)
+        fun getTestData() = getInAndOutArray(::PsiProviderTest, outExtension = Extension.TXT)
     }
 
     @Test

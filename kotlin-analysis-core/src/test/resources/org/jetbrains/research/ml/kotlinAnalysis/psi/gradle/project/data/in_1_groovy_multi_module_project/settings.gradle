@@ -1,0 +1,6 @@
+package org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.project.data.in_1_groovy_multi_module_project
+
+rootProject.name = 'in_0_multi_module_project'
+include 'first_module'
+include 'second_module'
+
