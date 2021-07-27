@@ -14,6 +14,8 @@
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinClonesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinDependenciesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinRangesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.AndroidProjectsFilterRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradleDependenciesAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>

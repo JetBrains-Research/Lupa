@@ -92,10 +92,11 @@ abstract class AnalyzersAggregator<P : PsiElement, R, T> {
  * @property visitor used to perform recursive traversal of PSI and analysis of each node with type [P].
  */
 open class PsiMainAnalyzer<P : PsiElement, R, T>(
+    pClass: Class<P>,
     analyzers: List<PsiAnalyzer<P, R>>,
     private val aggregator: AnalyzersAggregator<P, R, T>
 ) {
-    private val visitor: Visitor<P, R> = Visitor(analyzers)
+    private val visitor: Visitor<P, R> = Visitor(analyzers, pClass)
 
     /**
      * Performs recursive traversal of the [PSI element][psiElement],
@@ -117,14 +118,15 @@ open class PsiMainAnalyzer<P : PsiElement, R, T>(
  * @param R the type of the analysis result.
  * @property analyzerToStat mapping from the analyzer to its computed results.
  */
-class Visitor<P : PsiElement, R>(private val analyzers: List<PsiAnalyzer<P, R>>) :
+open class Visitor<P : PsiElement, R>(private val analyzers: List<PsiAnalyzer<P, R>>, private val pClass: Class<P>) :
     PsiRecursiveElementVisitor() {
-    val analyzerToStat: AnalyzerToStat<P, R> = analyzers.associateBy({ it }, { mutableMapOf() })
+    open val analyzerToStat: AnalyzerToStat<P, R> = analyzers.associateBy({ it }, { mutableMapOf() })
 
     override fun visitElement(element: PsiElement) {
         analyzers.forEach { analyzer ->
-            (element as? P)?.let {
-                analyzerToStat[analyzer]?.set(element, analyzer.analyze(element))
+            if (element::class.java == pClass) {
+                val pElement = pClass.cast(element)
+                analyzerToStat[analyzer]?.set(pElement, analyzer.analyze(pElement))
             }
         }
         super.visitElement(element)

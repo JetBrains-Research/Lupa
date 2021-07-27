@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.research.ml.kotlinAnalysis.psi.gradle.GradleFileManager.Companion.extractRootGradleFileFromProject
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
 import java.nio.file.Paths
 import java.util.*
@@ -24,12 +23,6 @@ fun <T : PsiElement> Project.extractElementsOfType(
     return extractPsiFiles()
         .map { it.extractElementsOfType(psiElementClass) }
         .flatten()
-}
-
-/** Checks if [Project] is android by checking for "com.android.tools" dependency in root build gradle file. */
-fun Project.isAndroidProject(): Boolean {
-    return extractRootGradleFileFromProject(this)
-        ?.extractBuildGradleDependencyByName("com.android.tools") != null
 }
 
 /** Extracts all modules from project. */

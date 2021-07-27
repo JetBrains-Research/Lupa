@@ -14,12 +14,9 @@ class ImportDirectivesAnalysisExecutor(outputDir: Path, filename: String = "impo
     AnalysisExecutor() {
 
     private val dependenciesDataWriter = PrintWriterResourceManager(outputDir, filename)
-    private val projectsDataWriter = PrintWriterResourceManager(outputDir, "not_android_projects_data.csv")
-    override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter, projectsDataWriter)
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        projectsDataWriter.writer.println(project.name.replace('#', '/'))
-        projectsDataWriter.writer.flush()
         val packageDirectives = project.extractElementsOfType(KtPackageDirective::class.java)
             .filter { !it.isRoot }
         val projectPackageFqNames = packageDirectives.map { PackageDirectivePsiAnalyzer.analyze(it) }.toSet()
