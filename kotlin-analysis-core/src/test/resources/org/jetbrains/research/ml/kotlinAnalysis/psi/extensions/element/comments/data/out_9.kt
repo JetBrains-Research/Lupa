@@ -1,5 +1,3 @@
-package org.jetbrains.research.ml.kotlinAnalysis.psi.extensions.data
-
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater

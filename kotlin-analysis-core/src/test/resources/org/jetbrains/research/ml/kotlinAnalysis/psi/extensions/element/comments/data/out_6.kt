@@ -1,5 +1,3 @@
-package org.jetbrains.research.ml.kotlinAnalysis.psi.extensions.data
-
 class SimpleClass {
     fun method1() {
         val a = 5

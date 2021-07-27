@@ -1,5 +1,3 @@
-package org.jetbrains.research.ml.kotlinAnalysis.psi.extensions.data
-
 /**
  *  This
     is

@@ -1,5 +1,3 @@
-package org.jetbrains.research.ml.kotlinAnalysis.psi.extensions.data
-
 fun main() {
     val c = 5
     outer@ while (true) {

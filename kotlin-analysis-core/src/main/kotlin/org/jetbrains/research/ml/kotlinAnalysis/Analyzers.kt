@@ -118,9 +118,9 @@ open class PsiMainAnalyzer<P : PsiElement, R, T>(
  * @param R the type of the analysis result.
  * @property analyzerToStat mapping from the analyzer to its computed results.
  */
-open class Visitor<P : PsiElement, R>(private val analyzers: List<PsiAnalyzer<P, R>>, private val pClass: Class<P>) :
+class Visitor<P : PsiElement, R>(private val analyzers: List<PsiAnalyzer<P, R>>, private val pClass: Class<P>) :
     PsiRecursiveElementVisitor() {
-    open val analyzerToStat: AnalyzerToStat<P, R> = analyzers.associateBy({ it }, { mutableMapOf() })
+    val analyzerToStat: AnalyzerToStat<P, R> = analyzers.associateBy({ it }, { mutableMapOf() })
 
     override fun visitElement(element: PsiElement) {
         analyzers.forEach { analyzer ->
