@@ -29,7 +29,6 @@ allprojects {
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
     dependencies {
-        kotlin("reflect")
         implementation(kotlin("stdlib-jdk8"))
         implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
 
