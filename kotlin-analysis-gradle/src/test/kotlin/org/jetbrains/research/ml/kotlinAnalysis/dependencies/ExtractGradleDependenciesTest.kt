@@ -37,6 +37,6 @@ open class ExtractGradleDependenciesTest :
         val rootGradlePsiFile = GradleFileManager.extractRootGradleFileFromProject(project!!)!!
         val actualGradleDependencies = rootGradlePsiFile.extractBuildGradleDependencies().map { it.toString() }.sorted()
         val expectedGradleDependencies = outFile!!.readLines().sorted()
-        Assert.assertEquals(actualGradleDependencies, expectedGradleDependencies)
+        Assert.assertEquals(expectedGradleDependencies, actualGradleDependencies)
     }
 }

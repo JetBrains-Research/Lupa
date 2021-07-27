@@ -9,7 +9,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import java.nio.file.Paths
 
 @RunWith(Parameterized::class)
 open class ExtractGradleFromProjectTest :
@@ -35,18 +34,18 @@ open class ExtractGradleFromProjectTest :
     @Test
     fun testExtractGradleFilesFromProject() {
         val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val actualGradleFilePaths =
-            GradleFileManager.extractGradleFilesFromProject(project!!).map { it.virtualFile.path }
-        val expectedGradleFilePaths = outFile!!.readLines().sorted().map { Paths.get(name) }
-        Assert.assertEquals(actualGradleFilePaths, expectedGradleFilePaths)
+        val actualGradleFilePaths = GradleFileManager
+            .extractGradleFilesFromProject(project!!).map { it.parent!!.name }.sorted()
+        val expectedGradleFilePaths = outFile!!.readLines().sorted()
+        Assert.assertEquals(expectedGradleFilePaths, actualGradleFilePaths)
     }
 
     @Test
     fun testExtractRootGradleFileFromProject() {
         val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val actualRootGradleFilePath =
-            GradleFileManager.extractRootGradleFileFromProject(project!!)?.virtualFile?.path
-        val expectedGradleFilePaths = outFile!!.readLines().sorted().map { Paths.get(name) }[0]
-        Assert.assertEquals(actualRootGradleFilePath, expectedGradleFilePaths)
+        val actualRootGradleFilePath = GradleFileManager
+            .extractRootGradleFileFromProject(project!!)!!.parent!!.name
+        val expectedGradleFilePaths = outFile!!.readLines()[0]
+        Assert.assertEquals(expectedGradleFilePaths, actualRootGradleFilePath)
     }
 }
