@@ -6,19 +6,23 @@ package org.jetbrains.research.ml.kotlinAnalysis
 class GradleFileUtil {
     companion object {
 
+        private const val NAME = "[^:\'\"]*"
+        private const val QUOTES = "[\'\"]"
+        private const val SEPARATORS = "[\'\":,]+"
+
         private val GRADLE_DEPENDENCIES_SHORT_REGEX = "(${
             GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?[\'\"]([^:]*)[\'\":,]+([^:]*)([\'\":,]+.*)?[\'\"][)]?"
+        })[(]?$QUOTES($NAME)$SEPARATORS($NAME)($SEPARATORS$NAME)?$QUOTES[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         private val GRADLE_DEPENDENCIES_FULL_REGEX = "(${
             GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?group=[\'\"]([^:]*)['\"]name=['\"]([^:]*)['\"](version=['\"][^:]*['\"])?[)]?"
+        })[(]?group=$QUOTES($NAME)$QUOTES,name=$QUOTES($NAME)$QUOTES(,version=$QUOTES$NAME$QUOTES)?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         private val GRADLE_DEPENDENCIES_KOTLIN_REGEX = "(${
             GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?kotlin[(]?['\"]([^:'\"]*)['\"].*[)]?[)]?"
+        })[(]?kotlin[(]?$QUOTES($NAME)$QUOTES.*[)]?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         fun parseGradleDependencyFromString(gradleDependencyLine: String): GradleDependency? {

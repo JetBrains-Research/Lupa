@@ -37,11 +37,7 @@ object KtsGradleDependencyAnalyzer :
 
     override fun analyze(psiElement: KtCallExpression, context: GradleBlockContext): GradleDependency? {
         return if (context.blocksStack.contains(GradleBlock.DEPENDENCIES)) {
-            val dependency = GradleFileUtil.parseGradleDependencyFromString(psiElement.text)
-            if (dependency == null && !psiElement.text.startsWith("dependencies")) {
-                println("can not parse ${psiElement.text}")
-            }
-            dependency
+            GradleFileUtil.parseGradleDependencyFromString(psiElement.text)
         } else {
             null
         }
