@@ -30,7 +30,7 @@ The optional argument ```--allowed-extensions``` accepts a list of extensions.
 Only files with these extensions will be saved (without this argument all files will be saved).
 
 
-#### Save GitHub metrics
+### Save GitHub metrics
 
 Run the script for saving different GitHub metrics (f.e. number of repository stars) every day:
 
