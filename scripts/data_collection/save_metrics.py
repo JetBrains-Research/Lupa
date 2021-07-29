@@ -21,6 +21,7 @@ if module_path not in sys.path:
     sys.path.append(module_path)
 
 from utils import create_directory
+from data_collection.data_collection_utils import get_github_token
 
 
 def main():
@@ -31,8 +32,7 @@ def main():
         header = "\t".join(["full_name", "stars", "forks", "issues", "time"])
         results_fout.write(header + "\n")
 
-    os.environ['GIT_TERMINAL_PROMPT'] = '0'
-    token = os.getenv('GITHUB_TOKEN')
+    token = get_github_token()
     github = Github(token, retry=Retry(total=50, backoff_factor=10, status_forcelist=[403]))
 
     schedule.every().day.at("01:00").do(save_metrics, args.csv_path, results_path, github)
