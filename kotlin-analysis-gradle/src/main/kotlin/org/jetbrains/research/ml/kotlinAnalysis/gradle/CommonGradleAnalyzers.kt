@@ -49,7 +49,14 @@ open class GradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
 
     override fun analyze(psiElement: P, context: GradleBlockContext): GradleDependency? {
         return if (context.containsBlock(GradleBlock.DEPENDENCIES)) {
-            GradleFileUtil.parseGradleDependencyFromString(psiElement.text)
+            GradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (group, name, key) ->
+                GradleDependency(
+                    group,
+                    name,
+                    GradleDependencyConfiguration.fromKey(key),
+                    context.containsBlock(GradleBlock.ALL_PROJECTS)
+                )
+            }
         } else {
             null
         }

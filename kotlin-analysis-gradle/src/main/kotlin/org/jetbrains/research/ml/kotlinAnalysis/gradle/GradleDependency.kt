@@ -33,6 +33,11 @@ enum class GradleDependencyConfiguration(
  * [group] = "com.android.tools.build:gradle:4.1.1"
  * [configuration] = [GradleDependencyConfiguration.CLASSPATH]
  * */
-data class GradleDependency(val group: String, val name: String, val configuration: GradleDependencyConfiguration?) {
+data class GradleDependency(
+    val group: String,
+    val name: String,
+    val configuration: GradleDependencyConfiguration?,
+    val allProjects: Boolean = false
+) {
     override fun toString(): String = "${configuration?.key ?: "none"} $group:$name"
 }
