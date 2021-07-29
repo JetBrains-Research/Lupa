@@ -2,6 +2,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleFileManager
 import java.nio.file.Path
 
 class AndroidProjectsFilterExecutor(outputDir: Path, filename: String = "not_android_projects_data.csv") :

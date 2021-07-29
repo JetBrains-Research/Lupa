@@ -35,12 +35,12 @@ allprojects {
         // Plugin utilities modules
         implementation("$utilitiesProjectName:plugin-utilities-core") {
             version {
-                branch = "main"
+                branch = "open_repo"
             }
         }
         implementation("$utilitiesProjectName:plugin-utilities-test") {
             version {
-                branch = "main"
+                branch = "open_repo"
             }
         }
     }

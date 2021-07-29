@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 enum class GradleBlock(val simpleName: String?) {
     DEPENDENCIES("dependencies"),

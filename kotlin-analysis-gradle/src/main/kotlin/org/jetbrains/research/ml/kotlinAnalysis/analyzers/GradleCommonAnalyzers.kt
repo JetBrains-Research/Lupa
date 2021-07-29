@@ -1,4 +1,10 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.analyzers
+
+import org.jetbrains.research.ml.kotlinAnalysis.AnalyzerContext
+import org.jetbrains.research.ml.kotlinAnalysis.AnalyzerWithContextToStat
+import org.jetbrains.research.ml.kotlinAnalysis.AnalyzersAggregatorWithContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependency
 
 /** Analysis context which stores stack of visited blocks [GradleBlock] on path to current psi element. */
 data class GradleBlockContext(var blocksStack: MutableList<GradleBlock> = mutableListOf()) : AnalyzerContext

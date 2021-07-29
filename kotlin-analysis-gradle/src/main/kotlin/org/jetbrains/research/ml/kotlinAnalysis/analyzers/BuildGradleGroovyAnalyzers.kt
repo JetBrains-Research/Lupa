@@ -1,9 +1,15 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.analyzers
 
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrApplicationStatementImpl
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
+import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzerWithContextImpl
+import org.jetbrains.research.ml.kotlinAnalysis.PsiContextControllerImpl
+import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.BuildGradleFileUtil
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependency
 
 /**
  * Controller for stack of blocks in build.gradle file, which controls the blocks [GradleBlock] order according to
@@ -39,7 +45,7 @@ object GroovyGradleDependencyAnalyzer :
 
     override fun analyze(psiElement: GrApplicationStatementImpl, context: GradleBlockContext): GradleDependency? {
         return if (context.blocksStack.contains(GradleBlock.DEPENDENCIES)) {
-            GradleFileUtil.parseGradleDependencyFromString(psiElement.text)
+            BuildGradleFileUtil.parseGradleDependencyFromString(psiElement.text)
         } else {
             null
         }

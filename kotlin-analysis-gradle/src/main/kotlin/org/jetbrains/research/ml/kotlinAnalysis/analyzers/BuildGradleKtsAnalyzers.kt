@@ -1,6 +1,12 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.analyzers
 
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzerWithContextImpl
+import org.jetbrains.research.ml.kotlinAnalysis.PsiContextControllerImpl
+import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.BuildGradleFileUtil
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependency
 
 /**
  * Controller for stack of blocks in build.gradle.kts file, which controls the blocks [GradleBlock] order according to
@@ -31,13 +37,13 @@ object KtsGradleBlockContextController :
  * Analyser for gradle dependency which parse [GradleDependency] form [KtCallExpression] inside
  * [GradleBlock.DEPENDENCIES] block.
  */
-object KtsGradleDependencyAnalyzer :
+object KtsBuildGradleDependencyAnalyzer :
     PsiAnalyzerWithContextImpl<GradleBlockContext, KtCallExpression, GradleDependency?>
         (KtCallExpression::class.java) {
 
     override fun analyze(psiElement: KtCallExpression, context: GradleBlockContext): GradleDependency? {
         return if (context.blocksStack.contains(GradleBlock.DEPENDENCIES)) {
-            GradleFileUtil.parseGradleDependencyFromString(psiElement.text)
+            BuildGradleFileUtil.parseGradleDependencyFromString(psiElement.text)
         } else {
             null
         }
@@ -50,9 +56,9 @@ object KtsGradleDependencyAnalyzer :
  * [implementation|api|compile|...][KtCallExpression] block ->
  * as its arguments
  */
-object KtsGradleDependenciesAnalyzer :
+object KtsBuildGradleDependenciesAnalyzer :
     PsiMainAnalyzerWithContext<GradleBlockContext, GradleDependency?, List<GradleDependency>>(
         listOf(KtsGradleBlockContextController),
-        listOf(KtsGradleDependencyAnalyzer),
+        listOf(KtsBuildGradleDependencyAnalyzer),
         GradleDependenciesAggregator
     )

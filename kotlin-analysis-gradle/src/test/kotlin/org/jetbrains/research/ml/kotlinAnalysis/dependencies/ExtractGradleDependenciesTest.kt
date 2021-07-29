@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.dependencies
 
-import org.jetbrains.research.ml.kotlinAnalysis.GradleFileManager
-import org.jetbrains.research.ml.kotlinAnalysis.util.ProjectSetupUtil
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleFileManager
+import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.junit.Assert
@@ -33,10 +33,12 @@ open class ExtractGradleDependenciesTest :
 
     @Test
     fun testExtractRootGradleFileFromProject() {
-        val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val rootGradlePsiFile = GradleFileManager.extractRootGradleFileFromProject(project!!)!!
-        val actualGradleDependencies = rootGradlePsiFile.extractBuildGradleDependencies().map { it.toString() }.sorted()
-        val expectedGradleDependencies = outFile!!.readLines().sorted()
-        Assert.assertEquals(expectedGradleDependencies, actualGradleDependencies)
+        RepositoryOpenerUtil.openReloadRepositoryOpener(inFile!!.toPath()) { project ->
+            val rootGradlePsiFile = GradleFileManager.extractRootGradleFileFromProject(project)!!
+            val actualGradleDependencies =
+                rootGradlePsiFile.extractBuildGradleDependencies().map { it.toString() }.sorted()
+            val expectedGradleDependencies = outFile!!.readLines().sorted()
+            Assert.assertEquals(expectedGradleDependencies, actualGradleDependencies)
+        }
     }
 }

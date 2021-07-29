@@ -2,7 +2,7 @@ package org.jetbrains.research.ml.kotlinAnalysis.psi.extensions.project.modules
 
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractModules
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractRootModule
-import org.jetbrains.research.ml.kotlinAnalysis.util.ProjectSetupUtil
+import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.junit.Assert
@@ -35,17 +35,19 @@ open class PsiExtractProjectModulesTest : ParametrizedBaseTest(getResourcesRootP
 
     @Test
     fun testExtractAllModulesFromProject() {
-        val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val actualModuleNames = project!!.extractModules().map { it.name }
-        val expectedModuleNames = outFile!!.readLines().sorted()
-        Assert.assertEquals(actualModuleNames, expectedModuleNames)
+        RepositoryOpenerUtil.openReloadRepositoryOpener(inFile!!.toPath()) { project ->
+            val actualModuleNames = project.extractModules().map { it.name }
+            val expectedModuleNames = outFile!!.readLines().sorted()
+            Assert.assertEquals(actualModuleNames, expectedModuleNames)
+        }
     }
 
     @Test
     fun testExtractRootModuleFromProject() {
-        val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val actualRootModuleName = project!!.extractRootModule()!!.name
-        val expectedRootModuleName = outFile!!.readLines()[0]
-        Assert.assertEquals(actualRootModuleName, expectedRootModuleName)
+        RepositoryOpenerUtil.openReloadRepositoryOpener(inFile!!.toPath()) { project ->
+            val actualRootModuleName = project.extractRootModule()!!.name
+            val expectedRootModuleName = outFile!!.readLines()[0]
+            Assert.assertEquals(actualRootModuleName, expectedRootModuleName)
+        }
     }
 }
