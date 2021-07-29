@@ -1,0 +1,11 @@
+androidTestImplementation androidx.test:runner
+classpath com.android.tools.build:gradle
+classpath org.jetbrains.kotlin:gradle-plugin
+compileOnly com.google.guava:guava
+implementation org.apache.commons:commons-math3
+implementation org.jetbrains.kotlin:stdlib-jdk8
+implementation org.jetbrains.kotlinx:kotlinx-coroutines-core
+testCompile junit:junit
+testRuntimeOnly junit:junit
+testImplementation junit:junit
+testRuntimeOnly org.junit.jupiter:junit-jupiter-engine

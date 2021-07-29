@@ -1,0 +1,3 @@
+in_2_kotlin_multi_module_project
+first_module
+second_module
