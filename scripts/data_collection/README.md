@@ -28,3 +28,18 @@ python3 scripts/data_collection/load_dataset.py /path/to/cleaned/data/dir/result
 ```
 The optional argument ```--allowed-extensions``` accepts a list of extensions. 
 Only files with these extensions will be saved (without this argument all files will be saved).
+
+
+#### Save GitHub metrics
+
+Run the script for saving different GitHub metrics (f.e. number of repository stars) every day:
+
+``` shell script
+python3 scripts/data_collection/save_metrics.py /path/to/csv_file/results.csv /path/to/output/metrics/dir
+```
+
+Or with nohup:
+``` shell script
+nohup python3 -u scripts/data_collection/save_metrics.py /path/to/csv_file/results.csv /path/to/output/metrics/dir > output.log &
+```
+This script makes requests to GitHub API, so you should add your GitHub Token to environment variables (variable name is ```GITHUB_TOKEN```).

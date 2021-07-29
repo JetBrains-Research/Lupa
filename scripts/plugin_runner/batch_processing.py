@@ -16,13 +16,13 @@ from pathlib import Path
 from shutil import copytree
 from typing import List
 
-from plugin_runner.merge_data import merge_clones, merge_ranges
-
 module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
 if module_path not in sys.path:
     sys.path.append(module_path)
 
 from utils import get_subdirectories, create_directory, Extensions
+from plugin_runner.merge_data import merge_clones, merge_ranges
+
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
 
