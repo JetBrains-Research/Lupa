@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 /** Dependency declaration configuration. */
 enum class GradleDependencyConfiguration(

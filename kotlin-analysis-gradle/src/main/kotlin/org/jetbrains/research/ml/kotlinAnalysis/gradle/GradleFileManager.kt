@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project

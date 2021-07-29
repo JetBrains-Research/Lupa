@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 /**
  * Util class for working with Gradle file structure, for example parsing dependencies from build files.
