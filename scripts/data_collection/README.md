@@ -43,3 +43,13 @@ Or with nohup:
 nohup python3 -u scripts/data_collection/save_metrics.py /path/to/csv_file/results.csv /path/to/output/metrics/dir > output.log &
 ```
 This script makes requests to GitHub API, so you should add your GitHub Token to environment variables (variable name is ```GITHUB_TOKEN```).
+
+
+### Save all data from GitHub
+
+Run the script for saving all GitHub JSON responses every day:
+
+``` shell script
+python3 scripts/data_collection/save_github_daily.py /path/to/csv_file/results.csv /path/to/output/jsons/dir
+```
+GitHub token is also required to run this script.
