@@ -1,10 +1,10 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
-import org.jetbrains.research.ml.kotlinAnalysis.util.ProjectSetupUtil
 import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 
@@ -38,7 +38,13 @@ abstract class AnalysisExecutor {
     /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        setupProject: (Path) -> Project? = ProjectSetupUtil.Companion::setUpProject
+        setupProject: (Path) -> Project? = { projectPath ->
+            ProjectManagerEx.getInstanceEx()
+                .openProject(
+                    projectPath,
+                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                )
+        }
     ) {
         init()
         try {
