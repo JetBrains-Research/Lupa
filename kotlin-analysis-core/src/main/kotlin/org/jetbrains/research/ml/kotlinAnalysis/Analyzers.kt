@@ -15,6 +15,18 @@ private fun <P : PsiElement> PsiElement.castToClass(pClass: Class<P>): P? {
 }
 
 /**
+ * Classes that implement this interface represent analyzer that analyzes the concrete type of PSI elements.
+ * For example, for the task "get fully qualified names for classes" [P] will be [PsiClass] and [R] will be [String]
+ * or any type that represents a fully qualified name.
+ * @param P the type of PSI elements that can be analyzed.
+ * @param R the type of the analysis result.
+ */
+interface PsiAnalyzer<P : PsiElement, R> {
+
+    fun analyze(psiElement: P): R?
+}
+
+/**
  * Classes that implement this interface should hold context of PSI tree while traversing to provide some
  * information from visited PSI elements to their subtrees.
  * For example, while build.gradle.kts dependencies analysis we should save the fact that we inside dependencies {} or
@@ -32,12 +44,12 @@ interface AnalyzerContext
  */
 interface PsiAnalyzerWithContext<C : AnalyzerContext, R> {
 
-    fun analyzeWithContext(psiElement: PsiElement, context: C): R?
+    fun analyze(psiElement: PsiElement, context: C?): R?
 }
 
 /**
- * [PsiAnalyzerWithContextImpl] implementation which specify psi element type [P] in analyzer. This implementation check
- * psi element type in [analyzeWithContext] and process analysis only if psi element type matches [pClass] type.
+ * [PsiAnalyzerWithContext] implementation which specify psi element type [P] in analyzer. This implementation check
+ * psi element type in [analyze] and process analysis only if psi element type matches [pClass] type.
  *
  * @param C the type of [AnalyzerContext] to get context in which element analysis is precessing.
  * @param P the type of PSI elements that can be analyzed.
@@ -47,24 +59,10 @@ interface PsiAnalyzerWithContext<C : AnalyzerContext, R> {
 abstract class PsiAnalyzerWithContextImpl<P : PsiElement, C : AnalyzerContext, R>(private val pClass: Class<P>) :
     PsiAnalyzerWithContext<C, R> {
 
-    abstract fun analyze(psiElement: P, context: C): R?
+    abstract fun analyzeWithContext(psiElement: P, context: C?): R?
 
-    override fun analyzeWithContext(psiElement: PsiElement, context: C): R? {
+    final override fun analyze(psiElement: PsiElement, context: C?): R? {
         return psiElement.castToClass(pClass)?.let { analyze(it, context) }
-    }
-}
-
-/** Null object for [AnalyzerContext] parameter, which does not store anythig. */
-object AnalyzerEmptyContext : AnalyzerContext
-
-/** [PsiAnalyzerWithContextImpl] implementation which ignores context and use [AnalyzerEmptyContext] instead. */
-abstract class PsiAnalyzer<P : PsiElement, R>(pClass: Class<P>) :
-    PsiAnalyzerWithContextImpl<P, AnalyzerEmptyContext, R>(pClass) {
-
-    abstract fun analyze(psiElement: P): R?
-
-    override fun analyze(psiElement: P, context: AnalyzerEmptyContext): R? {
-        return analyze(psiElement)
     }
 }
 
@@ -91,15 +89,7 @@ abstract class PsiAnalyzerWithCache<P : PsiElement, C : AnalyzerContext, R, T : 
      */
     abstract fun PsiElement.cacheKey(): T
 
-    /**
-     * Analyzes a [PSI element][psiElement] and returns the analysis result,
-     * for example, fully qualified name for a class or a function.
-     *
-     * If the analysis result is already computed for the corresponding key,
-     * the method returns the value stored in the cache.
-     * Otherwise, it runs [analyzeIfNotCached].
-     */
-    override fun analyze(psiElement: P, context: C): R? {
+    override fun analyzeWithContext(psiElement: P, context: C?): R? {
         val psiElementKey = psiElement.cacheKey()
         return cache[psiElementKey] ?: analyzeIfNotCached(psiElement)?.let {
             cache[psiElementKey] = it
@@ -125,9 +115,9 @@ abstract class PsiAnalyzerWithCache<P : PsiElement, C : AnalyzerContext, R, T : 
  */
 interface PsiContextController<C : AnalyzerContext> {
 
-    fun openPsiContext(psiElement: PsiElement, context: C) {}
+    fun openPsiContext(psiElement: PsiElement, context: C?) {}
 
-    fun closePsiContext(psiElement: PsiElement, context: C) {}
+    fun closePsiContext(psiElement: PsiElement, context: C?) {}
 }
 
 /**
@@ -138,18 +128,18 @@ interface PsiContextController<C : AnalyzerContext> {
  * @param C the type of [AnalyzerContext] to get context in which element analysis is precessing.
  * @param P the type of PSI elements that can be analyzed.
  */
-abstract class PsiContextControllerImpl<C : AnalyzerContext, P : PsiElement>(private val pClass: Class<P>) :
+abstract class PsiContextControllerImpl<P : PsiElement, C : AnalyzerContext>(private val pClass: Class<P>) :
     PsiContextController<C> {
 
-    open fun openContext(psiElement: P, context: C) {}
+    open fun openContext(psiElement: P, context: C?) {}
 
-    open fun closeContext(psiElement: P, context: C) {}
+    open fun closeContext(psiElement: P, context: C?) {}
 
-    override fun openPsiContext(psiElement: PsiElement, context: C) {
+    final override fun openPsiContext(psiElement: PsiElement, context: C?) {
         psiElement.castToClass(pClass)?.let { openContext(it, context) }
     }
 
-    override fun closePsiContext(psiElement: PsiElement, context: C) {
+    final override fun closePsiContext(psiElement: PsiElement, context: C?) {
         psiElement.castToClass(pClass)?.let { closeContext(it, context) }
     }
 }
@@ -182,10 +172,24 @@ open class PsiMainAnalyzerWithContext<C : AnalyzerContext, R, T>(
     private val aggregator: AnalyzersAggregatorWithContext<C, R, T>
 ) {
 
-    fun analyze(psiElement: PsiElement, context: C): T {
+    fun analyze(psiElement: PsiElement, context: C?): T {
         val visitor = VisitorWithContext(controllers, analyzers, context)
         psiElement.accept(visitor)
         return aggregator.aggregate(visitor.analyzerToStat)
+    }
+}
+
+/**
+ * [PsiMainAnalyzerWithContext] implementation which do not require [context][AnalyzerContext].
+ * [PsiMainAnalyzer] calls [analyze] method with null [AnalyzerContext] parameter.
+ */
+open class PsiMainAnalyzer<R, T>(
+    analyzers: List<PsiAnalyzerWithContext<AnalyzerContext, R>>,
+    aggregator: AnalyzersAggregatorWithContext<AnalyzerContext, R, T>
+) : PsiMainAnalyzerWithContext<AnalyzerContext, R, T>(listOf(), analyzers, aggregator) {
+
+    fun analyze(psiElement: PsiElement): T {
+        return super.analyze(psiElement, null)
     }
 }
 
@@ -200,7 +204,7 @@ open class PsiMainAnalyzerWithContext<C : AnalyzerContext, R, T>(
 class VisitorWithContext<C : AnalyzerContext, R>(
     private val controllers: List<PsiContextController<C>>,
     private val analyzers: List<PsiAnalyzerWithContext<C, R>>,
-    private val context: C
+    private val context: C?
 ) : PsiRecursiveElementVisitor() {
 
     val analyzerToStat: AnalyzerWithContextToStat<C, R> = analyzers.associateBy({ it }, { mutableMapOf() })
@@ -209,7 +213,7 @@ class VisitorWithContext<C : AnalyzerContext, R>(
         controllers.forEach { controller -> controller.openPsiContext(element, context) }
 
         analyzers.forEach { analyzer ->
-            analyzer.analyzeWithContext(element, context)?.let {
+            analyzer.analyze(element, context)?.let {
                 analyzerToStat[analyzer]?.set(element, it)
             }
         }
