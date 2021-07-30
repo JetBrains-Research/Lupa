@@ -1,3 +1,5 @@
+package com.swensun.func.recycler
+
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,3 +1,12 @@
-in_1_groovy_multi_module_project
-first_module
-second_module
+androidTestImplementation androidx.test.espresso:espresso-core
+annotationProcessor com.github.bumptech.glide:compiler
+api com.google.code.gson:gson
+classpath org.jetbrains.dokka:dokka-gradle-plugin
+compile org.jetbrains.kotlin:kotlin-stdlib-jre7
+compileOnly com.android.databinding:viewbinding
+implementation org.jetbrains.kotlin:kotlin-stdlib
+kapt androidx.room:room-compiler
+runtimeOnly com.h2database:h2
+testImplementation org.junit.jupiter:junit-jupiter-api
+testRuntime org.jetbrains.spek:spek-junit-platform-engine
+testRuntimeOnly org.junit.jupiter:junit-jupiter-engine

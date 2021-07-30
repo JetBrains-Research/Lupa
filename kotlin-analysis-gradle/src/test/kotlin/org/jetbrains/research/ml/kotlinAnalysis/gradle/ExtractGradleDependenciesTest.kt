@@ -1,7 +1,5 @@
-package org.jetbrains.research.ml.kotlinAnalysis.dependencies
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
-import org.jetbrains.research.ml.kotlinAnalysis.GradleFileManager
-import org.jetbrains.research.ml.kotlinAnalysis.util.ProjectSetupUtil
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.junit.Assert
@@ -9,6 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.nio.file.Paths
 
 @RunWith(Parameterized::class)
 open class ExtractGradleDependenciesTest :
@@ -33,10 +32,17 @@ open class ExtractGradleDependenciesTest :
 
     @Test
     fun testExtractRootGradleFileFromProject() {
-        val project = ProjectSetupUtil.setUpProject(inFile!!.toPath())
-        val rootGradlePsiFile = GradleFileManager.extractRootGradleFileFromProject(project!!)!!
-        val actualGradleDependencies = rootGradlePsiFile.extractBuildGradleDependencies().map { it.toString() }.sorted()
+        val resultDir = Paths.get(getResourcesRootPath(::ExtractGradleDependenciesTest))
+        val resultFileName = "result.txt"
+        val resultFile = File(resultDir.toFile(), resultFileName)
+
+        val analysisExecutor = GradleDependenciesAnalysisExecutor(resultDir, resultFileName)
+        analysisExecutor.execute(inFile!!.toPath())
+
         val expectedGradleDependencies = outFile!!.readLines().sorted()
+        val actualGradleDependencies = resultFile.readLines().sorted()
+        resultFile.delete()
+
         Assert.assertEquals(expectedGradleDependencies, actualGradleDependencies)
     }
 }
