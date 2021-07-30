@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 /** Scope block in gradle file. */
-enum class GradleBlock(val simpleName: String?) {
+enum class GradleBlock(val simpleName: String) {
     DEPENDENCIES("dependencies"),
     PLUGINS("plugins"),
     ALL_PROJECTS("allprojects"),
