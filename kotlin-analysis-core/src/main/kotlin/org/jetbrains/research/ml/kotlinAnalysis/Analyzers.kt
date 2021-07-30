@@ -62,7 +62,7 @@ abstract class PsiAnalyzerWithContextImpl<P : PsiElement, C : AnalyzerContext, R
     abstract fun analyzeWithContext(psiElement: P, context: C?): R?
 
     final override fun analyze(psiElement: PsiElement, context: C?): R? {
-        return psiElement.castToClass(pClass)?.let { analyze(it, context) }
+        return psiElement.castToClass(pClass)?.let { analyzeWithContext(it, context) }
     }
 }
 
