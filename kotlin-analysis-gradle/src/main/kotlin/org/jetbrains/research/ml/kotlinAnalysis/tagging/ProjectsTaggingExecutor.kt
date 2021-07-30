@@ -25,6 +25,7 @@ class ProjectsTaggingExecutor(outputDir: Path, filename: String = "not_android_p
     override fun analyse(project: Project) {
         val projectTags = taggers.flatMapTo(mutableSetOf()) { it.getProjectTag(project) }
             .ifEmpty { setOf(ProjectTag.OTHER) }
+            .map {it.value}
 
         projectsDataWriter.writer.println(
             listOf(
