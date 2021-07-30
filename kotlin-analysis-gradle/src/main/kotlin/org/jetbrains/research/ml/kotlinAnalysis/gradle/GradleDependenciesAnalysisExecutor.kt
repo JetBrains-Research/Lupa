@@ -1,6 +1,9 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.research.ml.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.ml.kotlinAnalysis.PrintWriterResourceManager
+import org.jetbrains.research.ml.kotlinAnalysis.ResourceManager
 import java.nio.file.Path
 
 /**

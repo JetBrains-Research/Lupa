@@ -1,5 +1,6 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependenciesAnalysisExecutor
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser

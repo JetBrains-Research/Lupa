@@ -1,5 +1,6 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
+/** Scope block in gradle file. */
 enum class GradleBlock(val simpleName: String?) {
     DEPENDENCIES("dependencies"),
     PLUGINS("plugins"),
@@ -9,7 +10,5 @@ enum class GradleBlock(val simpleName: String?) {
     companion object {
         fun fromSimpleName(simpleName: String) = values()
             .firstOrNull { it.simpleName.equals(simpleName, ignoreCase = true) }
-
-        fun availableKeys() = values().map { it.simpleName }
     }
 }

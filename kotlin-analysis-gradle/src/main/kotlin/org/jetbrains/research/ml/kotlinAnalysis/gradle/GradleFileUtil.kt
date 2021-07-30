@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 /**
  * Util class for working with Gradle file structure, for example parsing dependencies from build files.
@@ -25,22 +25,24 @@ class GradleFileUtil {
         })[(]?kotlin[(]?$QUOTES($NAME)$QUOTES.*[)]?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
-        fun parseGradleDependencyFromString(gradleDependencyLine: String): GradleDependency? {
+        fun parseGradleDependencyParams(gradleDependencyLine: String): Triple<String, String, String>? {
             return gradleDependencyLine.replace("\\s".toRegex(), "")
                 .let { dependencyLine ->
                     (GRADLE_DEPENDENCIES_SHORT_REGEX.matchEntire(dependencyLine)
                         ?: GRADLE_DEPENDENCIES_FULL_REGEX.matchEntire(dependencyLine))
-                        ?.groups?.let {
+                        ?.groups
+                        ?.let {
                             val key = it[1]?.value ?: return null
                             val group = it[2]?.value ?: return null
                             val name = it[3]?.value ?: return null
-                            GradleDependency(group, name, GradleDependencyConfiguration.fromKey(key))
+                            Triple(key, group, name)
                         } ?: (GRADLE_DEPENDENCIES_KOTLIN_REGEX.matchEntire(dependencyLine))
-                        ?.groups?.let {
+                        ?.groups
+                        ?.let {
                             val key = it[1]?.value ?: return null
                             val group = "org.jetbrains.kotlin"
                             val name = it[2]?.value ?: return null
-                            GradleDependency(group, name, GradleDependencyConfiguration.fromKey(key))
+                            Triple(key, group, name)
                         }
                 }
         }
