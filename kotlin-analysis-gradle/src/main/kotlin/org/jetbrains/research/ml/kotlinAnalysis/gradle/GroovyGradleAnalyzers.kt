@@ -11,8 +11,9 @@ import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
  * psi tree path order.
  */
 object GroovyGradleBlockContextController :
-    GradleBlockContextController<GrMethodCallExpressionImpl>(GrMethodCallExpressionImpl::class.java,
-        { psiElement -> psiElement.callReference?.methodName?.let { GradleBlock.fromSimpleName(it) } })
+    GradleBlockContextController<GrMethodCallExpressionImpl>(GrMethodCallExpressionImpl::class.java, { psiElement ->
+        psiElement.callReference?.methodName?.let { GradleBlock.fromSimpleName(it) }
+    })
 
 /**
  * Analyser for gradle dependency which parse [GradleDependency] form [GrApplicationStatementImpl] inside

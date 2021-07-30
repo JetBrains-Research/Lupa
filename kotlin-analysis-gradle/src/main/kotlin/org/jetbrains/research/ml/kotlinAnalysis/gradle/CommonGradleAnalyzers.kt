@@ -28,15 +28,14 @@ class GradleBlockContext(private val blocksStack: MutableList<GradleBlock> = mut
 open class GradleBlockContextController<P : PsiElement>(
     pClass: Class<P>,
     val getGradleBlock: (P) -> GradleBlock?
-) :
-    PsiContextControllerImpl<GradleBlockContext, P>(pClass) {
+) : PsiContextControllerImpl<P, GradleBlockContext>(pClass) {
 
-    override fun openContext(psiElement: P, context: GradleBlockContext) {
-        getGradleBlock(psiElement)?.let { context.addBlock(it) }
+    override fun openContext(psiElement: P, context: GradleBlockContext?) {
+        getGradleBlock(psiElement)?.let { context?.addBlock(it) }
     }
 
-    override fun closeContext(psiElement: P, context: GradleBlockContext) {
-        getGradleBlock(psiElement)?.let { context.removeBlock(it) }
+    override fun closeContext(psiElement: P, context: GradleBlockContext?) {
+        getGradleBlock(psiElement)?.let { context?.removeBlock(it) }
     }
 }
 
@@ -45,10 +44,11 @@ open class GradleBlockContextController<P : PsiElement>(
  * [GradleBlock.DEPENDENCIES] block.
  */
 open class GradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
-    PsiAnalyzerWithContextImpl<GradleBlockContext, P, GradleDependency?>(pClass) {
+    PsiAnalyzerWithContextImpl<P, GradleBlockContext, GradleDependency?>(pClass) {
 
-    override fun analyze(psiElement: P, context: GradleBlockContext): GradleDependency? {
-        return if (context.containsBlock(GradleBlock.DEPENDENCIES)) {
+    override fun analyzeWithContext(psiElement: P, context: GradleBlockContext?): GradleDependency? {
+        assert(context != null) { "Context should be provided" }
+        return if (context!!.containsBlock(GradleBlock.DEPENDENCIES)) {
             GradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (group, name, key) ->
                 GradleDependency(
                     group,
