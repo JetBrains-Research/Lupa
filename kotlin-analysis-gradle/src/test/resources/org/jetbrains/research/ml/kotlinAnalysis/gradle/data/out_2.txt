@@ -1,11 +1,12 @@
-androidTestImplementation androidx.test:runner
-classpath com.android.tools.build:gradle
-classpath org.jetbrains.kotlin:gradle-plugin
-compileOnly com.google.guava:guava
-implementation org.apache.commons:commons-math3
-implementation org.jetbrains.kotlin:stdlib-jdk8
-implementation org.jetbrains.kotlinx:kotlinx-coroutines-core
-testCompile junit:junit
-testRuntimeOnly junit:junit
-testImplementation junit:junit
-testRuntimeOnly org.junit.jupiter:junit-jupiter-engine
+project_name,module_id,group,name,config
+sample_project,2,androidx.test,runner,androidTestImplementation
+sample_project,2,com.android.tools.build,gradle,classpath
+sample_project,2,com.google.guava,guava,compileOnly
+sample_project,2,junit,junit,testCompile
+sample_project,2,junit,junit,testImplementation
+sample_project,2,junit,junit,testRuntimeOnly
+sample_project,2,org.apache.commons,commons-math3,implementation
+sample_project,2,org.jetbrains.kotlin,gradle-plugin,classpath
+sample_project,2,org.jetbrains.kotlin,stdlib-jdk8,implementation
+sample_project,2,org.jetbrains.kotlinx,kotlinx-coroutines-core,implementation
+sample_project,2,org.junit.jupiter,junit-jupiter-engine,testRuntimeOnly
