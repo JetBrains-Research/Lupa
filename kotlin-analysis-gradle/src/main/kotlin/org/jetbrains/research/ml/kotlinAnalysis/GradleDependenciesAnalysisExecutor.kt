@@ -24,8 +24,7 @@ class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gr
     override fun analyse(project: Project) {
         project.extractModules()
             .forEach { module ->
-                GradleUtil.findGradleModuleData(module)
-                GradleFileManager.extractSettingsGradleFileFromModule(module)
+                val subModules = GradleFileManager.extractSettingsGradleFileFromModule(module)?.extractIncludedModuleNames()
                 GradleFileManager
                     .extractBuildGradleFileFromModule(module)
                     ?.extractBuildGradleDependencies()

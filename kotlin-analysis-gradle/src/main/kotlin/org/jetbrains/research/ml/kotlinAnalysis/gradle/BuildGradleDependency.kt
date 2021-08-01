@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.gradle
 
 /** Dependency declaration configuration. */
-enum class GradleDependencyConfiguration(
+enum class BuildGradleDependencyConfiguration(
     val key: String
 ) {
     KAPT("kapt"),
@@ -31,8 +31,13 @@ enum class GradleDependencyConfiguration(
  *          classpath "com.android.tools.build:gradle:4.1.1"
  *     }
  * [group] = "com.android.tools.build:gradle:4.1.1"
- * [configuration] = [GradleDependencyConfiguration.CLASSPATH]
+ * [configuration] = [BuildGradleDependencyConfiguration.CLASSPATH]
  * */
-data class GradleDependency(val group: String, val name: String, val configuration: GradleDependencyConfiguration?) {
+data class BuildGradleDependency(
+    val group: String,
+    val name: String,
+    val configuration: BuildGradleDependencyConfiguration?,
+    val allProjects: Boolean = false
+) {
     override fun toString(): String = "${configuration?.key ?: "none"} $group:$name"
 }

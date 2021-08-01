@@ -18,7 +18,7 @@ class AndroidProjectsFilterExecutor(outputDir: Path, filename: String = "not_and
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectsDataWriter)
 
     override fun analyse(project: Project) {
-        val gradleFile = GradleFileManager.extractRootGradleFileFromProject(project)
+        val gradleFile = GradleFileManager.extractRootBuildGradleFileFromProject(project)
             ?: run {
                 logger.info("Can not find gradle file in project ${project.name}")
                 return

@@ -23,34 +23,92 @@ class GradleFileManager {
             GradleConstants.KOTLIN_DSL_SCRIPT_NAME
         )
 
-        /** Converts [PsiFile] to [GradleKtsPsiFile] or [GradleGroovyPsiFile] according to type. */
-        private fun PsiFile.toGradlePsiFile(): GradlePsiFile? {
-            return when (this) {
-                is GroovyFileImpl -> GradleGroovyPsiFile(this)
-                is KtFile -> if (this.isScript()) GradleKtsPsiFile(this) else null
+        private val SETTINGS_GRADLE_SCRIPT_NAMES = listOf(
+            GradleConstants.SETTINGS_FILE_NAME,
+            GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME
+        )
+
+        /** Converts [PsiFile] to [BuildGradleKtsPsiFile] or [BuildGradleGroovyPsiFile] according to type. */
+        private fun toBuildGradlePsiFile(psiFile: PsiFile): BuildGradlePsiFile? {
+            return when (psiFile) {
+                is GroovyFileImpl -> BuildGradleGroovyPsiFile(psiFile)
+                is KtFile -> if (psiFile.isScript()) BuildGradleKtsPsiFile(psiFile) else null
+                else -> null
+            }
+        }
+
+        /** Converts [PsiFile] to [SettingsGradleKtsPsiFile] or [SettingsGradleGroovyPsiFile] according to type. */
+        private fun toSettingsGradlePsiFile(psiFile: PsiFile): SettingsGradlePsiFile? {
+            return when (psiFile) {
+                is GroovyFileImpl -> SettingsGradleGroovyPsiFile(psiFile)
+                is KtFile -> if (psiFile.isScript()) SettingsGradleKtsPsiFile(psiFile) else null
                 else -> null
             }
         }
 
         /** Extracts all Gradle files from given [module]. */
-        fun extractGradleFileFromModule(module: Module): GradlePsiFile? {
-            return BUILD_GRADLE_SCRIPT_NAMES
+        private fun <T> extractGradleFileFromModule(
+            module: Module,
+            gradleFileNames: List<String>,
+            toGradleFile: (PsiFile) -> T?
+        ): T? {
+            return gradleFileNames
                 .mapNotNull { module.findPsiFileByName(it) }
-                .mapNotNull { it.toGradlePsiFile() }
+                .mapNotNull { toGradleFile(it) }
                 .toList().firstOrNull()
         }
 
         /** Extracts all Gradle files from given [project]. */
-        fun extractGradleFilesFromProject(project: Project): List<GradlePsiFile> {
-            return project.extractPsiFiles { file -> file.name in BUILD_GRADLE_SCRIPT_NAMES }
-                .mapNotNull { it.toGradlePsiFile() }
+        private fun <T> extractGradleFilesFromProject(
+            project: Project,
+            gradleFileNames: List<String>,
+            toGradleFile: (PsiFile) -> T?
+        ): List<T> {
+            return project.extractPsiFiles { file -> file.name in gradleFileNames }
+                .mapNotNull { toGradleFile(it) }
                 .toList()
         }
 
-        /** Extracts root Gradle file from given [project]. */
-        fun extractRootGradleFileFromProject(project: Project): GradlePsiFile? {
+        /** Extracts all Gradle build files from given [module]. */
+        fun extractBuildGradleFileFromModule(module: Module): BuildGradlePsiFile? {
+            return extractGradleFileFromModule(
+                module,
+                BUILD_GRADLE_SCRIPT_NAMES,
+                ::toBuildGradlePsiFile
+            )
+        }
+
+        /** Extracts all Gradle build files from given [project]. */
+        fun extractBuildGradleFilesFromProject(project: Project): List<BuildGradlePsiFile> {
+            return extractGradleFilesFromProject(
+                project,
+                BUILD_GRADLE_SCRIPT_NAMES,
+                ::toBuildGradlePsiFile
+            )
+        }
+
+        /** Extracts root Gradle build file from given [project]. */
+        fun extractRootBuildGradleFileFromProject(project: Project): BuildGradlePsiFile? {
             return project.findPsiFile { file -> file.name in BUILD_GRADLE_SCRIPT_NAMES }
-                ?.toGradlePsiFile()
+                ?.run(::toBuildGradlePsiFile)
+        }
+
+        /** Extracts all Gradle settings files from given [module]. */
+        fun extractSettingsGradleFileFromModule(module: Module): SettingsGradlePsiFile? {
+            return extractGradleFileFromModule(
+                module,
+                SETTINGS_GRADLE_SCRIPT_NAMES,
+                ::toSettingsGradlePsiFile
+            )
+        }
+
+        /** Extracts all Gradle settings files from given [project]. */
+        fun extractSettingsGradleFilesFromProject(project: Project): List<SettingsGradlePsiFile> {
+            return extractGradleFilesFromProject(
+                project,
+                SETTINGS_GRADLE_SCRIPT_NAMES,
+                ::toSettingsGradlePsiFile
+            )
         }
     }
 }

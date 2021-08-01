@@ -44,7 +44,7 @@ open class ExtractGradleFromProjectTest :
     fun testExtractRootGradleFileFromProject() {
         RepositoryOpenerUtil.openReloadRepositoryOpener(inFile!!.toPath()) { project ->
             val actualRootGradleFilePath = GradleFileManager
-                .extractRootGradleFileFromProject(project)!!.parent!!.name
+                .extractRootBuildGradleFileFromProject(project)!!.parent!!.name
             val expectedGradleFilePaths = outFile!!.readLines()[0]
             Assert.assertEquals(expectedGradleFilePaths, actualRootGradleFilePath)
         }

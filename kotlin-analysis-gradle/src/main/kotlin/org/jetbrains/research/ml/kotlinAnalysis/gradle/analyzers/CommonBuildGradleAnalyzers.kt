@@ -1,7 +1,11 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.analyzers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.research.ml.kotlinAnalysis.*
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.BuildGradleFileUtil
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.BuildGradleDependency
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.BuildGradleDependencyConfiguration
 
 /** Analysis context which stores stack of visited blocks [GradleBlock] on path to current psi element. */
 class GradleBlockContext(private val blocksStack: MutableList<GradleBlock> = mutableListOf()) : AnalyzerContext {
@@ -40,20 +44,20 @@ open class GradleBlockContextController<P : PsiElement>(
 }
 
 /**
- * Analyser for gradle dependency which parse [GradleDependency] form []psiElement][P] inside
+ * Analyser for gradle dependency which parse [BuildGradleDependency] form []psiElement][P] inside
  * [GradleBlock.DEPENDENCIES] block.
  */
-open class GradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
-    PsiAnalyzerWithContextImpl<P, GradleBlockContext, GradleDependency?>(pClass) {
+open class BuildGradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
+    PsiAnalyzerWithContextImpl<P, GradleBlockContext, BuildGradleDependency?>(pClass) {
 
-    override fun analyzeWithContext(psiElement: P, context: GradleBlockContext?): GradleDependency? {
+    override fun analyzeWithContext(psiElement: P, context: GradleBlockContext?): BuildGradleDependency? {
         assert(context != null) { "Context should be provided" }
         return if (context!!.containsBlock(GradleBlock.DEPENDENCIES)) {
-            GradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (key, group, name) ->
-                GradleDependency(
+            BuildGradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (key, group, name) ->
+                BuildGradleDependency(
                     group,
                     name,
-                    GradleDependencyConfiguration.fromKey(key),
+                    BuildGradleDependencyConfiguration.fromKey(key),
                     context.containsBlock(GradleBlock.ALL_PROJECTS)
                 )
             }
@@ -63,11 +67,11 @@ open class GradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
     }
 }
 
-/** Aggregator which combine results from gradle dependency analysis to list of [GradleDependency]. */
-object GradleDependenciesAggregator :
-    AnalyzersAggregatorWithContext<GradleBlockContext, GradleDependency?, List<GradleDependency>>() {
-    override fun aggregate(analyzerToStat: AnalyzerWithContextToStat<GradleBlockContext, GradleDependency?>):
-            List<GradleDependency> {
+/** Aggregator which combine results from gradle dependency analysis to list of [BuildGradleDependency]. */
+object BuildGradleDependenciesAggregator :
+    AnalyzersAggregatorWithContext<GradleBlockContext, BuildGradleDependency?, List<BuildGradleDependency>>() {
+    override fun aggregate(analyzerToStat: AnalyzerWithContextToStat<GradleBlockContext, BuildGradleDependency?>):
+            List<BuildGradleDependency> {
         return analyzerToStat.values.flatMap { it.values }.filterNotNull().toList()
     }
 }

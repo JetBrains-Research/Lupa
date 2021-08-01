@@ -34,7 +34,7 @@ open class ExtractGradleDependenciesTest :
     @Test
     fun testExtractRootGradleFileFromProject() {
         RepositoryOpenerUtil.openReloadRepositoryOpener(inFile!!.toPath()) { project ->
-            val rootGradlePsiFile = GradleFileManager.extractRootGradleFileFromProject(project)!!
+            val rootGradlePsiFile = GradleFileManager.extractRootBuildGradleFileFromProject(project)!!
             val actualGradleDependencies =
                 rootGradlePsiFile.extractBuildGradleDependencies().map { it.toString() }.sorted()
             val expectedGradleDependencies = outFile!!.readLines().sorted()

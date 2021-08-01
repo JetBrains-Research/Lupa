@@ -3,9 +3,9 @@ package org.jetbrains.research.ml.kotlinAnalysis.gradle
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyFileImpl
-import org.jetbrains.research.ml.kotlinAnalysis.analyzers.GradleBlockContext
-import org.jetbrains.research.ml.kotlinAnalysis.analyzers.GroovyGradleDependenciesAnalyzer
-import org.jetbrains.research.ml.kotlinAnalysis.analyzers.KtsBuildGradleDependenciesAnalyzer
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.analyzers.GradleBlockContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.analyzers.GroovyBuildGradleDependenciesAnalyzer
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.analyzers.KtsBuildGradleDependenciesAnalyzer
 
 /**
  * Wrapper class for build gradle [PsiFile]. Sets the interface for working with build.gradle/build.gradle.kts files
@@ -23,7 +23,7 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
     }
 
     /** Extracts all dependencies from gradle file. */
-    abstract fun extractBuildGradleDependencies(): List<GradleDependency>
+    abstract fun extractBuildGradleDependencies(): List<BuildGradleDependency>
 }
 
 /**
@@ -32,7 +32,7 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
  */
 class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
 
-    override fun extractBuildGradleDependencies(): List<GradleDependency> {
+    override fun extractBuildGradleDependencies(): List<BuildGradleDependency> {
         return KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 }
@@ -43,7 +43,7 @@ class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
  */
 class BuildGradleGroovyPsiFile(psiFile: GroovyFileImpl) : BuildGradlePsiFile(psiFile) {
 
-    override fun extractBuildGradleDependencies(): List<GradleDependency> {
-        return GroovyGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
+    override fun extractBuildGradleDependencies(): List<BuildGradleDependency> {
+        return GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 }
