@@ -38,4 +38,4 @@ gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-import-directive-analysis -Pi
 
 #### 5. Run statistics visualisation
 
-Not implemented now, wait for updates
+To read more about import directives statistics visualization go to `scripts/analysis/dependencies/README.md`

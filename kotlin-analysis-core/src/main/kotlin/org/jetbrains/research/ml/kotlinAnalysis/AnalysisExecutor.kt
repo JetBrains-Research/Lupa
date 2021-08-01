@@ -1,8 +1,11 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
+import com.intellij.ide.impl.OpenProjectTask
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
+import com.intellij.openapi.project.ex.ProjectManagerEx
+import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 
 /**
@@ -35,11 +38,33 @@ abstract class AnalysisExecutor {
     /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        repositoryOpener: (Path, (Project) -> Unit) -> Unit = RepositoryOpenerUtil.Companion::openReloadRepositoryOpener
+        setupProject: (Path) -> Project? = { projectPath ->
+            ProjectManagerEx.getInstanceEx()
+                .openProject(
+                    projectPath,
+                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                )
+        }
     ) {
         init()
         try {
-            repositoryOpener(projectsDir, ::analyse)
+            getSubdirectories(projectsDir).forEachIndexed { index, projectPath ->
+                ApplicationManager.getApplication().invokeAndWait {
+                    println("Opening project $projectPath (index $index)")
+                    setupProject(projectPath)?.let { project ->
+                        try {
+                            analyse(project)
+                        } catch (ex: Exception) {
+                            logger.error(ex)
+                        } finally {
+                            ApplicationManager.getApplication().invokeAndWait {
+                                val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                                logger.info("Project ${project.name} is closed = $closeStatus")
+                            }
+                        }
+                    }
+                }
+            }
         } finally {
             close()
         }

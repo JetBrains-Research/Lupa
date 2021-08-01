@@ -32,7 +32,7 @@ fun Project.extractModules(): List<Module> {
 
 /** Extracts root module from project. */
 fun Project.extractRootModule(): Module? {
-    return extractModules().firstOrNull { it.name == this.name || it.name == this.name.replace(" ", "_") }
+    return extractModules().firstOrNull { it.name == this.name }
 }
 
 /**
@@ -59,7 +59,7 @@ fun Project.extractPsiFiles(filePredicate: (VirtualFile) -> Boolean = VirtualFil
 
 /**
  * Finds first file in breadth-first traversal order from project matching given predicate.
- * Far example to find gradle or manifest files.
+ * For example to find gradle or manifest files.
  */
 fun Project.findPsiFile(filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile): PsiFile? {
     var subFiles = basePath
