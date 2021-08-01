@@ -73,6 +73,8 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
         merge_clones(batch_output_paths, output_dir)
     elif data == "ranges":
         merge_ranges(batch_output_paths, output_dir)
+    elif data == "dependencies":
+        merge_ranges(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 
@@ -81,7 +83,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("data", help="Data to analyse: clones or ranges", choices=["clones", "ranges"])
+    parser.add_argument("data", help="Data to analyse: clones or ranges", choices=["dependencies", "clones", "ranges"])
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
