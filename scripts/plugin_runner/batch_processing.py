@@ -13,10 +13,9 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-from shutil import copytree
 from typing import List
 
-from plugin_runner.merge_data import merge_clones, merge_ranges
+from plugin_runner.merge_data import merge_clones, merge_ranges, merge_dependencies
 
 module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
 if module_path not in sys.path:
@@ -63,7 +62,7 @@ def split(input: str, output: str, batch_size: int) -> List[str]:
         create_directory(batch_directory_path)
         for directory in batch:
             directory_name = os.path.split(directory)[-1]
-            copytree(directory, os.path.join(batch_directory_path, directory_name))
+            os.symlink(directory, os.path.join(batch_directory_path, directory_name))
         logging.info(f"Copied {index} batch")
     return batch_paths
 
@@ -74,7 +73,7 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
     elif data == "ranges":
         merge_ranges(batch_output_paths, output_dir)
     elif data == "dependencies":
-        merge_ranges(batch_output_paths, output_dir)
+        merge_dependencies(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 

@@ -9,17 +9,26 @@ METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
 RANGES_DATA = "ranges_data.csv"
+DEPENDENCIES_DATA = "import_directives_data.csv"
+
+
+def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str):
+    result_df = pd.DataFrame()
+
+    for batch_output_path in batch_output_paths:
+        batch_df = pd.read_csv(os.path.join(batch_output_path, csv_filename), sep='\t')
+        result_df = pd.concat([result_df, batch_df])
+
+    with open(os.path.join(result_dir, csv_filename), "a") as fout:
+        result_df.to_csv(fout, index=False, sep='\t')
+
+
+def merge_dependencies(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, DEPENDENCIES_DATA, output_dir)
 
 
 def merge_ranges(batch_output_paths: List[str], output_dir: str):
-    result_ranges_df = pd.DataFrame()
-
-    for batch_output_path in batch_output_paths:
-        batch_ranges_df = pd.read_csv(os.path.join(batch_output_path, RANGES_DATA), sep='\t')
-        result_ranges_df = pd.concat([result_ranges_df, batch_ranges_df])
-
-    with open(os.path.join(output_dir, RANGES_DATA), "a") as fout:
-        result_ranges_df.to_csv(fout, index=False, sep='\t')
+    merge_csv(batch_output_paths, RANGES_DATA, output_dir)
 
 
 def merge_clones(batch_output_paths: List[str], output_dir: str):
