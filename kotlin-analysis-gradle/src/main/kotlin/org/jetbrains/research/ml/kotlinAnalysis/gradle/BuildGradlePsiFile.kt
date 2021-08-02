@@ -23,7 +23,7 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
     }
 
     /** Extracts all dependencies from gradle file. */
-    abstract fun extractBuildGradleDependencies(): List<BuildGradleDependency>
+    abstract fun extractBuildGradleDependencies(): Set<BuildGradleDependency>
 }
 
 /**
@@ -32,7 +32,7 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
  */
 class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
 
-    override fun extractBuildGradleDependencies(): List<BuildGradleDependency> {
+    override fun extractBuildGradleDependencies(): Set<BuildGradleDependency> {
         return KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 }
@@ -43,7 +43,7 @@ class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
  */
 class BuildGradleGroovyPsiFile(psiFile: GroovyFileImpl) : BuildGradlePsiFile(psiFile) {
 
-    override fun extractBuildGradleDependencies(): List<BuildGradleDependency> {
+    override fun extractBuildGradleDependencies(): Set<BuildGradleDependency> {
         return GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 }

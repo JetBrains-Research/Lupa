@@ -1,8 +1,8 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.plugins.gradle.util.GradleUtil
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleFileManager
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.modules.GradleDependenciesCollector
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.modules.ModulesGraph
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractModules
 import java.nio.file.Path
 
@@ -22,23 +22,23 @@ class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gr
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        project.extractModules()
-            .forEach { module ->
-                val subModules = GradleFileManager.extractSettingsGradleFileFromModule(module)?.extractIncludedModuleNames()
-                GradleFileManager
-                    .extractBuildGradleFileFromModule(module)
-                    ?.extractBuildGradleDependencies()
-                    ?.forEach {
-                        gradleDependenciesDataWriter.writer.println(
-                            listOf(
-                                project.name.replace('#', '/'),
-                                module.name,
-                                it.group,
-                                it.name,
-                                it.configuration?.key ?: "-"
-                            ).joinToString(separator = ",")
-                        )
-                    }
+        val graph = ModulesGraph(project.extractModules())
+        val gradleDependenciesCollector = GradleDependenciesCollector()
+        graph.accept(gradleDependenciesCollector)
+        gradleDependenciesCollector
+            .moduleNameToGradleDependencies
+            .forEach { (moduleName, dependencies) ->
+                dependencies.forEach {
+                    gradleDependenciesDataWriter.writer.println(
+                        listOf(
+                            project.name.replace('#', '/'),
+                            moduleName,
+                            it.group,
+                            it.name,
+                            it.configuration?.key ?: "-"
+                        ).joinToString(separator = ",")
+                    )
+                }
             }
     }
 }

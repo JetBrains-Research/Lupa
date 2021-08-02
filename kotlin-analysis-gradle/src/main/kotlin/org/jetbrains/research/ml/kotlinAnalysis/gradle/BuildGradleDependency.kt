@@ -33,11 +33,27 @@ enum class BuildGradleDependencyConfiguration(
  * [group] = "com.android.tools.build:gradle:4.1.1"
  * [configuration] = [BuildGradleDependencyConfiguration.CLASSPATH]
  * */
-data class BuildGradleDependency(
+class BuildGradleDependency(
     val group: String,
     val name: String,
     val configuration: BuildGradleDependencyConfiguration?,
     val allProjects: Boolean = false
 ) {
     override fun toString(): String = "${configuration?.key ?: "none"} $group:$name"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BuildGradleDependency) return false
+
+        return group == other.group &&
+                name == other.name &&
+                configuration == other.configuration
+    }
+
+    override fun hashCode(): Int {
+        var result = group.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + (configuration?.hashCode() ?: 0)
+        return result
+    }
 }

@@ -8,22 +8,19 @@ class SettingsGradleFileUtil {
 
         private const val NAME = "[^:\'\",\n]*"
         private const val QUOTES = "[\'\"]"
-        private const val SEPARATOR = "[,\n]"
 
         private val INCLUDED_MODULES_STATEMENT_REGEX =
-            "include[(]?$[$SEPARATOR?$QUOTES($NAME)$QUOTES]*[)]?"
-                .toRegex(RegexOption.IGNORE_CASE)
+            "include[(]?(.*)[)]?".toRegex(RegexOption.IGNORE_CASE)
 
-        private val INCLUDED_MODULES_STATEMENT_REGEX2 =
-            "include[(]?((?<=$QUOTES)$NAME(?=$QUOTES))*[)]?".toRegex(RegexOption.IGNORE_CASE)
+        private val MODULE_NAME_REGEX = "$QUOTES:?($NAME)$QUOTES".toRegex(RegexOption.IGNORE_CASE)
 
         fun parseIncludedModulesFromString(includedModulesStatementLine: String): List<String> {
             return includedModulesStatementLine.replace("\\s".toRegex(), "")
                 .let { modulesStatementLine ->
                     INCLUDED_MODULES_STATEMENT_REGEX.matchEntire(modulesStatementLine)
-                        ?.groups
-                        ?.drop(1) // zero is entire match
-                        ?.mapNotNull { it?.value }
+                        ?.groups?.get(1)?.value
+                        ?.let { modules -> MODULE_NAME_REGEX.findAll(modules) }
+                        ?.map { it.groupValues[1] }?.toList()
                 } ?: listOf()
         }
     }

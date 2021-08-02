@@ -69,9 +69,9 @@ open class BuildGradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
 
 /** Aggregator which combine results from gradle dependency analysis to list of [BuildGradleDependency]. */
 object BuildGradleDependenciesAggregator :
-    AnalyzersAggregatorWithContext<GradleBlockContext, BuildGradleDependency?, List<BuildGradleDependency>>() {
+    AnalyzersAggregatorWithContext<GradleBlockContext, BuildGradleDependency?, Set<BuildGradleDependency>>() {
     override fun aggregate(analyzerToStat: AnalyzerWithContextToStat<GradleBlockContext, BuildGradleDependency?>):
-            List<BuildGradleDependency> {
-        return analyzerToStat.values.flatMap { it.values }.filterNotNull().toList()
+            Set<BuildGradleDependency> {
+        return analyzerToStat.values.flatMap { it.values }.filterNotNull().toHashSet()
     }
 }

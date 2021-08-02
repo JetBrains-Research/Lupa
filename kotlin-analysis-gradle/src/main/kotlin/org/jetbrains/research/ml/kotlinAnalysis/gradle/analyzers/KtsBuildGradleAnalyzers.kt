@@ -27,7 +27,7 @@ object KtsBuildGradleDependencyAnalyzer : BuildGradleDependencyAnalyzer<KtCallEx
  * as its arguments
  */
 object KtsBuildGradleDependenciesAnalyzer :
-    PsiMainAnalyzerWithContext<GradleBlockContext, BuildGradleDependency?, List<BuildGradleDependency>>(
+    PsiMainAnalyzerWithContext<GradleBlockContext, BuildGradleDependency?, Set<BuildGradleDependency>>(
         listOf(KtsBuildGradleBlockContextController),
         listOf(KtsBuildGradleDependencyAnalyzer),
         BuildGradleDependenciesAggregator

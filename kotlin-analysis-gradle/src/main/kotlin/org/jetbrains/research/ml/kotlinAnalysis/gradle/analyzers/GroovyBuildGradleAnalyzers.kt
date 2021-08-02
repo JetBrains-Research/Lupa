@@ -31,7 +31,7 @@ object GroovyBuildGradleDependencyAnalyzer :
  * as its arguments.
  */
 object GroovyBuildGradleDependenciesAnalyzer :
-    PsiMainAnalyzerWithContext<GradleBlockContext, BuildGradleDependency?, List<BuildGradleDependency>>(
+    PsiMainAnalyzerWithContext<GradleBlockContext, BuildGradleDependency?, Set<BuildGradleDependency>>(
         listOf(GroovyBuildGradleBlockContextController),
         listOf(GroovyBuildGradleDependencyAnalyzer),
         BuildGradleDependenciesAggregator
