@@ -14,6 +14,7 @@ import os
 import subprocess
 from pathlib import Path
 from typing import List
+import time
 
 from plugin_runner.merge_data import merge_clones, merge_ranges, merge_dependencies
 
@@ -36,6 +37,7 @@ def main():
     logs_path = os.path.join(args.output, "logs")
     create_directory(logs_path)
     for batch_path in batch_paths[args.start_from:]:
+        start_time = time.time()
         index = batch_path.split("_")[-1]
         batch_output_path = os.path.join(args.output, f"output/batch_{index}")
         batch_output_paths.append(batch_output_path)
@@ -47,7 +49,9 @@ def main():
                                         f"-Poutput={batch_output_path}"],
                                        stdout=fout, stderr=fout, cwd=PROJECT_DIR)
         process.wait()
-        logging.info(f"Finished batch {index} processing")
+        end_time = time.time()
+        process.terminate()
+        logging.info(f"Finished batch {index} processing in {end_time - start_time}s")
 
     merge(batch_output_paths, args.output, args.data)
 
@@ -62,8 +66,10 @@ def split(input: str, output: str, batch_size: int) -> List[str]:
         create_directory(batch_directory_path)
         for directory in batch:
             directory_name = os.path.split(directory)[-1]
-            os.symlink(directory, os.path.join(batch_directory_path, directory_name))
-        logging.info(f"Copied {index} batch")
+            directory_sym_link = os.path.join(batch_directory_path, directory_name)
+            if not os.path.exists(directory_sym_link):
+                os.symlink(directory, directory_sym_link)
+        logging.info(f"Create {index} batch")
     return batch_paths
 
 
