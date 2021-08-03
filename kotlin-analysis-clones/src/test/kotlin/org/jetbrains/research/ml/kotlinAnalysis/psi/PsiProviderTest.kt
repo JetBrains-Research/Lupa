@@ -2,6 +2,7 @@ package org.jetbrains.research.ml.kotlinAnalysis.psi
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.deleteComments
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile
 import org.junit.Assert
@@ -31,7 +32,7 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
     fun testDeleteCommentsInWholeFile() {
         val inPsiFile = getPsiFile(inFile!!, myFixture)
         val outPsiFile = getPsiFile(outFile!!, myFixture)
-        PsiProvider.deleteComments(inPsiFile)
+        inPsiFile.deleteComments()
         Assert.assertEquals(outPsiFile.text, inPsiFile.text)
     }
 
@@ -43,8 +44,8 @@ open class PsiProviderTest : ParametrizedBaseTest(getResourcesRootPath(::PsiProv
         val outMethods = PsiTreeUtil.collectElementsOfType(outPsiFile, KtNamedFunction::class.java)
         Assert.assertEquals(outMethods.size, inMethods.size)
         inMethods.zip(outMethods).forEach { (inMethod, outMethod) ->
-            PsiProvider.deleteComments(inMethod)
-            PsiProvider.deleteComments(outMethod)
+            inMethod.deleteComments()
+            outMethod.deleteComments()
             Assert.assertEquals(inMethod.text, outMethod.text)
         }
     }

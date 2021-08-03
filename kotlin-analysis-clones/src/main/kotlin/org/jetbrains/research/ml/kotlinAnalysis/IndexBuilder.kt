@@ -3,7 +3,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.research.ml.kotlinAnalysis.psi.getRelativePathToKtElement
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.getRelativePathToKtElement
 import java.nio.file.Path
 
 /**

@@ -1,8 +1,10 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.deleteComments
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import java.nio.file.Path
 
 /**
@@ -20,8 +22,8 @@ class FormattedMethodMiner(outputDir: Path) : AnalysisExecutor() {
         println("Start processing project ${project.name} (index $projectIndex)")
         // We should reverse the list with method since we handle all elements separately
         // and we can invalidate the previous one
-        val methods = PsiProvider
-            .extractElementsOfTypeFromProject(project, KtNamedFunction::class.java)
+        val methods = project
+            .extractElementsOfType(KtNamedFunction::class.java)
             .reversed()
         val methodsIndexed = methods.associateWith { method ->
             indexer.indexMethod(method, projectIndex)
@@ -31,7 +33,7 @@ class FormattedMethodMiner(outputDir: Path) : AnalysisExecutor() {
                 method,
                 projectIndex,
                 methodIndex,
-                PsiProvider::deleteComments
+                PsiElement::deleteComments
             )
             methodDataWriter.writer.println(methodFormatted)
         }

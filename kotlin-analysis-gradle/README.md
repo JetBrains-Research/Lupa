@@ -1,6 +1,6 @@
-# Kotlin-Analysis dependencies
+# Kotlin-Analysis gradle
 
-Functionality related to dependency analysis in Kotlin projects.
+Functionality related to Gradle dependencies analysis in Kotlin projects.
 
 ## Run the project
 
@@ -30,12 +30,27 @@ Run the following command to download the dataset:
 python3 scripts/load_dataset.py /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
 ```
 
-#### 4. Extract import directives full-qualified names from dataset
+#### 4. Extract gradle dependencies information from projects in dataset, such as:
+
+* project name
+* module index (will be replaced with name soon)
+* configuration (compile, implementation, ...)
+* group
+* name
 
 ``` 
-gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-import-directive-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
+gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-gradle-dependencies-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
 ```
 
-#### 5. Run statistics visualisation
+# Kotlin-Analysis projects tagging
 
-To read more about import directives statistics visualization go to `scripts/analysis/dependencies/README.md`
+For projects and modules tagging according to content, stack of technologies or theme we use gradle dependencies. Now we
+support only android projects tagging, to run this use:
+
+``` 
+gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-projects-tagging -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
+```
+
+This script creates csv file with project name and tag:
+`android` - for android project (which has `com.android.tools.build` dependency in gradle file)
+`other` - for other project, algorithm for them is not implemented now
