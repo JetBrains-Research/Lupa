@@ -10,7 +10,7 @@ import java.nio.file.Path
  * Executor for tagging projects from dataset as android/other/undefined.
  * Can be extended for more types of projects labeling.
  */
-class ProjectsTaggingExecutor(outputDir: Path, filename: String = "not_android_projects_data.csv") :
+class ProjectsTaggingExecutor(outputDir: Path, filename: String = "project_tags_data.csv") :
     AnalysisExecutor() {
 
     private val projectsDataWriter = PrintWriterResourceManager(

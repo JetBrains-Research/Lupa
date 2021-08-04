@@ -1,15 +1,30 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
-from typing import List
-import pandas as pd
 import os
+import argparse
+import pandas as pd
+from typing import List
 
 METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
 RANGES_DATA = "ranges_data.csv"
 DEPENDENCIES_DATA = "import_directives_data.csv"
+PROJECT_TAGS_DATA = "project_tags_data.csv"
+
+
+def merge(batch_output_paths: List[str], output_dir: str, data: str):
+    if data == "clones":
+        merge_clones(batch_output_paths, output_dir)
+    elif data == "ranges":
+        merge_ranges(batch_output_paths, output_dir)
+    elif data == "dependencies":
+        merge_dependencies(batch_output_paths, output_dir)
+    elif data == "project-tags":
+        merge_dependencies(batch_output_paths, output_dir)
+    else:
+        logging.error("Can't merge results")
 
 
 def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str):
@@ -21,6 +36,10 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
 
     with open(os.path.join(result_dir, csv_filename), "a") as fout:
         result_df.to_csv(fout, index=False, sep='\t')
+
+
+def merge_projects_tags(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, PROJECT_TAGS_DATA, output_dir)
 
 
 def merge_dependencies(batch_output_paths: List[str], output_dir: str):
@@ -69,3 +88,18 @@ def move_indexes_file(batch_output_path: str, output_path: str, filename: str, p
                          batch_output.readlines()))
     with open(os.path.join(output_path, filename), "a") as final_output:
         final_output.writelines(lines)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="Directory with batches outputs")
+    parser.add_argument("output", help="Directory for result")
+    parser.add_argument("data", help="Data to analyse: clones or ranges", choices=["dependencies", "clones", "ranges"])
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    input = [os.path.join(args.input, f'batch_{i}') for i in range(209)]
+    merge(input, args.output, args.data)

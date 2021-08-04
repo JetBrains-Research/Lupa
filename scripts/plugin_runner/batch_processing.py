@@ -16,8 +16,7 @@ from pathlib import Path
 from typing import List
 import time
 
-from plugin_runner.merge_data import merge_clones, merge_ranges, merge_dependencies
-
+from plugin_runner.merge_data import merge
 module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
 if module_path not in sys.path:
     sys.path.append(module_path)
@@ -72,23 +71,12 @@ def split(input: str, output: str, batch_size: int) -> List[str]:
         logging.info(f"Create {index} batch")
     return batch_paths
 
-
-def merge(batch_output_paths: List[str], output_dir: str, data: str):
-    if data == "clones":
-        merge_clones(batch_output_paths, output_dir)
-    elif data == "ranges":
-        merge_ranges(batch_output_paths, output_dir)
-    elif data == "dependencies":
-        merge_dependencies(batch_output_paths, output_dir)
-    else:
-        logging.error("Can't merge results")
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("data", help="Data to analyse: clones or ranges", choices=["dependencies", "clones", "ranges"])
+    parser.add_argument("data", help="Data to analyse: clones or ranges",
+                        choices=["dependencies", "clones", "ranges", "project-tags"])
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)

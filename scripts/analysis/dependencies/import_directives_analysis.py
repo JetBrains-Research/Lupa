@@ -169,7 +169,8 @@ def get_fq_names(path_to_fq_names: str, path_to_ignored_packages: str):
     else:
         ignored_packages = []
 
-    fq_names = list(map(lambda name: name.rstrip(), get_file_lines(path_to_fq_names)))
+    fq_names = list(map(lambda fq_names_info: fq_names_info.split(",")[1].rstrip(),
+                        get_file_lines(path_to_fq_names)))[1:]
     return filter_fq_names(fq_names, ignored_packages)
 
 
@@ -180,6 +181,7 @@ def analyze(path_to_fq_names: str, path_to_result_dir: str, path_to_ignored_pack
     create_directory(path_to_result_dir)
 
     fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages)
+    print(len(fq_names))
     fq_names_dict = fq_names_to_dict(fq_names)
     root, sub_roots = build_fq_name_tree_decomposition(fq_names_dict, max_subpackages, max_leaf_subpackages,
                                                        min_occurrence, max_occurrence, max_u_occurrence)
@@ -210,13 +212,13 @@ if __name__ == '__main__':
 
     parser.add_argument('--max-package-len', type=int, default=3,
                         help='max length of package name to group by')
-    parser.add_argument('--max-subpackages', type=int, default=20,
-                        help='max number of subpackages occurrence to visualize, ignore extra with least count')
-    parser.add_argument('--max-leaf-subpackages', type=int, default=0.7,
+    parser.add_argument('--max-subpackages', type=int, default=10000,
+                        help='max number of subpackages to visualize, ignore extra with least count')
+    parser.add_argument('--max-leaf-subpackages', type=int, default=0.8,
                         help='max percent of leaf subpackages to consider path as package')
-    parser.add_argument('--min-occurrence', type=int, default=5,
+    parser.add_argument('--min-occurrence', type=int, default=0,
                         help='min number of packages occurrence to analyze, ignore if less')
-    parser.add_argument('--max-occurrence', type=int, default=200,
+    parser.add_argument('--max-occurrence', type=int, default=1000,
                         help='max number of packages occurrence to visualize in main tree, '
                              'draw as a separate tree if less')
     parser.add_argument('--max-u-occurrence', type=int, default=50,
