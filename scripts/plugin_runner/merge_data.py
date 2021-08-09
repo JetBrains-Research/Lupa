@@ -22,7 +22,7 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
     elif data == "dependencies":
         merge_dependencies(batch_output_paths, output_dir)
     elif data == "project-tags":
-        merge_dependencies(batch_output_paths, output_dir)
+        merge_project_tags(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 
@@ -38,7 +38,7 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
         result_df.to_csv(fout, index=False, sep='\t')
 
 
-def merge_projects_tags(batch_output_paths: List[str], output_dir: str):
+def merge_project_tags(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, PROJECT_TAGS_DATA, output_dir)
 
 
