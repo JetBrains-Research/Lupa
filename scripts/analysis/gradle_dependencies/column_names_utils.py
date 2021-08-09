@@ -8,12 +8,7 @@ class GradleDependenciesColumn(str, enum.Enum):
     CONFIG = "config"
 
 
-class GradleDependencyConfigStatsColumn(str, enum.Enum):
-    CONFIG_NAME = "config_name"
-    COUNT = "count"
-
-
-class GradleDependenciesStatsExtensionColumn(str, enum.Enum):
+class GradleDependenciesStatsColumn(str, enum.Enum):
     DEPENDENCY = "full_name"
     COUNT = "count"
     URL = "url"
