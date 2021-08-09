@@ -88,18 +88,3 @@ def move_indexes_file(batch_output_path: str, output_path: str, filename: str, p
                          batch_output.readlines()))
     with open(os.path.join(output_path, filename), "a") as final_output:
         final_output.writelines(lines)
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="Directory with batches outputs")
-    parser.add_argument("output", help="Directory for result")
-    parser.add_argument("data", help="Data to analyse: clones or ranges", choices=["dependencies", "clones", "ranges"])
-
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = parse_args()
-    input = [os.path.join(args.input, f'batch_{i}') for i in range(209)]
-    merge(input, args.output, args.data)
