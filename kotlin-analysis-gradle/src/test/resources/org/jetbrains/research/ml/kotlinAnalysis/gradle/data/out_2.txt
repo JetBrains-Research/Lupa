@@ -1,4 +1,4 @@
-project_name,module_id,group_id,artifact_id,config
+project_name,module_id,group,name,config
 sample_project,2,androidx.test,runner,androidTestImplementation
 sample_project,2,com.android.tools.build,gradle,classpath
 sample_project,2,com.google.guava,guava,compileOnly

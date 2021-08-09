@@ -1,4 +1,4 @@
-project_name,module_id,group_id,artifact_id,config
+project_name,module_id,group,name,config
 sample_project,0,androidx.room,room-compiler,kapt
 sample_project,0,androidx.test.espresso,espresso-core,androidTestImplementation
 sample_project,0,com.android.databinding,viewbinding,compileOnly
