@@ -1,2 +1,2 @@
-full_name,tag
+project_name,tag
 sample_project,android

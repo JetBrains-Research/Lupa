@@ -14,9 +14,9 @@ sealed class GradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
      * Checks that gradle file contains dependency by group name.
      * For example to checks if build.gradle contains "com.android.tools" dependency.
      * */
-    fun containsDependencyWithGroup(group: String): Boolean {
+    fun containsDependencyWithGroupId(groupId: String): Boolean {
         return extractBuildGradleDependencies()
-            .firstOrNull { it.group.contains(group) } != null
+            .firstOrNull { it.groupId.contains(groupId) } != null
     }
 
     /** Extracts all dependencies from gradle file. */

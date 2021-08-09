@@ -15,7 +15,7 @@ class ProjectsTaggingExecutor(outputDir: Path, filename: String = "project_tags_
 
     private val projectsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("full_name", "tag").joinToString(separator = ",")
+        listOf("project_name", "tag").joinToString(separator = ",")
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectsDataWriter)
@@ -29,7 +29,7 @@ class ProjectsTaggingExecutor(outputDir: Path, filename: String = "project_tags_
 
         projectsDataWriter.writer.println(
             listOf(
-                project.name.replace('#', '/'),
+                project.name,
                 projectTags.joinToString(separator = ",")
             ).joinToString(separator = ",")
         )
