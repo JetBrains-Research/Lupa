@@ -6,7 +6,7 @@ package org.jetbrains.research.ml.kotlinAnalysis.gradle
 class GradleFileUtil {
     companion object {
 
-        private const val NAME = "[^:\'\"]*"
+        private const val NAME = "[^:{}\'\"]*"
         private const val QUOTES = "[\'\"]"
         private const val SEPARATORS = "[\'\":,]+"
 
@@ -32,17 +32,19 @@ class GradleFileUtil {
                         ?: GRADLE_DEPENDENCIES_FULL_REGEX.matchEntire(dependencyLine))
                         ?.groups
                         ?.let {
-                            val key = it[1]?.value ?: return null
-                            val group = it[2]?.value ?: return null
-                            val name = it[3]?.value ?: return null
-                            Triple(key, group, name)
+                            val configKey = it[1]?.value ?: return null
+                            val groupId = it[2]?.value ?: return null
+                            val artifactId = it[3]?.value ?: return null
+                            Triple(configKey, groupId, artifactId)
                         } ?: (GRADLE_DEPENDENCIES_KOTLIN_REGEX.matchEntire(dependencyLine))
                         ?.groups
                         ?.let {
-                            val key = it[1]?.value ?: return null
-                            val group = "org.jetbrains.kotlin"
-                            val name = it[2]?.value ?: return null
-                            Triple(key, group, name)
+                            val configKey = it[1]?.value ?: return null
+                            val groupId = "org.jetbrains.kotlin"
+                            val artifactId = it[2]?.value
+                                ?.let { kotlinArtifactId -> "kotlin-$kotlinArtifactId" }
+                                ?: return null
+                            Triple(configKey, groupId, artifactId)
                         }
                 }
         }
