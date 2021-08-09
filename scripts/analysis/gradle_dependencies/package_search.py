@@ -62,4 +62,4 @@ def full_names_to_urls_csv(path_to_stats):
 
 
 if __name__ == '__main__':
-    full_names_to_urls_csv("gradle_dependencies_data_prep.csv")
+    full_names_to_urls_csv("data/gradle_dependencies_data_prep.csv")
