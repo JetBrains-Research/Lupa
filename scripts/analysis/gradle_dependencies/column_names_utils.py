@@ -3,15 +3,23 @@ import enum
 
 class GradleDependenciesColumn(str, enum.Enum):
     PROJECT_NAME = "project_name"
-    GROUP = "group_id"
-    NAME = "artifact_id"
+    GROUP_ID = "group_id"
+    ARTIFACT_ID = "artifact_id"
     CONFIG = "config"
 
 
+class GradleDependenciesMetaColumn(str, enum.Enum):
+    FULL_NAME = "full_name"
+    URL = "url"
+    LANGUAGE = "language"
+
+
 class GradleDependenciesStatsColumn(str, enum.Enum):
-    DEPENDENCY = "full_name"
+    FULL_NAME = "full_name"
     COUNT = "count"
     URL = "url"
+    LANGUAGE = "language"
+    COMMUNITY = "community"
     IMPLEMENTATION = "implementation"
     TEST_IMPLEMENTATION = "testImplementation"
     ANDROID_TEST_IMPLEMENTATION = "androidTestImplementation"
