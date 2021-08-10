@@ -83,12 +83,16 @@ def calc_unique_count(parent: FqNameNode) -> int:
     return parent.unique_count
 
 
+def is_leaf(node: FqNameNode):
+    return node.is_leaf or node.name[0].isupper()
+
+
 def is_huge(node: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, max_u_occurrence: int) -> bool:
     """ Check is node huge to be considerate as package and show separately. """
     if node.unique_count < max_u_occurrence or (not node.is_root and node.count < max_occurrence):
         return True
     children_count = len(node.children)
-    leaf_children_count = len(list(filter(lambda child: child.is_leaf, node.children)))
+    leaf_children_count = len(list(filter(lambda child: is_leaf(child), node.children)))
     return children_count == 0 or leaf_children_count / children_count > max_leaf_subpackages
 
 
@@ -106,15 +110,17 @@ def split_to_subtrees(parent: FqNameNode, max_leaf_subpackages: float, max_occur
     """
     if parent.unique_count is None:
         parent.unique_count = calc_unique_count(parent)
+    if is_leaf(parent):
+        return []
     if is_huge(parent, max_leaf_subpackages, max_occurrence, max_u_occurrence):
         parent_root = FqNameNode(parent.full_name, None, parent.count, parent.unique_count)
         parent_root.children = parent.children
         parent.children = []
         return [parent_root]
-    packages = []
+    sub_roots = []
     for node in parent.children:
-        packages += split_to_subtrees(node, max_leaf_subpackages, max_occurrence, max_u_occurrence)
-    return packages
+        sub_roots += split_to_subtrees(node, max_leaf_subpackages, max_occurrence, max_u_occurrence)
+    return sub_roots
 
 
 def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:

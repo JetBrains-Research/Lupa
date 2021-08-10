@@ -4,7 +4,9 @@ import json
 import os
 import sys
 from collections import Counter
-from typing import Tuple, List, Callable
+from typing import List, Callable, Dict, Set
+
+import pandas as pd
 
 from column_names_utils import ImportDirectivesColumn
 from fq_names_tree import save_to_txt, save_to_png, build_fq_name_tree_decomposition, FqNameNode
@@ -39,16 +41,11 @@ The examples of each representation you can see in module README.md file.
 """
 
 
-def stat_to_row(stat: Tuple) -> str:
-    return ",".join([stat[0], str(stat[1])]) + "\n"
-
-
 def save_stats_to_csv(path_to_dir: str, filename: str, fq_names_stats: FqNamesStats):
     csv_file_path = os.path.join(path_to_dir, filename)
-    with open(csv_file_path, 'w+') as csv_file:
-        csv_file.write(stat_to_row((ImportDirectivesColumn.FQ_NAME.value, ImportDirectivesColumn.COUNT.value)))
-        for fq_name_count in fq_names_stats.items():
-            csv_file.write(stat_to_row(fq_name_count))
+    stats = {ImportDirectivesColumn.FQ_NAME.value: fq_names_stats.keys(),
+             ImportDirectivesColumn.COUNT.value: fq_names_stats.values()}
+    pd.DataFrame.from_dict(stats).to_csv(csv_file_path, index=False)
 
 
 def save_stats_to_bar_plot(fq_names_stats: FqNamesStats, title: str):
@@ -106,6 +103,7 @@ def fq_names_to_dict(fq_names: List[str]) -> FqNamesDict:
 
     grouped_fq_names_dict = fq_names_groups_to_dict(grouped_fq_names)
     grouped_fq_names_dict[ImportDirectivesColumn.COUNT] = cnt
+
     return grouped_fq_names_dict
 
 
@@ -123,7 +121,8 @@ def fq_names_to_bar_plot(fq_names: List[str]):
 def fq_names_by_prefix_to_csv(fq_names: List[str],
                               path_to_result_dir: str,
                               prefix_len: int):
-    fq_names_by_prefix = group_fq_names_by(fq_names, lambda fq_name: get_package_by_len(fq_name, prefix_len))
+    fq_names_by_prefix = group_fq_names_by(fq_names,
+                                           lambda fq_name: get_package_by_len(fq_name, prefix_len))
     fq_names_by_prefix_stats = fq_names_groups_to_stats(fq_names_by_prefix)
 
     save_stats_to_csv(path_to_result_dir, f"total_by_prefix.{Extensions.CSV}", fq_names_by_prefix_stats)
@@ -158,28 +157,63 @@ def fq_names_to_trees(root: FqNameNode, sub_roots: List[FqNameNode],
         show(sub_root, path_to_result_dir)
 
 
-def filter_fq_names(fq_names: List[str], filter_packages: List[str]) -> List[str]:
-    return list(filter(lambda fq_name: "." in fq_name and
-                                       not any(fq_name.startswith(package) for package in filter_packages), fq_names))
+def filter_fq_names(fq_names_with_project: List[List[str]],
+                    ignored_packages: Set[str],
+                    ignored_projects: Set[str]) -> List[List[str]]:
+    return list(filter(lambda x:
+                       "." in x[1] and  # filter noise import fq names
+                       not any(x[1].startswith(package) for package in ignored_packages) and  # filter ignored packages
+                       x[0] not in ignored_projects, fq_names_with_project))  # filter ignored projects
 
 
-def get_fq_names(path_to_fq_names: str, path_to_ignored_packages: str):
+def get_ignored_packages(path_to_ignored_packages: str) -> Set[str]:
+    ignored_packages = []
     if path_to_ignored_packages is not None:
         ignored_packages = get_file_lines(path_to_ignored_packages)
-    else:
-        ignored_packages = []
 
-    fq_names = list(map(lambda name: name.rstrip(), get_file_lines(path_to_fq_names)))
-    return filter_fq_names(fq_names, ignored_packages)
+    return set(ignored_packages)
+
+
+def get_ignored_projects(path_to_tagged_projects: str, tags: List[str]) -> Set[str]:
+    ignored_projects = set()
+    if path_to_tagged_projects is not None:
+        tagged_projects = pd.read_csv(path_to_tagged_projects)
+        for project, tag in tagged_projects.values:
+            if tag not in tags:
+                ignored_projects.add(project)
+
+    return ignored_projects
+
+
+def get_fq_names(path_to_fq_names: str, path_to_ignored_packages: str, path_to_tagged_projects: str, tags: List[str]) \
+        -> List[str]:
+    fq_names_with_project = pd.read_csv(path_to_fq_names).astype(str).values.tolist()
+    ignored_packages = get_ignored_packages(path_to_ignored_packages)
+    ignored_projects = get_ignored_projects(path_to_tagged_projects, tags)
+    filtered_fq_names_with_project = filter_fq_names(fq_names_with_project, ignored_packages, ignored_projects)
+
+    return [fq_name for _, fq_name in filtered_fq_names_with_project]
+
+
+def get_imports_count_stats(fq_names_with_project: List[List[str]]) -> Dict[str, int]:
+    imports_count_by_project = {}
+    for project, fq_name in fq_names_with_project:
+        if project not in imports_count_by_project:
+            imports_count_by_project[project] = 0
+        imports_count_by_project[project] += 1
+    return imports_count_by_project
 
 
 def analyze(path_to_fq_names: str, path_to_result_dir: str, path_to_ignored_packages: str,
+            path_to_tagged_projects: str, tags: List[str],
             max_package_len: int, max_subpackages: int, max_leaf_subpackages: int,
             min_occurrence: int, max_occurrence: int, max_u_occurrence: int,
             show_dot_trees: bool, show_txt_tree: bool, show_bar_plots: bool, show_csv: bool, show_package_csv: bool):
     create_directory(path_to_result_dir)
 
-    fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages)
+    fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages, path_to_tagged_projects, tags)
+    print(f"Got {len(fq_names)} imports")
+
     fq_names_dict = fq_names_to_dict(fq_names)
     root, sub_roots = build_fq_name_tree_decomposition(fq_names_dict, max_subpackages, max_leaf_subpackages,
                                                        min_occurrence, max_occurrence, max_u_occurrence)
@@ -207,19 +241,21 @@ if __name__ == '__main__':
     parser.add_argument('--input', type=str, help='path to csv file with fq_names', required=True)
     parser.add_argument('--output', type=str, help='path to output dir with result', required=True)
     parser.add_argument('--ignore', type=str, default=None, help='path to csv file with imports to ignore')
+    parser.add_argument('--tagged_projects', type=str, default=None, help='path to csv file with tagged projects')
+    parser.add_argument('--tags', help='path to csv file with tagged projects', nargs='+', default=['android', 'other'])
 
     parser.add_argument('--max-package-len', type=int, default=3,
                         help='max length of package name to group by')
-    parser.add_argument('--max-subpackages', type=int, default=20,
-                        help='max number of subpackages occurrence to visualize, ignore extra with least count')
-    parser.add_argument('--max-leaf-subpackages', type=int, default=0.7,
+    parser.add_argument('--max-subpackages', type=int, default=10000,
+                        help='max number of subpackages to visualize, ignore extra with least count')
+    parser.add_argument('--max-leaf-subpackages', type=int, default=0.8,
                         help='max percent of leaf subpackages to consider path as package')
-    parser.add_argument('--min-occurrence', type=int, default=5,
+    parser.add_argument('--min-occurrence', type=int, default=100,
                         help='min number of packages occurrence to analyze, ignore if less')
-    parser.add_argument('--max-occurrence', type=int, default=200,
+    parser.add_argument('--max-occurrence', type=int, default=1500,
                         help='max number of packages occurrence to visualize in main tree, '
                              'draw as a separate tree if less')
-    parser.add_argument('--max-u-occurrence', type=int, default=50,
+    parser.add_argument('--max-u-occurrence', type=int, default=500,
                         help='max number of unique packages occurrence to visualize in main tree, '
                              'draw as a separate tree if less')
 
@@ -236,7 +272,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    analyze(args.input, args.output, args.ignore,
+    analyze(args.input, args.output, args.ignore, args.tagged_projects, args.tags,
             args.max_package_len, args.max_subpackages, args.max_leaf_subpackages,
             args.min_occurrence, args.max_occurrence, args.max_u_occurrence,
             args.show_dot_trees, args.show_txt_trees, args.show_bar_plots, args.show_csv, args.show_package_csv)
