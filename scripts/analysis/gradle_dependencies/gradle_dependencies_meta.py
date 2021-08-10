@@ -6,7 +6,7 @@ from typing import Optional
 import pandas as pd
 
 from analysis.gradle_dependencies.column_names_utils import GradleDependenciesMetaColumn
-from data_collection.github.api import get_repo
+from data_collection.github_data.api import get_repo
 from data_collection.package_search.api import get_packages
 
 

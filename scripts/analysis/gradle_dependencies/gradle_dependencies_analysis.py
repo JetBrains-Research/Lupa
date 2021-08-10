@@ -96,7 +96,7 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=str, help='path to output dir with result', required=True)
     parser.add_argument('--meta', type=str, help='path to dir with csv with columns:'
                                                  'full_name -- groupId:artifactId of dependency'
-                                                 'url -- url to github or other library resource'
+                                                 'url -- url to github_data or other library resource'
                                                  'language -- language for library', required=True)
     parser.add_argument('--tagged_projects', type=str, default=None, help='path to csv file with tagged projects',
                         required=True)
