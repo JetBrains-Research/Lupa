@@ -11,7 +11,7 @@ object KotlinGradlePropertiesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerA
     override fun run(args: IORunnerArgs) {
         GradlePropertiesAnalysisExecutor(args.outputDir).execute(
             args.inputDir,
-            repositoryOpener = RepositoryOpenerUtil.Companion::openRepositoryOpener
+            repositoryOpener = RepositoryOpenerUtil.Companion::standardRepositoryOpener
         )
     }
 }

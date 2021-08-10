@@ -3,9 +3,9 @@ package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyFileImpl
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.analyzers.GradleBlockContext
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.analyzers.GroovyBuildGradleDependenciesAnalyzer
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.analyzers.KtsBuildGradleDependenciesAnalyzer
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers.GradleBlockContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers.GroovyBuildGradleDependenciesAnalyzer
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers.KtsBuildGradleDependenciesAnalyzer
 
 /**
  * Wrapper class for build gradle [PsiFile]. Sets the interface for working with build.gradle/build.gradle.kts files

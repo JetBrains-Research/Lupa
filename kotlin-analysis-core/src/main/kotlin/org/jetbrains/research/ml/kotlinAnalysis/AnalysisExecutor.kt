@@ -1,6 +1,5 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
@@ -33,7 +32,7 @@ abstract class AnalysisExecutor {
     /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        repositoryOpener: (Path, (Project) -> Unit) -> Unit = RepositoryOpenerUtil.Companion::openReloadRepositoryOpener
+        repositoryOpener: (Path, (Project) -> Unit) -> Unit = RepositoryOpenerUtil.Companion::standardRepositoryOpener
     ) {
         init()
         try {

@@ -1,9 +1,9 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.analyzers
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers
 
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependency
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
 
 /**
  * Controller for stack of blocks in build.gradle.kts file, which controls the blocks [GradleBlock] order according to

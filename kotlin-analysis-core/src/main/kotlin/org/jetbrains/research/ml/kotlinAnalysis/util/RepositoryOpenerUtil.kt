@@ -27,7 +27,7 @@ class RepositoryOpenerUtil {
             }
         }
 
-        fun openRepositoryOpener(path: Path, action: (Project) -> Unit) {
+        fun standardRepositoryOpener(path: Path, action: (Project) -> Unit) {
             getSubdirectories(path).forEachIndexed { index, projectPath ->
                 ApplicationManager.getApplication().invokeAndWait {
                     println("Opening project $projectPath index=$index time=${System.currentTimeMillis()}")

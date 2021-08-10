@@ -14,7 +14,7 @@ class AndroidProjectsFilterExecutor(outputDir: Path, filename: String = "not_and
         const val ANDROID_DEPENDENCY_GROUP_NAME = "com.android.tools.build"
     }
 
-    private val projectsDataWriter = PrintWriterResourceManager(outputDir, filename, "full_name")
+    private val projectsDataWriter = PrintWriterResourceManager(outputDir, filename, "project_name,tag")
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectsDataWriter)
 
     override fun analyse(project: Project) {

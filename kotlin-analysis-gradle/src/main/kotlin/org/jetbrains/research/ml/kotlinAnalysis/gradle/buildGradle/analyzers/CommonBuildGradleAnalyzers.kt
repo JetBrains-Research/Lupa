@@ -1,11 +1,11 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.analyzers
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.research.ml.kotlinAnalysis.*
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleFileUtil
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependency
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependencyConfiguration
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleFileUtil
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
 
 /** Analysis context which stores stack of visited blocks [GradleBlock] on path to current psi element. */
 class GradleBlockContext(private val blocksStack: MutableList<GradleBlock> = mutableListOf()) : AnalyzerContext {
