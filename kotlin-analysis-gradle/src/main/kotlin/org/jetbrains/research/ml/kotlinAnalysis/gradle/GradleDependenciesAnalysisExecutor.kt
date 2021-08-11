@@ -8,14 +8,15 @@ import java.nio.file.Path
 
 /**
  * Executor for gradle dependencies analysis which collects group name, name and configuration of all
- * dependencies in all gradle files to csv file with columns "project_name", "module_id", "group", "name", "config".
+ * dependencies in all gradle files to csv file with columns:
+ * "project_name", "module_id", "group_id", "artifact_id", "config".
  */
 class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gradle_dependencies_data.csv") :
     AnalysisExecutor() {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("project_name", "module_id", "group", "name", "config")
+        listOf("project_name", "module_id", "group_id", "artifact_id", "config")
             .joinToString(separator = ",")
     )
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
@@ -27,10 +28,10 @@ class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gr
             gradleDependencies.forEach {
                 gradleDependenciesDataWriter.writer.println(
                     listOf(
-                        project.name.replace('#', '/'),
+                        project.name,
                         gradleFileIndex,
-                        it.group,
-                        it.name,
+                        it.groupId,
+                        it.artifactId,
                         it.configuration?.key ?: "-"
                     ).joinToString(separator = ",")
                 )

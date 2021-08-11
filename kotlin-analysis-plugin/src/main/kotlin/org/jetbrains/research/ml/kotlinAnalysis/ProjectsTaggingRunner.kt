@@ -7,7 +7,7 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 
 /** Runner for tagging project to label projects in dataset with [tags][ProjectTag]. */
 object ProjectsTaggingRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
-    ("kotlin-projects-tagging", IORunnerArgsParser) {
+    ("kotlin-project-tags-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
         ProjectsTaggingExecutor(args.outputDir).execute(args.inputDir)
     }
