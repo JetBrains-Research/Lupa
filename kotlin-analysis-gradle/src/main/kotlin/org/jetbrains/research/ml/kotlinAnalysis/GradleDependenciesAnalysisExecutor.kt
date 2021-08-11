@@ -15,7 +15,7 @@ class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gr
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("project_name", "module_name", "group", "name", "config")
+        listOf("project_name", "module_name", "group_id", "artifact_id", "config")
             .joinToString(separator = ",")
     )
 
@@ -33,8 +33,8 @@ class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gr
                         listOf(
                             project.name.replace('#', '/'),
                             moduleName,
-                            it.group,
-                            it.name,
+                            it.groupId,
+                            it.artifactId,
                             it.configuration?.key ?: "-"
                         ).joinToString(separator = ",")
                     )

@@ -19,7 +19,7 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
      * */
     fun containsDependencyWithGroup(group: String): Boolean {
         return extractBuildGradleDependencies()
-            .firstOrNull { it.group.contains(group) } != null
+            .firstOrNull { it.groupId.contains(group) } != null
     }
 
     /** Extracts all dependencies from gradle file. */

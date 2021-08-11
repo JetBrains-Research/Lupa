@@ -39,26 +39,26 @@ enum class BuildGradleDependencyConfiguration(
  * [configuration] = ["classpath"][GradleDependencyConfiguration.CLASSPATH]
  * [allProjects] = True (because of inside allprojects block)
  * */
-data class GradleDependency(
+data class BuildGradleDependency(
     val groupId: String,
     val artifactId: String,
-    val configuration: GradleDependencyConfiguration?,
+    val configuration: BuildGradleDependencyConfiguration?,
     val allProjects: Boolean = false
 ) {
-    override fun toString(): String = "${configuration?.key ?: "none"} $group:$name"
+    override fun toString(): String = "${configuration?.key ?: "none"} $groupId:$artifactId"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is BuildGradleDependency) return false
 
-        return group == other.group &&
-                name == other.name &&
+        return groupId == other.groupId &&
+                artifactId == other.artifactId &&
                 configuration == other.configuration
     }
 
     override fun hashCode(): Int {
-        var result = group.hashCode()
-        result = 31 * result + name.hashCode()
+        var result = groupId.hashCode()
+        result = 31 * result + artifactId.hashCode()
         result = 31 * result + (configuration?.hashCode() ?: 0)
         return result
     }

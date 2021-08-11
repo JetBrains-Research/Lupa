@@ -32,7 +32,7 @@ class RepositoryOpenerUtil {
                 ApplicationManager.getApplication().invokeAndWait {
                     println("Opening project $projectPath index=$index time=${System.currentTimeMillis()}")
                     ProjectManagerEx.getInstanceEx().openProject(
-                        path,
+                        projectPath,
                         OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
                     )?.let { project ->
                         try {
