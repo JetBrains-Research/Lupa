@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
 
 /** Scope block in gradle file. */
 enum class GradleBlock(val simpleName: String) {

@@ -1,7 +1,7 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
 
 /** Dependency declaration configuration. */
-enum class GradleDependencyConfiguration(
+enum class BuildGradleDependencyConfiguration(
     val key: String
 ) {
     KAPT("kapt"),
@@ -39,11 +39,27 @@ enum class GradleDependencyConfiguration(
  * [configuration] = ["classpath"][GradleDependencyConfiguration.CLASSPATH]
  * [allProjects] = True (because of inside allprojects block)
  * */
-data class GradleDependency(
+data class BuildGradleDependency(
     val groupId: String,
     val artifactId: String,
-    val configuration: GradleDependencyConfiguration?,
+    val configuration: BuildGradleDependencyConfiguration?,
     val allProjects: Boolean = false
 ) {
     override fun toString(): String = "${configuration?.key ?: "none"} $groupId:$artifactId"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BuildGradleDependency) return false
+
+        return groupId == other.groupId &&
+                artifactId == other.artifactId &&
+                configuration == other.configuration
+    }
+
+    override fun hashCode(): Int {
+        var result = groupId.hashCode()
+        result = 31 * result + artifactId.hashCode()
+        result = 31 * result + (configuration?.hashCode() ?: 0)
+        return result
+    }
 }

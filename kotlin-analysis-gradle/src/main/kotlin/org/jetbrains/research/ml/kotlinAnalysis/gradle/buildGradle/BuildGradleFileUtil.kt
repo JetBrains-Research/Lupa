@@ -1,9 +1,9 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
 
 /**
  * Util class for working with Gradle file structure, for example parsing dependencies from build files.
  */
-class GradleFileUtil {
+class BuildGradleFileUtil {
     companion object {
 
         private const val NAME = "[^:{}\'\"]*"
@@ -24,7 +24,7 @@ class GradleFileUtil {
          * ... same as for build.gradle but in build.gradle.kts notation with brackets ...
          **/
         private val GRADLE_DEPENDENCIES_SHORT_REGEX = "(${
-            GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
+            BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
         })[(]?$QUOTES($NAME)$SEPARATORS($NAME)($SEPARATORS$NAME)?$QUOTES[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
@@ -41,7 +41,7 @@ class GradleFileUtil {
          * ... same as for build.gradle but in build.gradle.kts notation with brackets ...
          **/
         private val GRADLE_DEPENDENCIES_FULL_REGEX = "(${
-            GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
+            BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
         })[(]?group=$QUOTES($NAME)$QUOTES,name=$QUOTES($NAME)$QUOTES(,version=$QUOTES$NAME$QUOTES)?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
@@ -53,7 +53,7 @@ class GradleFileUtil {
          * classpath(kotlin("gradle-plugin", "1.5.20")) ~ classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"))
          **/
         private val GRADLE_DEPENDENCIES_KOTLIN_REGEX = "(${
-            GradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
+            BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
         })[(]?kotlin[(]?$QUOTES($NAME)$QUOTES.*[)]?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 

@@ -1,5 +1,6 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
 
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependenciesAnalysisExecutor
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedGoldenFileTest
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.junit.Test
@@ -20,7 +21,7 @@ open class ExtractGradleDependenciesTest :
     }
 
     @Test
-    fun testExtractRootGradleFileFromProject() {
+    fun testGradleDependenciesExtraction() {
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor = GradleDependenciesAnalysisExecutor(outFile.parentFile.toPath(), outFile.name)
             analysisExecutor.execute(inFile.toPath())

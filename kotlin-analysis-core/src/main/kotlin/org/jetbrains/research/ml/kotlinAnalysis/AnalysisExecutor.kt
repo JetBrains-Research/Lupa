@@ -1,11 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
-import com.intellij.ide.impl.OpenProjectTask
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectManagerEx
-import org.jetbrains.research.ml.kotlinAnalysis.util.getSubdirectories
+import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**
@@ -13,8 +9,6 @@ import java.nio.file.Path
  * for each project in given dataset.
  */
 abstract class AnalysisExecutor {
-
-    private val logger: Logger = Logger.getInstance(javaClass)
 
     /**
      * Set of resources which are under control of executor. Executor[AnalysisExecutor] runs their initialization
@@ -38,33 +32,11 @@ abstract class AnalysisExecutor {
     /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        setupProject: (Path) -> Project? = { projectPath ->
-            ProjectManagerEx.getInstanceEx()
-                .openProject(
-                    projectPath,
-                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
-                )
-        }
+        repositoryOpener: (Path, (Project) -> Unit) -> Unit = RepositoryOpenerUtil.Companion::standardRepositoryOpener
     ) {
         init()
         try {
-            getSubdirectories(projectsDir).forEachIndexed { index, projectPath ->
-                ApplicationManager.getApplication().invokeAndWait {
-                    println("Opening project $projectPath (index $index)")
-                    setupProject(projectPath)?.let { project ->
-                        try {
-                            analyse(project)
-                        } catch (ex: Exception) {
-                            logger.error(ex)
-                        } finally {
-                            ApplicationManager.getApplication().invokeAndWait {
-                                val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
-                                logger.info("Project ${project.name} is closed = $closeStatus")
-                            }
-                        }
-                    }
-                }
-            }
+            repositoryOpener(projectsDir, ::analyse)
         } finally {
             close()
         }
