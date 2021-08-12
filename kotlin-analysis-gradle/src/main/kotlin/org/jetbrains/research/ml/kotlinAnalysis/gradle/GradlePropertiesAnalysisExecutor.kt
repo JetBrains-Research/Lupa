@@ -7,7 +7,7 @@ import org.jetbrains.research.ml.kotlinAnalysis.ResourceManager
 import java.nio.file.Path
 
 /**
- * Executor for gradle properties analysis which collects property name and value from gradle.properties file
+ * Executor for gradle properties analysis which collects property name and value from gradle.properties files
  * to csv file with columns "project_name", "property_key", "property_value".
  */
 class GradlePropertiesAnalysisExecutor(outputDir: Path, filename: String = "gradle_properties_data.csv") :

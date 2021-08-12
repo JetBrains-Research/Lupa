@@ -6,7 +6,7 @@ import org.jetbrains.research.ml.kotlinAnalysis.gradle.gradleProperties.analyzer
 /** Wrapper class for gradle.properties [PsiFile]. */
 class GradlePropertiesPsiFile(psiFile: PsiFile) : PsiFile by psiFile {
 
-    /** Extracts included module names. */
+    /** Extracts list of gradle properties. */
     fun extractGradleProperties(): List<GradleProperty> {
         return GradlePropertiesAnalyzer.analyze(this)
     }

@@ -6,7 +6,7 @@ import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 
-/** Runner for kotlin gradle dependencies analysis. */
+/** Runner for kotlin gradle properties analysis. */
 object KotlinGradlePropertiesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-gradle-properties-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {

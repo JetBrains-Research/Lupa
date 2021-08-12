@@ -1,12 +1,10 @@
 import argparse
 import os
+import pandas as pd
 import re
 import sys
-from typing import Dict, Any
-
-import pandas as pd
-
 from analysis.gradle_properties.column_names_utils import GradlePropertiesKeyStatsColumn, GradlePropertiesColumn
+from typing import Dict, Any
 from utils import Extensions, create_directory, get_file_lines
 
 GradlePropertiesStats = Dict[str, Any]
@@ -87,11 +85,16 @@ def analyze(path_to_properties: str, path_to_result_dir: str, path_to_select_pro
 
 def preprocess_gradle_properties_data(path_to_properties: str) -> str:
     lines = get_file_lines(path_to_properties)
-    path_to_prep_properties = "data/prep2_gradle_properties_data.csv"
+    path_to_prep_properties = "data/prep_gradle_properties_data.csv"
     with open(path_to_prep_properties, "w+") as f:
         for line in lines:
+            # if there is no property_value put null
             if re.match("^[^,]+,[^,]+,$", line):
                 line = line[:-1] + "None\n"
+            sub_lines = line.split(",")
+            # if property_value contains "," replace with " "
+            if len(sub_lines) > 3:
+                line = ",".join(sub_lines[:2] + [" ".join(sub_lines[2:])])
             f.write(line)
     return path_to_prep_properties
 
@@ -101,12 +104,11 @@ if __name__ == '__main__':
 
     parser.add_argument('--input', type=str, help='path to csv file with gradle dependencies csv wit columns:'
                                                   'project_name -- project name'
-                                                  'group_id -- dependency group id'
-                                                  'artifact_id -- dependency artifact id'
-                                                  'config -- dependency configuration', required=True)
+                                                  'property_key -- property key'
+                                                  'property_value -- property value', required=True)
     parser.add_argument('--output', type=str, help='path to output dir with result', required=True)
-    parser.add_argument('--select', type=str, default=None, help='path to csv file with dependencies to select')
+    parser.add_argument('--select', type=str, default=None, help='path to csv file with properties keys to select')
 
     args = parser.parse_args(sys.argv[1:])
-    # prep_input = preprocess_gradle_properties_data(args.input)
-    analyze(args.input, args.output, args.select)
+    prep_input = preprocess_gradle_properties_data(args.input)
+    analyze(prep_input, args.output, args.select)

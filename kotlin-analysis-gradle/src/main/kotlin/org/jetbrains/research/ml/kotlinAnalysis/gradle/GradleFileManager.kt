@@ -130,7 +130,7 @@ class GradleFileManager {
             )
         }
 
-        /** Extracts all gradle.properties file from given [project]. */
+        /** Extracts all gradle.properties files from given [project]. */
         fun extractGradlePropertiesFilesFromProject(project: Project): List<GradlePropertiesPsiFile> {
             return extractGradleFilesFromProject(
                 project,
