@@ -1,0 +1,4 @@
+rootProject.name = 'in_0_groovy_multi_module_project'
+include 'first_module'
+include 'second_module'
+
