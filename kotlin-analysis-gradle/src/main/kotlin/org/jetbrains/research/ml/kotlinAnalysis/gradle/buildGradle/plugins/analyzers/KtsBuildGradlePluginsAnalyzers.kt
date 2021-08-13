@@ -2,23 +2,14 @@ package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.plugins.anal
 
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlock
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlockContext
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.KtsBuildGradleBlockContextController
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.plugins.BuildGradlePlugin
 
-/**
- * Analyser for gradle plugin which parse [BuildGradlePlugin] form [KtCallExpression] inside
- * [GradleBlock.PLUGIN] block.
- */
+/** Analyser for gradle plugin which parse [BuildGradlePlugin] form [KtCallExpression].*/
 object KtsBuildGradlePluginAnalyzer : BuildGradlePluginAnalyzer<KtCallExpression>(KtCallExpression::class.java)
 
-/**
- * In Kotlin file plugins area stored inside
- * [dependency][KtCallExpression] block ->
- * [implementation|api|compile|...][KtCallExpression] block ->
- * as its arguments
- */
+/** Analyzer for gradle plugins which extracts all applied or declared plugins in build.gradle.kts file. */
 object KtsBuildGradlePluginsAnalyzer :
     PsiMainAnalyzerWithContext<GradleBlockContext, BuildGradlePlugin?, Set<BuildGradlePlugin>>(
         listOf(KtsBuildGradleBlockContextController),

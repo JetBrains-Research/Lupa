@@ -26,7 +26,7 @@ class BuildGradlePluginFileUtil {
          */
         private val GRADLE_COMMUNITY_PLUGIN_REGEX =
             "id[(]?$QUOTES($NAME)$QUOTES[)]?(version$QUOTES$NAME$QUOTES)?(apply$NAME)?"
-            .toRegex(RegexOption.IGNORE_CASE)
+                .toRegex(RegexOption.IGNORE_CASE)
 
         /**
          * Regex to parse Gradle community plugin:
@@ -95,6 +95,7 @@ class BuildGradlePluginFileUtil {
             GRADLE_APPLY_BINARY_PLUGIN_KTS_REGEX
         )
 
+        /** Extracts plugin id from [given code line][gradlePluginLine] if it match one of plugin declaration regexes. */
         fun parseGradlePluginParams(gradlePluginLine: String): String? {
             return gradlePluginLine.replace("\\s".toRegex(), "")
                 .let { pluginLine ->
@@ -110,6 +111,7 @@ class BuildGradlePluginFileUtil {
                 }
         }
 
+        /** Extracts plugin id from [given code line][gradlePluginLine] if it match one of apply plugin regexes. */
         fun parseGradleApplyPluginParams(gradlePluginLine: String): String? {
             return gradlePluginLine.replace("\\s".toRegex(), "")
                 .let { pluginLine ->

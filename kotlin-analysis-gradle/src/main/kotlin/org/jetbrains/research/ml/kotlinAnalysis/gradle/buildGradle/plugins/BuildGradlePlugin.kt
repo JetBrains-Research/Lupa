@@ -1,6 +1,6 @@
 package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.plugins
 
-/** Plugin wrapper for gradle files, which holds [pluginId] values and [allprojects] flag.
+/** Plugin wrapper for plugins, declared in Gradle build files, which holds [pluginId] values and [allprojects] flag.
  *
  * For example:
  * plugins {

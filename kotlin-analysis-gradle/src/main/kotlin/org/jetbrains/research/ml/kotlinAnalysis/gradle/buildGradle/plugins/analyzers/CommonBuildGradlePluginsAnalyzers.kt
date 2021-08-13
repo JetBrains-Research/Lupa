@@ -10,8 +10,8 @@ import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.plugins.Build
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.plugins.BuildGradlePluginFileUtil
 
 /**
- * Analyser for gradle plugin which parse [BuildGradlePlugin] form [psiElement][P] inside
- * [GradleBlock.PLUGINS] block.
+ * Analyser for gradle plugin which parse declared plugins [BuildGradlePlugin] form [psiElement][P] inside
+ * [GradleBlock.PLUGINS] block or applied plugins.
  */
 open class BuildGradlePluginAnalyzer<P : PsiElement>(pClass: Class<P>) :
     PsiAnalyzerWithContextImpl<P, GradleBlockContext, BuildGradlePlugin?>(pClass) {
