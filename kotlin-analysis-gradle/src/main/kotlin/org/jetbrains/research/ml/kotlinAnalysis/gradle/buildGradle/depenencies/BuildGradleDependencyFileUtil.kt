@@ -82,7 +82,7 @@ class BuildGradleDependencyFileUtil {
                             val configKey = it[1]?.value ?: return null
                             val groupId = KotlinConstants.OGR_JETBRAINS_KOTLIN.value
                             val artifactId = it[2]?.value
-                                ?.let { kotlinArtifactId -> "${KotlinConstants.KOTLIN}-$kotlinArtifactId" }
+                                ?.let { kotlinArtifactId -> "${KotlinConstants.KOTLIN.value}-$kotlinArtifactId" }
                                 ?: return null
                             Triple(configKey, groupId, artifactId)
                         }

@@ -21,7 +21,7 @@ open class BuildGradlePluginAnalyzer<P : PsiElement>(pClass: Class<P>) :
         return if (context!!.containsBlock(GradleBlock.PLUGINS)) {
             BuildGradlePluginFileUtil.parseGradlePluginParams(psiElement.text)
         } else {
-            BuildGradlePluginFileUtil.parseGradlePluginParams(psiElement.text)
+            BuildGradlePluginFileUtil.parseGradleApplyPluginParams(psiElement.text)
         }?.let { pluginId ->
             BuildGradlePlugin(
                 pluginId,
