@@ -17,7 +17,7 @@ object AndroidProjectTagger : ProjectTagger {
 
     override fun getProjectTag(project: Project): Set<ProjectTag> {
         return GradleFileManager.extractRootGradleFileFromProject(project)
-            ?.takeIf { it.containsDependencyWithGroup(ANDROID_DEPENDENCY_GROUP_NAME) }
+            ?.takeIf { it.containsDependencyWithGroupId(ANDROID_DEPENDENCY_GROUP_NAME) }
             ?.let { setOf(ProjectTag.ANDROID) }
             ?: emptySet()
     }

@@ -24,20 +24,26 @@ enum class GradleDependencyConfiguration(
     }
 }
 
-/** Dependency wrapper for gradle files, which holds [group] and [configuration].
+/** Dependency wrapper for gradle files, which holds [groupId], [artifactId], [configuration] values
+ * and [allprojects] flag.
  *
  * For example:
+ * allprojects {
  *     dependencies {
  *          classpath "com.android.tools.build:gradle:4.1.1"
  *     }
- * [group] = "com.android.tools.build:gradle:4.1.1"
- * [configuration] = [GradleDependencyConfiguration.CLASSPATH]
+ * }
+ * [groupId] = "com.android.tools.build"
+ * [artifactId] = "gradle"
+ * [version] = "4.1.1"
+ * [configuration] = ["classpath"][GradleDependencyConfiguration.CLASSPATH]
+ * [allProjects] = True (because of inside allprojects block)
  * */
 data class GradleDependency(
-    val group: String,
-    val name: String,
+    val groupId: String,
+    val artifactId: String,
     val configuration: GradleDependencyConfiguration?,
     val allProjects: Boolean = false
 ) {
-    override fun toString(): String = "${configuration?.key ?: "none"} $group:$name"
+    override fun toString(): String = "${configuration?.key ?: "none"} $groupId:$artifactId"
 }

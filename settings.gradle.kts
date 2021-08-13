@@ -8,7 +8,8 @@ include(
     "kotlin-analysis-clones",
     "kotlin-analysis-dependencies",
     "kotlin-analysis-statistic",
-    "kotlin-analysis-gradle"
+    "kotlin-analysis-gradle",
+    "kotlin-analysis-test"
 )
 
 val utilitiesRepo = "https://github.com/JetBrains-Research/plugin-utilities.git"
