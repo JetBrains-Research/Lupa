@@ -49,11 +49,11 @@ open class GradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
     override fun analyzeWithContext(psiElement: P, context: GradleBlockContext?): GradleDependency? {
         assert(context != null) { "Context should be provided" }
         return if (context!!.containsBlock(GradleBlock.DEPENDENCIES)) {
-            GradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (key, group, name) ->
+            GradleFileUtil.parseGradleDependencyParams(psiElement.text)?.let { (configKey, groupId, artifactId) ->
                 GradleDependency(
-                    group,
-                    name,
-                    GradleDependencyConfiguration.fromKey(key),
+                    groupId,
+                    artifactId,
+                    GradleDependencyConfiguration.fromKey(configKey),
                     context.containsBlock(GradleBlock.ALL_PROJECTS)
                 )
             }
