@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies
 
 /** Dependency declaration configuration. */
 enum class BuildGradleDependencyConfiguration(
@@ -44,22 +44,4 @@ data class BuildGradleDependency(
     val artifactId: String,
     val configuration: BuildGradleDependencyConfiguration?,
     val allProjects: Boolean = false
-) {
-    override fun toString(): String = "${configuration?.key ?: "none"} $groupId:$artifactId"
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is BuildGradleDependency) return false
-
-        return groupId == other.groupId &&
-                artifactId == other.artifactId &&
-                configuration == other.configuration
-    }
-
-    override fun hashCode(): Int {
-        var result = groupId.hashCode()
-        result = 31 * result + artifactId.hashCode()
-        result = 31 * result + (configuration?.hashCode() ?: 0)
-        return result
-    }
-}
+)
