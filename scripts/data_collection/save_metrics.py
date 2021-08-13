@@ -4,7 +4,7 @@ It stores current number of stars, forks and issues for given repositories.
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory
-    * time to save GitHub at
+    * time to save GitHub at (optional argument)
 """
 import os
 import pandas as pd

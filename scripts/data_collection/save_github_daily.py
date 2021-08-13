@@ -3,7 +3,7 @@ This script runs GitHub API every day and saves all collected data about given r
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory
-    * time to save GitHub at
+    * time to save GitHub at (optional argument)
 """
 import os
 import typing
