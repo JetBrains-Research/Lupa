@@ -19,14 +19,14 @@ open class BuildGradlePluginAnalyzer<P : PsiElement>(pClass: Class<P>) :
     override fun analyzeWithContext(psiElement: P, context: GradleBlockContext?): BuildGradlePlugin? {
         assert(context != null) { "Context should be provided" }
         return if (context!!.containsBlock(GradleBlock.PLUGINS)) {
-            BuildGradlePluginFileUtil.parseGradlePluginParams(psiElement.text)?.let { pluginId ->
-                BuildGradlePlugin(
-                    pluginId,
-                    context.containsBlock(GradleBlock.ALL_PROJECTS)
-                )
-            }
+            BuildGradlePluginFileUtil.parseGradlePluginParams(psiElement.text)
         } else {
-            null
+            BuildGradlePluginFileUtil.parseGradlePluginParams(psiElement.text)
+        }?.let { pluginId ->
+            BuildGradlePlugin(
+                pluginId,
+                context.containsBlock(GradleBlock.ALL_PROJECTS)
+            )
         }
     }
 }

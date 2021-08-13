@@ -51,8 +51,9 @@ class BuildGradlePluginFileUtil {
          *     plugin("java")
          * }
          */
-        private val GRADLE_PLUGIN_KTS_REGEX = "[plugin][(]?$QUOTES($NAME)$QUOTES[)]?"
+        private val GRADLE_PLUGIN_KOTLIN_REGEX = "kotlin[(]?$QUOTES($NAME)$QUOTES[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
+
 
         /**
          * Regex to parse Groovy Kts plugin inside apply:
@@ -62,7 +63,7 @@ class BuildGradlePluginFileUtil {
          *     plugin("java")
          * }
          */
-        private val GRADLE_PLUGIN_KOTLIN_REGEX = "kotlin[(]?$QUOTES($NAME)$QUOTES[)]?"
+        private val GRADLE_PLUGIN_KTS_REGEX = "[plugin][(]?$QUOTES($NAME)$QUOTES[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         /**
@@ -87,6 +88,9 @@ class BuildGradlePluginFileUtil {
             GRADLE_COMMUNITY_PLUGIN_REGEX,
             GRADLE_CORE_PLUGIN_REGEX,
             GRADLE_PLUGIN_KTS_REGEX,
+        )
+
+        private val APPLY_PLUGIN_REGEXES = listOf(
             GRADLE_APPLY_BINARY_PLUGIN_GROOVY_REGEX,
             GRADLE_APPLY_BINARY_PLUGIN_KTS_REGEX
         )
@@ -101,6 +105,15 @@ class BuildGradlePluginFileUtil {
                         val groupId = it[1]?.value ?: return null
                         "${KotlinConstants.OGR_JETBRAINS_KOTLIN}.$groupId"
                     } ?: PLUGIN_REGEXES.mapNotNull { it.matchEntire(pluginLine)?.groups }
+                        .firstOrNull { it.size == 2 }
+                        ?.let { it[1]?.value }
+                }
+        }
+
+        fun parseGradleApplyPluginParams(gradlePluginLine: String): String? {
+            return gradlePluginLine.replace("\\s".toRegex(), "")
+                .let { pluginLine ->
+                    APPLY_PLUGIN_REGEXES.mapNotNull { it.matchEntire(pluginLine)?.groups }
                         .firstOrNull { it.size == 2 }
                         ?.let { it[1]?.value }
                 }

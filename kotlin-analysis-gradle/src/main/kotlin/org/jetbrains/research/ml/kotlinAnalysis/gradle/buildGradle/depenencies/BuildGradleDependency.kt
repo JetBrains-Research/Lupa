@@ -38,7 +38,7 @@ enum class BuildGradleDependencyConfiguration(
  * [version] = "4.1.1"
  * [configuration] = ["classpath"][GradleDependencyConfiguration.CLASSPATH]
  * [allProjects] = True (because of inside allprojects block)
- * */
+ */
 data class BuildGradleDependency(
     val groupId: String,
     val artifactId: String,
