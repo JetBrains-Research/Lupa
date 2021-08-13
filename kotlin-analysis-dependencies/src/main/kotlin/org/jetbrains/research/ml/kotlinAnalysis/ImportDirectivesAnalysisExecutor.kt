@@ -3,7 +3,7 @@ package org.jetbrains.research.ml.kotlinAnalysis
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.research.ml.kotlinAnalysis.psi.PsiProvider
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import java.nio.file.Path
 
 /**
@@ -17,10 +17,10 @@ class ImportDirectivesAnalysisExecutor(outputDir: Path, filename: String = "impo
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        val packageDirectives = PsiProvider.extractElementsOfTypeFromProject(project, KtPackageDirective::class.java)
+        val packageDirectives = project.extractElementsOfType(KtPackageDirective::class.java)
             .filter { !it.isRoot }
         val projectPackageFqNames = packageDirectives.map { PackageDirectivePsiAnalyzer.analyze(it) }.toSet()
-        val importDirectives = PsiProvider.extractElementsOfTypeFromProject(project, KtImportDirective::class.java)
+        val importDirectives = project.extractElementsOfType(KtImportDirective::class.java)
         val results = importDirectives
             .map { ImportDirectivePsiAnalyzer.analyze(it) }
             .filter { importDirective -> !projectPackageFqNames.any { importDirective.startsWith(it) } }

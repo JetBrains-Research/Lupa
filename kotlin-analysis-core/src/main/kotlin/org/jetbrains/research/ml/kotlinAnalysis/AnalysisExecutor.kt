@@ -1,6 +1,6 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
-import com.intellij.ide.impl.ProjectUtil
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -35,24 +35,31 @@ abstract class AnalysisExecutor {
         controlledResourceManagers.forEach { it.close() }
     }
 
-    /** Execute analysis for all projects in [given directory][projectsDir]. */
+    /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun execute(
         projectsDir: Path,
-        setupProject: (Path) -> Project = { projectPath -> ProjectUtil.openOrImport(projectPath, null, true) }
+        setupProject: (Path) -> Project? = { projectPath ->
+            ProjectManagerEx.getInstanceEx()
+                .openProject(
+                    projectPath,
+                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                )
+        }
     ) {
         init()
         try {
             getSubdirectories(projectsDir).forEachIndexed { index, projectPath ->
                 ApplicationManager.getApplication().invokeAndWait {
                     println("Opening project $projectPath (index $index)")
-                    setupProject(projectPath).let { project ->
+                    setupProject(projectPath)?.let { project ->
                         try {
                             analyse(project)
                         } catch (ex: Exception) {
                             logger.error(ex)
                         } finally {
                             ApplicationManager.getApplication().invokeAndWait {
-                                ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                                val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                                logger.info("Project ${project.name} is closed = $closeStatus")
                             }
                         }
                     }

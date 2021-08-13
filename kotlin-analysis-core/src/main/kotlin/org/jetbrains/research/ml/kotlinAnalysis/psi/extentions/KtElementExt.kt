@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis.psi
+package org.jetbrains.research.ml.kotlinAnalysis.psi.extentions
 
 import org.jetbrains.kotlin.psi.KtElement
 import java.nio.file.Path
