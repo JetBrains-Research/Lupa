@@ -3,9 +3,9 @@ This script runs GitHub API every day and saves all collected data about given r
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory
+    * time to save GitHub at
 """
 import os
-import sys
 import typing
 
 import pandas as pd
@@ -17,12 +17,10 @@ import schedule
 import time
 from datetime import datetime
 
-module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
 from utils import create_directory, Extensions
 from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
+
+TIME = "17:00"
 
 
 def main():
@@ -34,7 +32,8 @@ def main():
     headers = {'Authorization': f'token {token}'}
     session = create_github_session()
 
-    schedule.every().day.at("17:00").do(save_jsons, args.csv_path, args.output, session, headers)
+    schedule.every().day.at(args.time if args.time is not None else TIME).do(save_jsons, args.csv_path, args.output,
+                                                                             session, headers)
 
     while True:
         schedule.run_pending()
@@ -65,6 +64,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
+    parser.add_argument("--time", help="The time data will be saved at. The time has to be in isoformat (hh:mm)",
+                        nargs='?', type=str)
     return parser.parse_args()
 
 

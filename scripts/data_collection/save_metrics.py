@@ -4,9 +4,9 @@ It stores current number of stars, forks and issues for given repositories.
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory
+    * time to save GitHub at
 """
 import os
-import sys
 import pandas as pd
 import argparse
 import logging
@@ -16,12 +16,10 @@ import time
 from github import Github
 from datetime import datetime
 
-module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
 from utils import create_directory
 from data_collection.data_collection_utils import get_github_token
+
+TIME = "01:00"
 
 
 def main():
@@ -35,7 +33,8 @@ def main():
     token = get_github_token()
     github = Github(token, retry=Retry(total=50, backoff_factor=10, status_forcelist=[403]))
 
-    schedule.every().day.at("01:00").do(save_metrics, args.csv_path, results_path, github)
+    schedule.every().day.at(args.time if args.time is not None else TIME).do(save_metrics, args.csv_path, results_path,
+                                                                             github)
 
     while True:
         schedule.run_pending()
@@ -66,6 +65,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
+    parser.add_argument("--time", help="The time data will be saved at. The time has to be in isoformat (hh:mm)",
+                        nargs='?', type=str)
     return parser.parse_args()
 
 

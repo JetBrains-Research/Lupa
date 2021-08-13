@@ -11,15 +11,10 @@ It accepts
 """
 
 import os
-import sys
 import pandas as pd
 import argparse
 import logging
 from typing import Set, TextIO, Tuple
-
-module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
-if module_path not in sys.path:
-    sys.path.append(module_path)
 
 from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
 from utils import create_directory, Extensions
