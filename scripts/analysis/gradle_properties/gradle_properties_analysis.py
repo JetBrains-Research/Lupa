@@ -33,13 +33,13 @@ def get_properties_key_value_stats(df: pd.DataFrame) -> GradlePropertiesStats:
     for project_name, property_key, property_value in df.values:
         properties_keys.add(property_key)
         for property_sub_value in str(property_value).split(' '):
-            if property_sub_value != "":
+            if property_sub_value != '':
                 properties_values.add(property_sub_value)
 
     properties_key_value_stats = {v: {k: 0 for k in properties_keys} for v in properties_values}
     for project_name, property_key, property_value in df.values:
         for property_sub_value in str(property_value).split(' '):
-            if property_sub_value != "":
+            if property_sub_value != '':
                 properties_key_value_stats[property_sub_value][property_key] += 1
 
     stats = {v: [] for v in properties_values}
@@ -86,15 +86,15 @@ def analyze(path_to_properties: str, path_to_result_dir: str, path_to_select_pro
 def preprocess_gradle_properties_data(path_to_properties: str) -> str:
     lines = get_file_lines(path_to_properties)
     path_to_prep_properties = "data/prep_gradle_properties_data.csv"
-    with open(path_to_prep_properties, "w+") as f:
+    with open(path_to_prep_properties, 'w+') as f:
         for line in lines:
             # if there is no property_value put null
             if re.match("^[^,]+,[^,]+,$", line):
-                line = line[:-1] + "None\n"
-            sub_lines = line.split(",")
+                line = line[:-1] + 'None\n'
+            sub_lines = line.split(',')
             # if property_value contains "," replace with " "
             if len(sub_lines) > 3:
-                line = ",".join(sub_lines[:2] + [" ".join(sub_lines[2:])])
+                line = ','.join(sub_lines[:2] + [' '.join(sub_lines[2:])])
             f.write(line)
     return path_to_prep_properties
 
