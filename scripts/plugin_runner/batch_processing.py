@@ -7,7 +7,6 @@ It accepts
     * batch size (default is 300)
     * index of batch to start from
 """
-import sys
 import argparse
 import logging
 import os
@@ -15,12 +14,7 @@ import subprocess
 from pathlib import Path
 from typing import List
 import time
-
 from plugin_runner.merge_data import merge
-module_path = os.path.abspath(os.path.join(os.path.realpath(__file__), os.pardir, os.pardir))
-if module_path not in sys.path:
-    sys.path.append(module_path)
-
 from utils import get_subdirectories, create_directory, Extensions
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
@@ -41,7 +35,8 @@ def main():
         batch_output_path = os.path.join(args.output, f"output/batch_{index}")
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
-        with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.{Extensions.TXT}")), "w+") as fout:
+        with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.{Extensions.TXT}")),
+                  "w+") as fout:
             process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli",
                                         f"-Prunner=kotlin-{args.data}-analysis",
                                         f"-Pinput={batch_path}",

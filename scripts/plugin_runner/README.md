@@ -3,7 +3,7 @@
 #### Extract methods from dataset
 
 ``` 
-python3 scripts/plugin_runner/batch_processing.py data_to_analyze /path/to/dataset/dir /path/to/extracted_methods/dir 
+python3 -m plugin_runner.batch_processing.py data_to_analyze /path/to/dataset/dir /path/to/extracted_methods/dir 
 ```
 
 where ```data_to_analyze``` can be ```clones``` or ```ranges```
