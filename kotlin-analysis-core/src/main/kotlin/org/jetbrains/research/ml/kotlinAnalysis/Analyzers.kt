@@ -4,6 +4,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 
 typealias AnalyzerWithContextToStat<C, R> = Map<PsiAnalyzerWithContext<C, R>, MutableMap<PsiElement, R>>
+typealias AnalyzerIgnoreContextToStat<R> = Map<PsiAnalyzerWithContext<AnalyzerContext, R>, MutableMap<PsiElement, R>>
 
 /** Cast Psi element to type [P] of given [pClass]. */
 private fun <P : PsiElement> PsiElement.castToClass(pClass: Class<P>): P? {
@@ -63,6 +64,24 @@ abstract class PsiAnalyzerWithContextImpl<P : PsiElement, C : AnalyzerContext, R
 
     final override fun analyze(psiElement: PsiElement, context: C?): R? {
         return psiElement.castToClass(pClass)?.let { analyzeWithContext(it, context) }
+    }
+}
+
+/**
+ * [PsiAnalyzerWithContextImpl] implementation which ignores context.
+ * Context type is replaces with base [AnalyzerContext].
+ *
+ * @param P the type of PSI elements that can be analyzed.
+ * @param R the type of the analysis result.
+ * @property pClass class to cast elements to [P] type or do not process analysis.
+ */
+abstract class PsiAnalyzerIgnoreContextImpl<P : PsiElement, R>(private val pClass: Class<P>) :
+    PsiAnalyzerWithContextImpl<P, AnalyzerContext, R>(pClass) {
+
+    abstract fun analyzeIgnoreContext(psiElement: P): R?
+
+    final override fun analyzeWithContext(psiElement: P, context: AnalyzerContext?): R? {
+        return analyzeIgnoreContext(psiElement)
     }
 }
 
@@ -154,6 +173,22 @@ abstract class PsiContextControllerImpl<P : PsiElement, C : AnalyzerContext>(pri
 abstract class AnalyzersAggregatorWithContext<C : AnalyzerContext, R, T> {
 
     abstract fun aggregate(analyzerToStat: AnalyzerWithContextToStat<C, R>): T
+}
+
+/**
+ * [AnalyzersAggregatorWithContext] implementation which ignores context.
+ * Context type is replaces with base [AnalyzerContext].
+ *
+ * @param R the type of the analysis result.
+ * @param T the type of aggregator result.
+ */
+abstract class AnalyzersAggregatorIgnoreContext<R, T> : AnalyzersAggregatorWithContext<AnalyzerContext, R, T>() {
+
+    abstract fun aggregateIgnoreContext(analyzerToStat: AnalyzerIgnoreContextToStat<R>): T
+
+    override fun aggregate(analyzerToStat: AnalyzerWithContextToStat<AnalyzerContext, R>): T {
+        return aggregateIgnoreContext(analyzerToStat)
+    }
 }
 
 /**
