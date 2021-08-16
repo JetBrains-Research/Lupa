@@ -7,7 +7,7 @@ This module contains scripts for plugins from the build.gradle/build.gradle.kts 
 To count gradle plugin ids occurrence statistics run:
 
 ``` 
-python3 scripts/analysis/gradle_properties/gradle_plugins_analysis.py 
+python3 -m analysis/gradle_properties/gradle_plugins_analysis.py 
                     --input path/to/gradle_plugins_data.csv 
                     --output path/to/result/dir 
 ```

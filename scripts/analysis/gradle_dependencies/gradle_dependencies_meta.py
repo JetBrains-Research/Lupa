@@ -1,6 +1,7 @@
 import argparse
 import re
 import sys
+from collections import defaultdict
 from typing import Optional
 
 import pandas as pd
@@ -17,7 +18,7 @@ def url_to_repo_name(url: str) -> Optional[str]:
 
 
 def check_is_community(full_name) -> bool:
-    full_name_not_community_artifacts = ["org.jetbrains.kotlin", "androidx", "com.android", "com.google"]
+    full_name_not_community_artifacts = ['org.jetbrains.kotlin', 'androidx', 'com.android', 'com.google']
     return not any(artifact in full_name for artifact in full_name_not_community_artifacts)
 
 
@@ -37,14 +38,7 @@ def get_gradle_dependencies_meta_csv(path_to_stats: str, path_to_result: str, pa
                                     GradleDependenciesColumn.ARTIFACT_ID]].values]))
 
     packages = get_packages(full_names)
-    meta = {
-        GradleDependenciesMetaColumn.FULL_NAME: [],
-        GradleDependenciesMetaColumn.REPO_NAME: [],
-        GradleDependenciesMetaColumn.URL: [],
-        GradleDependenciesMetaColumn.LANGUAGE: [],
-        GradleDependenciesMetaColumn.MULTIPLATFORM: [],
-        GradleDependenciesMetaColumn.COMMUNITY: [],
-    }
+    meta = defaultdict(list)
 
     for package in packages:
         full_name = f"{package.group_id}:{package.artifact_id}"

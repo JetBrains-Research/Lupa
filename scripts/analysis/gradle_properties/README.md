@@ -7,7 +7,7 @@ This module contains scripts for properties from the gradle.properties files ana
 To count gradle properties keys occurrence statistics run:
 
 ``` 
-python3 scripts/analysis/gradle_properties/gradle_properties_analysis.py 
+python3 -m analysis/gradle_properties/gradle_properties_analysis.py 
                     --input path/to/gradle_properties_data.csv 
                     --output path/to/result/dir
                     --select path/to/selectes_properties_data.csv

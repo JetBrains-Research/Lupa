@@ -1,5 +1,7 @@
 import argparse
 import os
+from collections import defaultdict
+
 import pandas as pd
 import sys
 from typing import Dict, Any
@@ -13,17 +15,14 @@ GradlePluginsStats = Dict[str, Any]
 def save_stats_with_to_csv(path_to_dir: str, filename: str, stats: GradlePluginsStats):
     csv_file_path = os.path.join(path_to_dir, filename)
     pd.DataFrame.from_dict(stats) \
-        .sort_values(by="count", ascending=False) \
+        .sort_values(by=GradlePluginsStatsColumn.COUNT.value, ascending=False) \
         .to_csv(csv_file_path, index=False)
 
 
 def get_plugins_stats(df: pd.DataFrame, unique=False) -> GradlePluginsStats:
-    plugins = {}
-    projects_by_plugins = {}
+    plugins = defaultdict(int)
+    projects_by_plugins = defaultdict(set)
     for project_name, plugin_id in df.values:
-        if plugin_id not in plugins:
-            projects_by_plugins[plugin_id] = set()
-            plugins[plugin_id] = 0
         if not unique or project_name not in projects_by_plugins[plugin_id]:
             projects_by_plugins[plugin_id].add(project_name)
             plugins[plugin_id] += 1

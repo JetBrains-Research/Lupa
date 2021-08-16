@@ -4,26 +4,28 @@ This module contains scripts for the dependencies section content for build.grad
 
 ### Metadata for libraries collection
 
-Metadata includes gradle dependency source (url to github) and language (main language in github). 
-To collect it run:
+Metadata includes gradle dependency source (url to github) and language (main language in github). To collect it run:
 
 ``` 
-python3 scripts/analysis/gradle_dependencies/gradle_dependencies_meta.py 
+python3 -m analysis/gradle_dependencies/gradle_dependencies_meta.py 
                     --input path/to/gradle_dependencies_data.csv 
                     --output path/to/result/dir
                     --plugins path/to/gradle_plugins_data.csv 
 ```
+
 To get plugins data you need to:
+
 1. Create file with libraries names which have github links
 2. Run load_data.py on in to clone all libraries' repos
 3. On this dataset run kotlin-gradle-plugins-analysis analyzer to get `gradle_plugins_data.csv`
 
 ### Statistics calculation for gradle dependencies occurrence
 
-To count gradle dependencies occurrence statistics (including statistics for each configuration) and dependency type (community/multiplatform) run:
+To count gradle dependencies occurrence statistics (including statistics for each configuration) and dependency type (
+community/multiplatform) run:
 
 ``` 
-python3 scripts/analysis/gradle_dependencies/gradle_dependencies.py 
+python3 -m analysis/gradle_dependencies/gradle_dependencies.py 
                     --input path/to/gradle_dependencies_data.csv 
                     --output path/to/result/dir
                     --meta path/to/gradle_dependencies_meta_data.csv 
@@ -32,7 +34,6 @@ python3 scripts/analysis/gradle_dependencies/gradle_dependencies.py
 ```
 
 The result of this script in `path/to/gradle_dependencies_stats.csv`, which contains information:
-
 
 | full_name | count | url | language | community | multiplatform |implementation | testImplementation | androidTestImplementation | kapt | classpath | api | annotationProcessor | compile | compileOnly | testCompile | testRuntimeOnly | testRuntime | runtimeOnly  |
 | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
