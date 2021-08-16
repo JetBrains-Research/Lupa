@@ -9,7 +9,7 @@ Import directives analysis consists in processing collected from dataset of proj
 directives.
 
 ``` 
-python3 scripts/analysis/dependencies/import_directives_analysis.py 
+python3 -m analysis/dependencies/import_directives_analysis.py 
                                      [-h] --input INPUT --output OUTPUT
                                      [--ignore IGNORE]
                                      [--tagged_projects TAGGED_PROJECTS]
@@ -30,7 +30,7 @@ python3 scripts/analysis/dependencies/import_directives_analysis.py
 Run to get the description of the above flags run:
 
 ``` 
-python3 scripts/analysis/dependencies/import_directives_analysis.py -h
+python3 -m analysis/dependencies/import_directives_analysis.py -h
 ```
 
 Examples of import directives fq names analysis results visualization:

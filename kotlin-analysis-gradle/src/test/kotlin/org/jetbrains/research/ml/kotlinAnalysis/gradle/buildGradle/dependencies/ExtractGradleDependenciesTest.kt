@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.dependencies
 
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleDependenciesAnalysisExecutor
 import org.jetbrains.research.ml.kotlinAnalysis.util.ParametrizedGoldenFileTest

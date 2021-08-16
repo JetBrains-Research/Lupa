@@ -1,21 +1,13 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies.analyzers
 
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrApplicationStatementImpl
-import org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.path.GrMethodCallExpressionImpl
 import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependency
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
-
-/**
- * Controller for stack of blocks in build.gradle file, which controls the blocks [GradleBlock] order according to
- * psi tree path order.
- */
-object GroovyBuildGradleBlockContextController :
-    GradleBlockContextController<GrMethodCallExpressionImpl>(GrMethodCallExpressionImpl::class.java, { psiElement ->
-        psiElement.callReference?.methodName?.let { GradleBlock.fromSimpleName(it) }
-    })
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlockContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GroovyBuildGradleBlockContextController
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies.BuildGradleDependency
 
 /**
  * Analyser for gradle dependency which parse [BuildGradleDependency] form [GrApplicationStatementImpl] inside

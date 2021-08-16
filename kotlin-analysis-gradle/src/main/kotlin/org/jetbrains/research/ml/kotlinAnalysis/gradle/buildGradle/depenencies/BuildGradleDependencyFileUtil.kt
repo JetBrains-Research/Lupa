@@ -1,9 +1,11 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies
+
+import org.jetbrains.research.ml.kotlinAnalysis.util.KotlinConstants
 
 /**
- * Util class for working with Gradle file structure, for example parsing dependencies from build files.
+ * Util class for working with Gradle dependencies section, for example parsing dependencies from build files.
  */
-class BuildGradleFileUtil {
+class BuildGradleDependencyFileUtil {
     companion object {
 
         private const val NAME = "[^:{}\'\"]*"
@@ -78,9 +80,9 @@ class BuildGradleFileUtil {
                                 return null
                             }
                             val configKey = it[1]?.value ?: return null
-                            val groupId = "org.jetbrains.kotlin"
+                            val groupId = KotlinConstants.OGR_JETBRAINS_KOTLIN.value
                             val artifactId = it[2]?.value
-                                ?.let { kotlinArtifactId -> "kotlin-$kotlinArtifactId" }
+                                ?.let { kotlinArtifactId -> "${KotlinConstants.KOTLIN.value}-$kotlinArtifactId" }
                                 ?: return null
                             Triple(configKey, groupId, artifactId)
                         }
