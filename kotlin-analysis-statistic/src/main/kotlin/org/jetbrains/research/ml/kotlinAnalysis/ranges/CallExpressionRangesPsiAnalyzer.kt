@@ -1,6 +1,7 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.ranges
 
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzer
 
 /**
  * Analyzer for call expressions.

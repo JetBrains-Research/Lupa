@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.ranges
 
 enum class RangeType(val fqName: String?, val simpleName: String?) {
     UNTIL("kotlin.ranges.until", "until"),

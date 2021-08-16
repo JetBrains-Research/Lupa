@@ -1,7 +1,8 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.ranges
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzer
 
 /**
  * Analyzer that determines in which context the range is used.

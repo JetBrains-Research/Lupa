@@ -1,5 +1,6 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
+import org.jetbrains.research.ml.kotlinAnalysis.ranges.RangesAnalysisExecutor
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile

@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.ranges
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
