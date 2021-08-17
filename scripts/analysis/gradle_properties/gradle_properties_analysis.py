@@ -1,5 +1,7 @@
 import argparse
 import os
+from collections import defaultdict
+
 import pandas as pd
 import re
 import sys
@@ -12,14 +14,12 @@ GradlePropertiesStats = Dict[str, Any]
 
 def save_stats_with_to_csv(path_to_dir: str, filename: str, stats: GradlePropertiesStats):
     csv_file_path = os.path.join(path_to_dir, filename)
-    pd.DataFrame.from_dict(stats).sort_values(by="count", ascending=False).to_csv(csv_file_path, index=False)
+    pd.DataFrame.from_dict(stats).sort_values(by=GradlePropertiesKeyStatsColumn.COUNT.value, ascending=False).to_csv(csv_file_path, index=False)
 
 
 def get_properties_key_stats(df: pd.DataFrame) -> GradlePropertiesStats:
-    properties_key_stats = {}
+    properties_key_stats = defaultdict(int)
     for project_name, property_key, property_value in df.values:
-        if property_key not in properties_key_stats:
-            properties_key_stats[property_key] = 0
         properties_key_stats[property_key] += 1
     return {
         GradlePropertiesKeyStatsColumn.PROPERTY_KEY: properties_key_stats.keys(),
