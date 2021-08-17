@@ -1,0 +1,5 @@
+project_name,plugin_id
+sample_project,java
+sample_project,kotlin
+sample_project,org.jetbrains.groovy
+sample_project,org.jetbrains.kotlin.jvm
