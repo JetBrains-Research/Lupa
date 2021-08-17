@@ -19,6 +19,7 @@ def split_to_chunks(lst: List[str], n) -> List[str]:
 def get_packages(full_names: List[str]) -> List[Package]:
     """ Get packages for given package full names: group_id:artifact_id. """
     packages = []
+    current_loaded, total_loaded = 0, len(full_names)
     for full_names_chunks in split_to_chunks(full_names, 20):
         try:
             full_names_range = ",".join(full_names_chunks)
@@ -26,7 +27,8 @@ def get_packages(full_names: List[str]) -> List[Package]:
             response = requests.get(url)
             response = from_dict(data_class=PackageSearchResponse, data=json.loads(response.content))
             packages += response.packages
-            print(f"Got {len(response.packages)} packages")
+            current_loaded += len(response.packages)
+            print(f"Got {current_loaded}/{total_loaded} packages")
         except Exception as e:
             print(f"Can not access package search {full_names_chunks}:", e)
     return packages
