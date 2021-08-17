@@ -30,27 +30,47 @@ Run the following command to download the dataset:
 python3 scripts/load_dataset.py /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
 ```
 
-#### 4. Extract gradle dependencies information from projects in dataset, such as:
+#### 4. Extract data
 
-* project name
-* module index (will be replaced with name soon)
-* configuration (compile, implementation, ...)
-* group
-* name
+### Gradle Dependencies
 
+Extract gradle dependencies form build.gradle/build.gradle.kts projects' files from dataset.
 ``` 
 gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-gradle-dependencies-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
 ```
 
-# Kotlin-Analysis projects tagging
+The result is `gradle_dependencies_data.csv` file with columns:
+
+| project_name | group_id | artifact_id | configuration |
+| ---- | ---- | ---- | ---- |
+| ... | ... | ... | (compile, implementation, ...)
+
+### Project Tags
 
 For projects and modules tagging according to content, stack of technologies or theme we use gradle dependencies. Now we
-support only android projects tagging, to run this use:
-
+support only android projects tagging.
 ``` 
 gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-projects-tagging -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
 ```
 
-This script creates csv file with project name and tag:
-`android` - for android project (which has `com.android.tools.build` dependency in gradle file)
+The result is `projetcs_tagging_data.csv` file with columns:
+
+| project_name | tag |
+| ---- | ---- |
+| ... | android / other |
+  
+where:\
+`android` - for android project (which has `com.android.tools.build` dependency in gradle file) \
 `other` - for other project, algorithm for them is not implemented now
+
+### Gradle Properties
+Extract gradle properties from gradle.properties projects' file from dataset. 
+``` 
+gradle :kotlin-analysis-plugin:cli -Prunner=kotlin-gradle-properties-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
+```
+
+The result is `gradle_properties_data.csv` file with columns:
+
+| project_name | property_key | property_value |
+| ---- | ---- | ---- |
+| ... | ... | ... |

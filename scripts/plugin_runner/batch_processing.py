@@ -71,7 +71,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
     parser.add_argument("data", help="Data to analyse: clones or ranges",
-                        choices=["dependencies", "clones", "ranges", "project-tags", "gradle-dependencies"])
+                        choices=["dependencies", "clones", "ranges", "project-tags", "gradle-dependencies",
+                                 "gradle-properties"])
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)

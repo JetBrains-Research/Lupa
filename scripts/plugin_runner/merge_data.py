@@ -13,6 +13,7 @@ RANGES_DATA = "ranges_data.csv"
 DEPENDENCIES_DATA = "import_directives_data.csv"
 PROJECT_TAGS_DATA = "project_tags_data.csv"
 GRADLE_DEPENDENCIES_DATA = "gradle_dependencies_data.csv"
+GRADLE_PROPERTIES_DATA = "gradle_properties_data.csv"
 
 
 def merge(batch_output_paths: List[str], output_dir: str, data: str):
@@ -26,6 +27,8 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
         merge_project_tags(batch_output_paths, output_dir)
     elif data == "gradle-dependencies":
         merge_gradle_dependencies(batch_output_paths, output_dir)
+    elif data == "gradle-properties":
+        merge_gradle_properties(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 
@@ -39,6 +42,10 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
 
     with open(os.path.join(result_dir, csv_filename), "a") as fout:
         result_df.to_csv(fout, index=False, sep='\t')
+
+
+def merge_gradle_properties(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, GRADLE_PROPERTIES_DATA, output_dir)
 
 
 def merge_gradle_dependencies(batch_output_paths: List[str], output_dir: str):

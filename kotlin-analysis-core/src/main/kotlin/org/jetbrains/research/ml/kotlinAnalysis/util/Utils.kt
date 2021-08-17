@@ -8,6 +8,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.streams.toList
 
+enum class KotlinConstants(val value: String) {
+    OGR_JETBRAINS_KOTLIN("org.jetbrains.kotlin"),
+    KOTLIN("kotlin")
+}
+
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == Extension.KT.value || this.extension == Extension.KTS.value
 }

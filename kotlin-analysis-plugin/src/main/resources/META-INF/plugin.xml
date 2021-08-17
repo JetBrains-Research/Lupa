@@ -17,7 +17,8 @@
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.ProjectsTaggingRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradleDependenciesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradleDependenciesByModulesAnalysisRunner"/>
-
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePropertiesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePluginsAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>

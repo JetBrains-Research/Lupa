@@ -1,0 +1,4 @@
+project_name,property_key,property_value
+sample_project,kotlin.code.style,official
+sample_project,org.gradle.jvmargs,-Xmx1536m
+sample_project,org.gradle.parallel,true

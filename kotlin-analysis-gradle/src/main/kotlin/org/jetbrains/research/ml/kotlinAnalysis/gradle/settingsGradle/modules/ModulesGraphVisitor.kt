@@ -1,7 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.gradle.settingsGradle.modules
 
 import org.jetbrains.research.ml.kotlinAnalysis.gradle.GradleFileManager
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependency
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies.BuildGradleDependency
 
 /** Interface for [project's module graph][ModulesGraph] visitors. */
 interface ModulesGraphVisitor {

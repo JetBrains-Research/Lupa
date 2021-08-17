@@ -1,18 +1,11 @@
-package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.analyzers
+package org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies.analyzers
 
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.research.ml.kotlinAnalysis.PsiMainAnalyzerWithContext
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.BuildGradleDependency
-import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.GradleBlock
-
-/**
- * Controller for stack of blocks in build.gradle.kts file, which controls the blocks [GradleBlock] order according to
- * psi tree path order.
- */
-object KtsBuildGradleBlockContextController :
-    GradleBlockContextController<KtCallExpression>(
-        KtCallExpression::class.java,
-        { psiElement -> psiElement.calleeExpression?.text?.let { GradleBlock.fromSimpleName(it) } })
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlock
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.GradleBlockContext
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.context.KtsBuildGradleBlockContextController
+import org.jetbrains.research.ml.kotlinAnalysis.gradle.buildGradle.depenencies.BuildGradleDependency
 
 /**
  * Analyser for gradle dependency which parse [BuildGradleDependency] form [KtCallExpression] inside
