@@ -1,11 +1,9 @@
 package org.jetbrains.research.ml.kotlinAnalysis.psi.extentions
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
-import org.jetbrains.research.pluginUtilities.util.Extension
 
 /** Finds [PsiFile] in module by given name. */
 fun Module.findPsiFileByName(name: String): PsiFile? {

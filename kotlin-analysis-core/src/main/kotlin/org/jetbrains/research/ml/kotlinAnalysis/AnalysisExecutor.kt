@@ -43,7 +43,6 @@ abstract class AnalysisExecutor {
     }
 }
 
-
 /** Class for simultaneous execution of multiple analysis for each project in given dataset. */
 class MultipleAnalysisExecutor(private val analysisExecutors: List<AnalysisExecutor>) : AnalysisExecutor() {
 

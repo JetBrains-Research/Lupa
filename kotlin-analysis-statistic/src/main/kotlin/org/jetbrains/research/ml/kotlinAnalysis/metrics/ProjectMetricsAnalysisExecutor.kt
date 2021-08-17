@@ -10,7 +10,6 @@ import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.findPsiFilesByExt
 import org.jetbrains.research.pluginUtilities.util.Extension
 import java.nio.file.Path
 
-
 /**
  * Executor for project metrics analysis which collects number of modules, files,
  * dependencies in all modules' gradle files to csv file with columns:
