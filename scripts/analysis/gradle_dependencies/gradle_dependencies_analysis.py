@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from collections import defaultdict
 from typing import Dict, List, Any
 
 import pandas as pd
@@ -14,17 +15,15 @@ GradleDependenciesStats = Dict[str, Any]
 
 def save_stats_with_to_csv(path_to_dir: str, filename: str, stats: pd.DataFrame):
     csv_file_path = os.path.join(path_to_dir, filename)
-    stats.sort_values(by="count", ascending=False).to_csv(csv_file_path, index=False)
+    stats.sort_values(by=GradleDependenciesStatsColumn.COUNT, ascending=False).to_csv(csv_file_path, index=False)
 
 
 def get_full_name_stats(df: pd.DataFrame, unique=False) -> pd.DataFrame:
-    full_names_stats = {}
-    projects_by_full_names = {}
+    full_names_stats = defaultdict(dict)
+    projects_by_full_names = defaultdict(set)
     for project_name, _, group_id, artifact_id, config in df.values:
         full_name = f"{group_id}:{artifact_id}"
         if full_name not in full_names_stats:
-            projects_by_full_names[full_name] = set()
-            full_names_stats[full_name] = dict()
             full_names_stats[full_name][GradleDependenciesStatsColumn.FULL_NAME] = full_name
             full_names_stats[full_name][GradleDependenciesStatsColumn.COUNT] = 0
             for c in GradleDependenciesConfigs:
@@ -34,11 +33,9 @@ def get_full_name_stats(df: pd.DataFrame, unique=False) -> pd.DataFrame:
             full_names_stats[full_name][GradleDependenciesConfigs(config)] += 1
             full_names_stats[full_name][GradleDependenciesStatsColumn.COUNT] += 1
 
-    stats = {}
+    stats = defaultdict(list)
     for full_name, full_name_stats in full_names_stats.items():
         for k in full_name_stats.keys():
-            if k not in stats:
-                stats[k] = []
             stats[k].append(full_name_stats[k])
     return pd.DataFrame.from_dict(stats)
 
