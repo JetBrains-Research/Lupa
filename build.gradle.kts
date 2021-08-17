@@ -35,12 +35,12 @@ allprojects {
         // Plugin utilities modules
         implementation("$utilitiesProjectName:plugin-utilities-core") {
             version {
-                branch = "open-repo-before-the-incident"
+                branch = "main"
             }
         }
         implementation("$utilitiesProjectName:plugin-utilities-test") {
             version {
-                branch = "open-repo-before-the-incident"
+                branch = "main"
             }
         }
     }
