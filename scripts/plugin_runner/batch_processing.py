@@ -66,6 +66,7 @@ def split(input: str, output: str, batch_size: int) -> List[str]:
         logging.info(f"Create {index} batch")
     return batch_paths
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")

@@ -11,22 +11,37 @@ import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.getRelativePathTo
 import java.nio.file.Path
 
 /**
+ * Wrapper for data about range -- it's type, context and pair of identifiers used as left and right border.
+ */
+data class RangeData(val rangeType: RangeType, val rangeContext: ContextType, val identifiers: Pair<String, String>)
+
+/**
  * Executor for ranges analysis which collects range and context types of all ranges usages in projects
- * and stores them to the file in [output directory][outputDir].
+ * and stores them to the file in output directory.
  * Also, it stores information about ranges usage with undefined context.
  */
 class RangesAnalysisExecutor(
     outputDir: Path,
-    rangesFilename: String = "ranges_data.csv",
+    rangesStatsFilename: String = "ranges_stats.csv",
+    rangesDataFilename: String = "ranges_data.csv",
     otherContextFilename: String = "other_context.csv",
 ) : AnalysisExecutor() {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
 
-    private val rangesDataWriter = PrintWriterResourceManager(outputDir, rangesFilename, getRangesHeader())
+    private val rangesStatsWriter = PrintWriterResourceManager(outputDir, rangesStatsFilename, getRangesHeader())
     private val otherContextDataWriter =
         PrintWriterResourceManager(outputDir, otherContextFilename, getOtherContextHeader())
-    override val controlledResourceManagers: Set<ResourceManager> = setOf(rangesDataWriter, otherContextDataWriter)
+    private val rangesDataWriter = PrintWriterResourceManager(
+        outputDir, rangesDataFilename,
+        listOf("project", "range_type", "context", "left_border", "right_border").joinToString(separator = "\t")
+    )
+
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(
+        rangesStatsWriter,
+        otherContextDataWriter,
+        rangesDataWriter
+    )
 
     override fun analyse(project: Project) {
         val binaryExpressionRanges = project.extractElementsOfType(KtBinaryExpression::class.java)
@@ -36,42 +51,67 @@ class RangesAnalysisExecutor(
         val callExpressionRanges = project.extractElementsOfType(KtCallExpression::class.java)
         val callExpressionResults = callExpressionRanges.associateWith { CallExpressionRangesPsiAnalyzer.analyze(it) }
 
-        val elementToRangeAndContext = (callExpressionResults + binaryExpressionResults)
+        val elementToRangeData = (callExpressionResults + binaryExpressionResults)
             .filter { it.value != RangeType.NOT_RANGE }
             .mapValues { (element, range) ->
-                Pair(range, RangesContextAnalyzer.analyze(element))
+                RangeData(
+                    range,
+                    RangesContextAnalyzer.analyze(element),
+                    RangesIdentifierLengthAnalyzer.analyze(element)!!
+                )
             }
 
-        saveProjectStats(project, elementToRangeAndContext)
-        saveOtherContextStats(elementToRangeAndContext)
+        saveProjectStats(project, elementToRangeData)
+        saveOtherContextStats(elementToRangeData)
+        saveRangeData(project, elementToRangeData)
+    }
+
+    private fun saveRangeData(
+        project: Project,
+        elementToRangeData: Map<KtExpressionImpl, RangeData>
+    ) {
+        elementToRangeData.forEach { (_, data) ->
+            rangesDataWriter.writer.println(
+                listOf(
+                    project.name,
+                    data.rangeType.name.toLowerCase(),
+                    data.rangeContext.name.toLowerCase(),
+                    escapeString(data.identifiers.first),
+                    escapeString(data.identifiers.second)
+                ).joinToString(separator = "\t")
+            )
+        }
     }
 
     private fun saveProjectStats(
         project: Project,
-        elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>
+        elementToRangeData: Map<KtExpressionImpl, RangeData>
     ) {
-        val rangesAndContextStats = elementToRangeAndContext.values.groupingBy { it }.eachCount()
+        val rangesAndContextStats =
+            elementToRangeData.values.map { rangeData -> Pair(rangeData.rangeType, rangeData.rangeContext) }
+                .groupingBy { it }
+                .eachCount()
 
         val rangesStats = rangeAndContextPairs
             .map { type -> rangesAndContextStats.getOrDefault(type, 0) }
             .joinToString(separator = "\t")
-        rangesDataWriter.writer.println("${project.name}\t$rangesStats")
+        rangesStatsWriter.writer.println("${project.name}\t$rangesStats")
     }
 
     /**
      * This method saves metadata about range usages with undefined context.
      *
-     * @param elementToRangeAndContext mapping from PSI element (that corresponds to the range usage)
+     * @param elementToRangeData mapping from PSI element (that corresponds to the range usage)
      * to it's range and context type
      * @param smallContextNParents parent number, which text will be saved as a small context of range usage
      * @param contextNParents parent number, which text will be saved as a full context of range usage
      * @param nParentsTypes number of parents, whose types will be saved
      */
     private fun saveOtherContextStats(
-        elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>,
+        elementToRangeData: Map<KtExpressionImpl, RangeData>,
         smallContextNParents: Int = 3, contextNParents: Int = 6, nParentsTypes: Int = 10
     ) {
-        val elements = elementToRangeAndContext.filter { it.value.second == ContextType.OTHER }.keys
+        val elements = elementToRangeData.filter { it.value.rangeContext == ContextType.OTHER }.keys
         elements.forEach { psiElement ->
             val relativeFilePath = psiElement.getRelativePathToKtElement()
             val smallContext = escapeString(psiElement.parents.take(smallContextNParents).last().text)

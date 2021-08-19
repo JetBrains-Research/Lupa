@@ -40,7 +40,7 @@ open class RangesAnalysisExecutorTest :
         val resultFileName = "result.csv"
         val resultFile = File(resultDir.toFile(), resultFileName)
 
-        val analysisExecutor = RangesAnalysisExecutor(resultDir, rangesFilename = resultFileName)
+        val analysisExecutor = RangesAnalysisExecutor(resultDir, rangesStatsFilename = resultFileName)
         analysisExecutor.controlledResourceManagers.forEach { it.init() }
         analysisExecutor.analyse(psiFile.project)
         analysisExecutor.controlledResourceManagers.forEach { it.close() }

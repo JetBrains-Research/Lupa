@@ -1,8 +1,8 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
+import logging
 import os
-import argparse
 import pandas as pd
 from typing import List
 
@@ -10,6 +10,7 @@ METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
 RANGES_DATA = "ranges_data.csv"
+RANGES_STATS = "ranges_stats.csv"
 DEPENDENCIES_DATA = "import_directives_data.csv"
 PROJECT_TAGS_DATA = "project_tags_data.csv"
 GRADLE_DEPENDENCIES_DATA = "gradle_dependencies_data.csv"
@@ -69,6 +70,7 @@ def merge_dependencies(batch_output_paths: List[str], output_dir: str):
 
 def merge_ranges(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, RANGES_DATA, output_dir)
+    merge_csv(batch_output_paths, RANGES_STATS, output_dir)
 
 
 def merge_clones(batch_output_paths: List[str], output_dir: str):
