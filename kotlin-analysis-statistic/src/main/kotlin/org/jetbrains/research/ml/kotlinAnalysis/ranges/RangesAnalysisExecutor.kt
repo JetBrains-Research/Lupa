@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis
+package org.jetbrains.research.ml.kotlinAnalysis.ranges
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
@@ -6,6 +6,9 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.research.ml.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.ml.kotlinAnalysis.PrintWriterResourceManager
+import org.jetbrains.research.ml.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.getRelativePathToKtElement
 import java.nio.file.Path
