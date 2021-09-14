@@ -22,7 +22,7 @@ class GradleDependenciesByModulesAnalysisExecutor(
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("project_name", "module_name", "group_id", "artifact_id", "config")
+        listOf("project_full_path", "project_name", "module_name", "group_id", "artifact_id", "config")
             .joinToString(separator = ",")
     )
 
@@ -38,6 +38,7 @@ class GradleDependenciesByModulesAnalysisExecutor(
                 dependencies.forEach {
                     gradleDependenciesDataWriter.writer.println(
                         listOf(
+                            project.basePath,
                             project.name.replace('#', '/'),
                             moduleName,
                             it.groupId,

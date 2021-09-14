@@ -1,8 +1,8 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
+import logging
 import os
-import argparse
 import pandas as pd
 from typing import List
 
@@ -15,6 +15,7 @@ PROJECT_TAGS_DATA = "project_tags_data.csv"
 GRADLE_DEPENDENCIES_DATA = "gradle_dependencies_data.csv"
 GRADLE_PROPERTIES_DATA = "gradle_properties_data.csv"
 GRADLE_PLUGINS_DATA = "gradle_plugins_data.csv"
+GRADLE_DEPENDENCIES_BY_MODULES_DATA = "gradle_dependencies_by_modules_data.csv"
 
 
 def merge(batch_output_paths: List[str], output_dir: str, data: str):
@@ -32,6 +33,8 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
         merge_gradle_properties(batch_output_paths, output_dir)
     elif data == "gradle-plugins":
         merge_gradle_plugins(batch_output_paths, output_dir)
+    elif data == "gradle-dependencies-by-modules":
+        merge_gradle_dependencies_by_modules(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 
@@ -57,6 +60,10 @@ def merge_gradle_properties(batch_output_paths: List[str], output_dir: str):
 
 def merge_gradle_dependencies(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, GRADLE_DEPENDENCIES_DATA, output_dir)
+
+
+def merge_gradle_dependencies_by_modules(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, GRADLE_DEPENDENCIES_BY_MODULES_DATA, output_dir)
 
 
 def merge_project_tags(batch_output_paths: List[str], output_dir: str):
