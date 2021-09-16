@@ -17,6 +17,10 @@ fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == Extension.KT.value || this.extension == Extension.KTS.value
 }
 
+fun VirtualFile.isPythonRelatedFile(): Boolean {
+    return this.extension == Extension.PY.value
+}
+
 fun getSubdirectories(path: Path): List<Path> {
     return Files.walk(path, 1)
         .filter { Files.isDirectory(it) && !it.equals(path) }
