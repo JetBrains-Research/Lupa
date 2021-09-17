@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.deleteComments
-import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractKtElementsOfType
 import java.nio.file.Path
 
 /**
@@ -23,7 +23,7 @@ class FormattedMethodMiner(outputDir: Path) : AnalysisExecutor() {
         // We should reverse the list with method since we handle all elements separately
         // and we can invalidate the previous one
         val methods = project
-            .extractElementsOfType(KtNamedFunction::class.java)
+            .extractKtElementsOfType(KtNamedFunction::class.java)
             .reversed()
         val methodsIndexed = methods.associateWith { method ->
             indexer.indexMethod(method, projectIndex)
