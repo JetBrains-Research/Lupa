@@ -87,4 +87,5 @@ jobs:
       - run: ./gradlew ktlintCheck
 
       - name: Run python static code analyzers
+        uses: actions/checkout@v2
         run: flake8 ./scripts/ --count --statistics
