@@ -19,6 +19,9 @@ jobs:
           sudo apt update
           sudo apt install python3-pip
           python -m pip install virtualenv
+
+      - name: Install python static code analyzers
+        run: pip install -r ./scripts/requirements-code-style.txt
           
       # Cache Gradle dependencies
       - name: Setup Gradle Dependencies Cache
@@ -82,3 +85,6 @@ jobs:
           java-version: 11
       - uses: actions/checkout@v2
       - run: ./gradlew ktlintCheck
+
+      - name: Run python static code analyzers
+        run: flake8 ./scripts/ --count --statistics
