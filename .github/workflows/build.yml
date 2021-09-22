@@ -105,4 +105,6 @@ jobs:
           key: ${{ runner.os }}-pip-cache-${{ hashFiles('./scripts/requirements*.txt') }}
 
       - name: Run python static code analyzers
-        run: flake8 ./scripts/ --count --statistics
+        run: |
+          source ./srcipts/venv/bin/activate
+          flake8 ./scripts/ --count --statistics
