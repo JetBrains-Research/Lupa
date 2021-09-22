@@ -20,8 +20,19 @@ jobs:
           sudo apt install python3-pip
           python -m pip install virtualenv
 
-      - name: Install python static code analyzers
-        run: pip install -r ./scripts/requirements-code-style.txt
+      - name: Cache Python virtual enviroment
+        id: pip-cache
+        uses: actions/cache@v2
+        with:
+          path: ./scripts/venv
+          key: ${{ runner.os }}-pip-cache-${{ hashFiles('./scripts/requirements*.txt') }}
+
+      - name: Install Python requirements
+        if: steps.pip-cache.outputs.cache-hit != 'true'
+        run: |
+          virtualenv ./scripts/venv/
+          source ./scripts/venv/bin/activate
+          pip install -r ./scripts/requirements*.txt
           
       # Cache Gradle dependencies
       - name: Setup Gradle Dependencies Cache
@@ -86,5 +97,12 @@ jobs:
       - uses: actions/checkout@v2
       - run: ./gradlew ktlintCheck
 
+      - name: Cache Python virtual enviroment
+        id: pip-cache
+        uses: actions/cache@v2
+        with:
+          path: ./scripts/venv
+          key: ${{ runner.os }}-pip-cache-${{ hashFiles('./scripts/requirements*.txt') }}
+
       - name: Run python static code analyzers
-        run: python3 -m flake8 ./scripts/ --count --statistics
+        run: flake8 ./scripts/ --count --statistics
