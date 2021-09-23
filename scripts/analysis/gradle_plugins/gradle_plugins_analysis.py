@@ -14,9 +14,8 @@ GradlePluginsStats = Dict[str, Any]
 
 def save_stats_with_to_csv(path_to_dir: str, filename: str, stats: GradlePluginsStats):
     csv_file_path = os.path.join(path_to_dir, filename)
-    pd.DataFrame.from_dict(stats) \
-        .sort_values(by=GradlePluginsStatsColumn.COUNT.value, ascending=False) \
-        .to_csv(csv_file_path, index=False)
+    stats_df = pd.DataFrame.from_dict(stats).sort_values(by=GradlePluginsStatsColumn.COUNT.value, ascending=False)
+    stats_df.to_csv(csv_file_path, index=False)
 
 
 def get_plugins_stats(df: pd.DataFrame, unique=False) -> GradlePluginsStats:

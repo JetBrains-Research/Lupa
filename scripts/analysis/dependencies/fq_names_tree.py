@@ -10,8 +10,8 @@ from fq_names_types import FqNamesDict
 from utils import Extensions, write_to_file, create_directory
 
 """
-Script fow working with import dependencies fq name tree. 
-It contain methods for deleting nodes with small occurrence, merging single child nodes to one, splitting thee into 
+Script fow working with import dependencies fq name tree.
+It contain methods for deleting nodes with small occurrence, merging single child nodes to one, splitting thee into
 subtrees for showing it separately, if subtree is not large or meaning.
 """
 
@@ -36,8 +36,10 @@ def save_to_png(node: FqNameNode, path_to_result_dir: str):
     tree_dot_dir = os.path.join(path_to_result_dir, "tree_dot")
     create_directory(tree_dot_dir)
     filename = os.path.join(tree_dot_dir, f"{node.full_name}.{Extensions.PNG}")
-    UniqueDotExporter(node, edgeattrfunc=lambda parent, child: "style=bold,label=%d" % (child.count or 0)) \
-        .to_picture(filename)
+    UniqueDotExporter(
+        node,
+        edgeattrfunc=lambda parent, child: "style=bold,label=%d" % (child.count or 0),
+    ).to_picture(filename)
 
 
 def save_to_txt(node: FqNameNode, path_to_result_dir: str):
@@ -52,7 +54,7 @@ def delete_extra_child_nodes(parent: FqNameNode, max_children: int):
     :param parent: node to remove extra children
     :param max_children: max number of children that is allowed to leave
     """
-    parent.children = list(sorted(parent.children, key=lambda n: -n.count))[:max_children]
+    parent.children = sorted(parent.children, key=lambda n: -n.count)[:max_children]
     for node in parent.children:
         delete_extra_child_nodes(node, max_children)
 
@@ -96,12 +98,16 @@ def is_huge(node: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, 
     return children_count == 0 or leaf_children_count / children_count > max_leaf_subpackages
 
 
-def split_to_subtrees(parent: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, max_u_occurrence: int) \
-        -> List[FqNameNode]:
+def split_to_subtrees(
+    parent: FqNameNode,
+    max_leaf_subpackages: float,
+    max_occurrence: int,
+    max_u_occurrence: int,
+) -> List[FqNameNode]:
     """ Recursively split tree into subtrees to make each subtree smaller and representative.
     :param parent: node to remove extra rare children
     :param max_leaf_subpackages: if for `parent` node percent of leaf children is more then `max_leaf_subpackages`
-     we consider `parent` as root of new subtree spit it from given tree
+    we consider `parent` as root of new subtree spit it from given tree
     :param max_occurrence: if parent count value is more then `max_occurrence` we do not consider `parent` as root
     of new subtree
     :param max_u_occurrence: if parent subtree size is more then `max_u_occurrence` we do not consider `parent` as root
@@ -129,9 +135,14 @@ def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:
     return root
 
 
-def build_fq_name_tree_decomposition(fq_names_dict: FqNamesDict, max_subpackages: int, max_leaf_subpackages: int,
-                                     min_occurrence: int, max_occurrence: int, max_u_occurrence: int) \
-        -> Tuple[FqNameNode, List[FqNameNode]]:
+def build_fq_name_tree_decomposition(
+    fq_names_dict: FqNamesDict,
+    max_subpackages: int,
+    max_leaf_subpackages: int,
+    min_occurrence: int,
+    max_occurrence: int,
+    max_u_occurrence: int,
+) -> Tuple[FqNameNode, List[FqNameNode]]:
     root = build_fq_name_tree(fq_names_dict)
 
     delete_rare_nodes(root, min_occurrence)

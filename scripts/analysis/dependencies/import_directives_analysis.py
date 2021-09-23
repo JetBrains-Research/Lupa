@@ -16,22 +16,24 @@ from visualization.diagram import show_bar_plot
 
 """
 This script process mined imports directive list and runs analysis and visualization.
-Usage: import_directives_analysis.py [-h] --input INPUT --output OUTPUT [--ignore IGNORE] [--max-package-len MAX_PACKAGE_LEN] [--max-subpackages MAX_SUBPACKAGES]
-                                     [--max-leaf-subpackages MAX_LEAF_SUBPACKAGES] [--min-occurrence MIN_OCCURRENCE] [--max-occurrence MAX_OCCURRENCE]
-                                     [--max-u-occurrence MAX_U_OCCURRENCE] [--show-dot-trees SHOW_DOT_TREES] [--show-txt-trees SHOW_TXT_TREES]
-                                     [--show-bar-plots SHOW_BAR_PLOTS] [--show-csv SHOW_CSV] [--show-package-csv SHOW_PACKAGE_CSV]
+Usage: import_directives_analysis.py [-h] --input INPUT --output OUTPUT [--ignore IGNORE]
+                                     [--max-package-len MAX_PACKAGE_LEN] [--max-subpackages MAX_SUBPACKAGES]
+                                     [--max-leaf-subpackages MAX_LEAF_SUBPACKAGES] [--min-occurrence MIN_OCCURRENCE]
+                                     [--max-occurrence MAX_OCCURRENCE] [--max-u-occurrence MAX_U_OCCURRENCE]
+                                     [--show-dot-trees SHOW_DOT_TREES] [--show-txt-trees SHOW_TXT_TREES]
+                                     [--show-bar-plots SHOW_BAR_PLOTS] [--show-csv SHOW_CSV]
+                                     [--show-package-csv SHOW_PACKAGE_CSV]
 
 Run with -h flag to get the description of the above flags.
 The results will be placed in result directory.
-Output: 
+Output:
 1. "total.csv" and plotly bar chart with raw import dependencies fq names occurrence statistics
-2. "total_by_prefix.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by package 
+2. "total_by_prefix.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by package
    -- name's prefix MAX_PACKAGE_LEN length
-3. "total_by_package.csv" and plotly bar chart with import dependencies fq names occurrence statistics grouped by package 
-   prefix got by building fq names tree and detecting
-   import dependencies packages names
-4. "root.png" - dot packages tree with occurrence on edges, build from import dependencies names according to 
-   filters and simplifications with selected parameters (MAX_SUBPACKAGES, MAX_LEAF_SUBPACKAGES, MIN_OCCURRENCE, 
+3. "total_by_package.csv" and plotly bar chart with import dependencies fq names occurrence statistics
+   grouped by package prefix got by building fq names tree and detecting import dependencies packages names
+4. "root.png" - dot packages tree with occurrence on edges, build from import dependencies names according to
+   filters and simplifications with selected parameters (MAX_SUBPACKAGES, MAX_LEAF_SUBPACKAGES, MIN_OCCURRENCE,
    MAX_OCCURRENCE, MAX_U_OCCURRENCE)
 5. "{package_name}.png" - dot import dependencies fq names subtrees with occurrence on edges for each package
 6. "root.txt" - txt packages tree with occurrence on edges
@@ -72,8 +74,8 @@ def get_prefix_by_package(fq_name: str, packages: List[str], prefix_len: int) ->
 def get_longest_common_prefix(fq_names: List[str]) -> str:
     fq_names = [fq_name.split('.') for fq_name in fq_names]
     max_prefix_len = 0
-    while all(len(fq_name) > max_prefix_len for fq_name in fq_names) and \
-            all(fq_name[max_prefix_len] == fq_names[0][max_prefix_len] for fq_name in fq_names):
+    while (all(len(fq_name) > max_prefix_len for fq_name in fq_names)
+           and all(fq_name[max_prefix_len] == fq_names[0][max_prefix_len] for fq_name in fq_names)):
         max_prefix_len += 1
     return ".".join(fq_names[0][:max_prefix_len])
 
@@ -161,9 +163,9 @@ def filter_fq_names(fq_names_with_project: List[List[str]],
                     ignored_packages: Set[str],
                     ignored_projects: Set[str]) -> List[List[str]]:
     return list(filter(lambda x:
-                       "." in x[1] and  # filter noise import fq names
-                       not any(x[1].startswith(package) for package in ignored_packages) and  # filter ignored packages
-                       x[0] not in ignored_projects, fq_names_with_project))  # filter ignored projects
+                       "." in x[1]  # filter noise import fq names
+                       and not any(x[1].startswith(package) for package in ignored_packages)  # filter ignored packages
+                       and x[0] not in ignored_projects, fq_names_with_project))  # filter ignored projects
 
 
 def get_ignored_packages(path_to_ignored_packages: str) -> Set[str]:
@@ -185,8 +187,12 @@ def get_ignored_projects(path_to_tagged_projects: str, tags: List[str]) -> Set[s
     return ignored_projects
 
 
-def get_fq_names(path_to_fq_names: str, path_to_ignored_packages: str, path_to_tagged_projects: str, tags: List[str]) \
-        -> List[str]:
+def get_fq_names(
+    path_to_fq_names: str,
+    path_to_ignored_packages: str,
+    path_to_tagged_projects: str,
+    tags: List[str],
+) -> List[str]:
     fq_names_with_project = pd.read_csv(path_to_fq_names).astype(str).values.tolist()
     ignored_packages = get_ignored_packages(path_to_ignored_packages)
     ignored_projects = get_ignored_projects(path_to_tagged_projects, tags)
@@ -196,8 +202,9 @@ def get_fq_names(path_to_fq_names: str, path_to_ignored_packages: str, path_to_t
 
 
 def get_imports_count_stats(fq_names_with_project: List[List[str]]) -> Dict[str, int]:
+    # TODO: rewrite with default dict
     imports_count_by_project = {}
-    for project, fq_name in fq_names_with_project:
+    for project, _fq_name in fq_names_with_project:
         if project not in imports_count_by_project:
             imports_count_by_project[project] = 0
         imports_count_by_project[project] += 1

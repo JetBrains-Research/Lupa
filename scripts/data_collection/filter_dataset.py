@@ -14,7 +14,7 @@ def main():
 
 def filter_files(input_dir: str, output_dir: str, extension_list: List[str]):
     dot_extensions = list(map(lambda s: "." + s, extension_list))
-    for root, dirs, files in os.walk(input_dir):
+    for root, _dirs, files in os.walk(input_dir):
         for file in files:
             file_abs_path = os.path.join(root, file)
             if not allowed_extension(file, dot_extensions) and input_dir == output_dir:
