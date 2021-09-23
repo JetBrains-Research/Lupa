@@ -17,7 +17,7 @@ def main():
     df_final = pd.DataFrame.from_dict(ranges_dict, orient='index')
 
     # add total sums
-    df_final.loc[TOTAL]= df_final.sum(axis=0)
+    df_final.loc[TOTAL] = df_final.sum(axis=0)
     df_final.loc[:, TOTAL] = df_final.sum(axis=1)
 
     # reorder columns
