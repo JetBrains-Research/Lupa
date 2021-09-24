@@ -34,7 +34,6 @@ fun <T : KtElement> Project.extractKtElementsOfType(psiElementClass: Class<T>): 
     return extractElementsOfType(psiElementClass, VirtualFile::isKotlinRelatedFile)
 }
 
-
 /** Extracts [python elements][PyElement] of given type from python related files in project. */
 fun <T : PyElement> Project.extractPyElementsOfType(psiElementClass: Class<T>): List<T> {
     return extractElementsOfType(psiElementClass, VirtualFile::isPythonRelatedFile)
