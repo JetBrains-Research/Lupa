@@ -7,8 +7,12 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 @RunWith(Parameterized::class)
-open class ImportStatementsAnalysisExecutorTest :
-    ParametrizedGoldenFileTest(getResourcesRootPath(::ImportStatementsAnalysisExecutorTest, "importStatementsAnalysisExecutorData")) {
+open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
+    getResourcesRootPath(
+        ::ImportStatementsAnalysisExecutorTest,
+        "importStatementsAnalysisExecutorData"
+    )
+) {
 
     companion object {
         @JvmStatic
