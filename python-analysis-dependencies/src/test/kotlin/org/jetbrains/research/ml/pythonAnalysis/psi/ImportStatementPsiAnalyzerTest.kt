@@ -1,7 +1,6 @@
 package org.jetbrains.research.ml.pythonAnalysis.psi
 
 import com.jetbrains.python.psi.PyImportStatement
-import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.ml.pythonAnalysis.ImportStatementPsiAnalyzer
 import org.jetbrains.research.pluginUtilities.util.Extension
