@@ -7,7 +7,7 @@ The plugin to run various project analysis from the CLI:
 * ```kotlin-ranges-analysis``` - command process various ranges implementations usage analysis
 * ```kotlin-gradle-dependencies-analysis``` - command process Gradle dependencies and imports analysis
 * ```kotlin-projects-tagging``` - command process projects from dataset tagging according to theme or content
-* ```python-dependencies-analysis``` - command process python project dependencies and imports analysis
+* ```python-dependencies-analysis``` - command process python imports analysis
 
 ### Usage
 
