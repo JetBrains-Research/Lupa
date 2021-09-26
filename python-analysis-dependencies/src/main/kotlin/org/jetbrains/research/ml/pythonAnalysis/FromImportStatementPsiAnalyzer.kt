@@ -22,8 +22,7 @@ object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<
             }
             // Processing relative import
             else -> {
-                val importSourceQName =
-                    psiElement.resolveImportSource()?.getQName()?.toString() ?: psiElement.importSourceQName?.toString()
+                val importSourceQName = psiElement.resolveImportSource()?.getQName()?.toString()
 
                 when (psiElement.isStarImport) {
                     true -> importSourceQName?.let { listOf(it) } ?: emptyList()
