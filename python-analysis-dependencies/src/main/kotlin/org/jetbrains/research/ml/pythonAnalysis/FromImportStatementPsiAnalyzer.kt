@@ -16,23 +16,22 @@ object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<
             // Processing absolute import
             0 -> {
                 when (psiElement.isStarImport) {
-                    true -> psiElement.importSourceQName?.toString()?.let { listOf(it) }
-                            ?: emptyList()
+                    true -> psiElement.importSourceQName?.toString()?.let { listOf(it) } ?: emptyList()
                     false -> psiElement.fullyQualifiedObjectNames
                 }
             }
             // Processing relative import
             else -> {
                 val importSourceQName =
-                    psiElement.resolveImportSource()?.getQName()?.toString()
-                        ?: psiElement.importSourceQName?.toString()
+                    psiElement.resolveImportSource()?.getQName()?.toString() ?: psiElement.importSourceQName?.toString()
 
                 when (psiElement.isStarImport) {
                     true -> importSourceQName?.let { listOf(it) } ?: emptyList()
                     false -> {
-                        val importElements =
-                            psiElement.importElements.mapNotNull { it.importedQName?.toString() }
-                        importElements.map { importElement -> "$importSourceQName.$importElement" }
+                        val importElements = psiElement.importElements.mapNotNull { it.importedQName?.toString() }
+                        importSourceQName?.let { importSource ->
+                            importElements.map { importElement -> "$importSource.$importElement" }
+                        } ?: emptyList()
                     }
                 }
             }
