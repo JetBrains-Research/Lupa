@@ -47,8 +47,8 @@ class ImportStatementPsiAnalyzerTest : ParametrizedBaseTest(
         val actualImportStatementFqNames = inPsiFile.extractElementsOfType(PyImportStatement::class.java)
             .map { ImportStatementPsiAnalyzer.analyze(it) }.flatten().sorted()
 
-        val expectedImportDirectiveFqNames = outFile!!.readLines().sorted()
+        val expectedImportStatementFqNames = outFile!!.readLines().sorted()
 
-        Assert.assertEquals(expectedImportDirectiveFqNames, actualImportStatementFqNames)
+        Assert.assertEquals(expectedImportStatementFqNames, actualImportStatementFqNames)
     }
 }
