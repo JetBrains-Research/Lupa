@@ -32,7 +32,7 @@ object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<
                     false -> {
                         val importElements =
                             psiElement.importElements.mapNotNull { it.importedQName?.toString() }
-                        importElements.map { "$importSourceQName.$it" }
+                        importElements.map { importElement -> "$importSourceQName.$importElement" }
                     }
                 }
             }
