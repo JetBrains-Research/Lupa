@@ -41,7 +41,7 @@ class ImportStatementPsiAnalyzerTest : ParametrizedBaseTest(
     }
 
     @Test
-    fun testFromImportStatementsFqNamesInFile() {
+    fun testImportStatementsFqNamesInFile() {
         val inPsiFile = getPsiFile(inFile!!, myFixture)
 
         val actualImportStatementFqNames = inPsiFile.extractElementsOfType(PyImportStatement::class.java)
