@@ -10,28 +10,30 @@ import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzer
  */
 object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<String>> {
 
+    private const val RELATIVE_LEVEL_OF_ABSOLUTE_IMPORT = 0
+
     /** Get fully qualified name of given [from import statement][PyFromImportStatement]. */
     override fun analyze(psiElement: PyFromImportStatement): List<String> {
         return when (psiElement.relativeLevel) {
             // Processing absolute import
-            0 -> {
-                when (psiElement.isStarImport) {
-                    true -> psiElement.importSourceQName?.toString()?.let { listOf(it) } ?: emptyList()
-                    false -> psiElement.fullyQualifiedObjectNames
+            RELATIVE_LEVEL_OF_ABSOLUTE_IMPORT -> {
+                if (psiElement.isStarImport) {
+                    psiElement.importSourceQName?.toString()?.let { listOf(it) } ?: emptyList()
+                } else {
+                    psiElement.fullyQualifiedObjectNames
                 }
             }
             // Processing relative import
             else -> {
                 val importSourceQName = psiElement.resolveImportSource()?.getQName()?.toString()
 
-                when (psiElement.isStarImport) {
-                    true -> importSourceQName?.let { listOf(it) } ?: emptyList()
-                    false -> {
-                        val importElements = psiElement.importElements.mapNotNull { it.importedQName?.toString() }
-                        importSourceQName?.let { importSource ->
-                            importElements.map { importElement -> "$importSource.$importElement" }
-                        } ?: emptyList()
-                    }
+                if (psiElement.isStarImport) {
+                    importSourceQName?.let { listOf(it) } ?: emptyList()
+                } else {
+                    val importElements = psiElement.importElements.mapNotNull { it.importedQName?.toString() }
+                    importSourceQName?.let { importSource ->
+                        importElements.map { importElement -> "$importSource.$importElement" }
+                    } ?: emptyList()
                 }
             }
         }
