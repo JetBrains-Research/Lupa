@@ -10,19 +10,33 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.jetbrains.python.psi.PyElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.research.ml.kotlinAnalysis.util.isKotlinRelatedFile
+import org.jetbrains.research.ml.kotlinAnalysis.util.isPythonRelatedFile
 import java.nio.file.Paths
 import java.util.*
 
 /** File contains various extension methods for [com.intellij.openapi.project.Project] class. */
 
-/** Extracts elements of given type from kotlin related files files in project. */
+/** Extracts elements of given type from files in project. */
 fun <T : PsiElement> Project.extractElementsOfType(
-    psiElementClass: Class<T>
+    psiElementClass: Class<T>,
+    filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile,
 ): List<T> {
-    return extractPsiFiles()
+    return extractPsiFiles(filePredicate)
         .map { it.extractElementsOfType(psiElementClass) }
         .flatten()
+}
+
+/** Extracts [kotlin elements][KtElement] of given type from kotlin related files in project. */
+fun <T : KtElement> Project.extractKtElementsOfType(psiElementClass: Class<T>): List<T> {
+    return extractElementsOfType(psiElementClass, VirtualFile::isKotlinRelatedFile)
+}
+
+/** Extracts [python elements][PyElement] of given type from python related files in project. */
+fun <T : PyElement> Project.extractPyElementsOfType(psiElementClass: Class<T>): List<T> {
+    return extractElementsOfType(psiElementClass, VirtualFile::isPythonRelatedFile)
 }
 
 /** Extracts all modules from project. */
