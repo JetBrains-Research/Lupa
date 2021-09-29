@@ -25,6 +25,8 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven (url ="https://www.jetbrains.com/intellij-repository/releases")
+        maven (url ="https://cache-redirector.jetbrains.com/intellij-dependencies")
     }
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"

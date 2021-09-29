@@ -20,6 +20,8 @@
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePropertiesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePluginsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinProjectMetricsAnalysisAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinImportsUsageAnalysisRunner"/>
+
     </extensions>
 
 </idea-plugin>
