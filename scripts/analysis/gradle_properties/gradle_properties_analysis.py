@@ -14,12 +14,13 @@ GradlePropertiesStats = Dict[str, Any]
 
 def save_stats_with_to_csv(path_to_dir: str, filename: str, stats: GradlePropertiesStats):
     csv_file_path = os.path.join(path_to_dir, filename)
-    pd.DataFrame.from_dict(stats).sort_values(by=GradlePropertiesKeyStatsColumn.COUNT.value, ascending=False).to_csv(csv_file_path, index=False)
+    stats_df = pd.DataFrame.from_dict(stats).sort_values(by=GradlePropertiesKeyStatsColumn.COUNT.value, ascending=False)
+    stats_df.to_csv(csv_file_path, index=False)
 
 
 def get_properties_key_stats(df: pd.DataFrame) -> GradlePropertiesStats:
     properties_key_stats = defaultdict(int)
-    for project_name, property_key, property_value in df.values:
+    for _project_name, property_key, _property_value in df.values:
         properties_key_stats[property_key] += 1
     return {
         GradlePropertiesKeyStatsColumn.PROPERTY_KEY: properties_key_stats.keys(),
@@ -30,22 +31,23 @@ def get_properties_key_stats(df: pd.DataFrame) -> GradlePropertiesStats:
 def get_properties_key_value_stats(df: pd.DataFrame) -> GradlePropertiesStats:
     properties_keys = set()
     properties_values = set()
-    for project_name, property_key, property_value in df.values:
+    for _project_name, property_key, property_value in df.values:
         properties_keys.add(property_key)
         for property_sub_value in str(property_value).split(' '):
             if property_sub_value != '':
                 properties_values.add(property_sub_value)
 
     properties_key_value_stats = {v: {k: 0 for k in properties_keys} for v in properties_values}
-    for project_name, property_key, property_value in df.values:
+    for _project_name, property_key, property_value in df.values:
         for property_sub_value in str(property_value).split(' '):
             if property_sub_value != '':
                 properties_key_value_stats[property_sub_value][property_key] += 1
 
     stats = {v: [] for v in properties_values}
     stats[GradlePropertiesKeyStatsColumn.PROPERTY_KEY] = list(properties_keys)
-    stats[GradlePropertiesKeyStatsColumn.COUNT] = \
-        [sum(properties_key_value_stats[v][k] for v in properties_values) for k in properties_keys]
+    stats[GradlePropertiesKeyStatsColumn.COUNT] = [
+        sum(properties_key_value_stats[v][k] for v in properties_values) for k in properties_keys
+    ]
 
     for property_key in properties_keys:
         for property_value in properties_values:
@@ -61,8 +63,11 @@ def analyze_properties_key_stats(df: pd.DataFrame, path_to_result_dir: str):
 
 def analyze_properties_key_value_stats(df: pd.DataFrame, path_to_result_dir: str):
     properties_key_value_stats = get_properties_key_value_stats(df)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_properties_key_value_stats.{Extensions.CSV}",
-                           properties_key_value_stats)
+    save_stats_with_to_csv(
+        path_to_result_dir,
+        f"gradle_properties_key_value_stats.{Extensions.CSV}",
+        properties_key_value_stats,
+    )
 
 
 def get_gradle_properties(path_to_properties: str, path_to_select_properties: str) -> pd.DataFrame:

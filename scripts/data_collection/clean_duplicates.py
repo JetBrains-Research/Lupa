@@ -46,7 +46,9 @@ def main():
                     r = session.get(r.url, headers=headers)
                     response_json = r.json()
                 else:
-                    logging.info(f"Request failed with status code: {r.status_code}. Message: {response_json['message']}")
+                    logging.info(
+                        f"Request failed with status code: {r.status_code}. Message: {response_json['message']}",
+                    )
                     continue
 
             save_full_name(response_json["full_name"], unique_names, results_fout)

@@ -1,8 +1,8 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
+import logging
 import os
-import argparse
 import pandas as pd
 from typing import List
 

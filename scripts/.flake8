@@ -1,0 +1,17 @@
+[flake8]
+max-line-length=120
+
+ignore=WPS, # TODO: Do not ignore WPS inspections
+       D, # TODO: Do not ignore inspections related to documentation
+       I00, # TODO: Do not ignore inspections related to the order of imports
+       Q, # TODO: Do not ignore inspections related to quote checking
+       W503, # Line break occurred before a binary operator. According to PEP8 the line break must come before the binary operator.
+       RST301, # Unexpected indentation (in docstring).
+       S404, # Consider possible security implications associated with subprocess module. TODO: Maybe we shouldn't ignore this inspection
+       S603, # Subprocess call - check for execution of untrusted input. TODO: Maybe we shouldn't ignore this inspection
+       S607, # Starting a process with a partial executable path TODO: Maybe we shouldn't ignore this inspection
+       P101, # Format string does contain unindexed parameters.
+       P102, # Docstring does contain unindexed parameters.
+       P103, # Other string does contain unindexed parameters.
+
+exclude=venv,

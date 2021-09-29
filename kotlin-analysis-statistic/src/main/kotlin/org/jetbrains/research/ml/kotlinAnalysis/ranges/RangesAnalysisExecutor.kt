@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.ml.kotlinAnalysis.AnalysisExecutor
 import org.jetbrains.research.ml.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.ml.kotlinAnalysis.ResourceManager
-import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
+import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractKtElementsOfType
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.getRelativePathToKtElement
 import java.nio.file.Path
 
@@ -32,11 +32,11 @@ class RangesAnalysisExecutor(
     override val controlledResourceManagers: Set<ResourceManager> = setOf(rangesDataWriter, otherContextDataWriter)
 
     override fun analyse(project: Project) {
-        val binaryExpressionRanges = project.extractElementsOfType(KtBinaryExpression::class.java)
+        val binaryExpressionRanges = project.extractKtElementsOfType(KtBinaryExpression::class.java)
         val binaryExpressionResults =
             binaryExpressionRanges.associateWith { BinaryExpressionRangesPsiAnalyzer.analyze(it) }
 
-        val callExpressionRanges = project.extractElementsOfType(KtCallExpression::class.java)
+        val callExpressionRanges = project.extractKtElementsOfType(KtCallExpression::class.java)
         val callExpressionResults = callExpressionRanges.associateWith { CallExpressionRangesPsiAnalyzer.analyze(it) }
 
         val elementToRangeAndContext = (callExpressionResults + binaryExpressionResults)

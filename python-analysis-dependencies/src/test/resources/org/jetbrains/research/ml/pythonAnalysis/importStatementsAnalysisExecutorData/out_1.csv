@@ -1,0 +1,6 @@
+project_name,import
+sample_project,itertools
+sample_project,math.cos
+sample_project,math.pow
+sample_project,math.sin
+sample_project,plotly.express

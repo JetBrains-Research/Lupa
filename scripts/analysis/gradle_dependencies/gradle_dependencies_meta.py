@@ -25,17 +25,17 @@ def check_is_community(full_name) -> bool:
 def check_is_multiplatform(repo_name: str, plugins: pd.DataFrame) -> Optional[bool]:
     if repo_name is None:
         return None
-    return ((plugins[GradlePluginsColumn.PROJECT_NAME] == repo_name.replace('/', '#').lower()) &
-            (plugins[GradlePluginsColumn.PLUGIN_ID] == 'org.jetbrains.kotlin.multiplatform')).any()
+    return ((plugins[GradlePluginsColumn.PROJECT_NAME] == repo_name.replace('/', '#').lower())
+            & (plugins[GradlePluginsColumn.PLUGIN_ID] == 'org.jetbrains.kotlin.multiplatform')).any()
 
 
 def get_gradle_dependencies_meta_csv(path_to_stats: str, path_to_result: str, path_to_plugins: str):
     data = pd.read_csv(path_to_stats)[:10]
     plugins = pd.read_csv(path_to_plugins)
 
-    full_names = list(set([f"{group_id}:{artifact_id}" for group_id, artifact_id
-                           in data[[GradleDependenciesColumn.GROUP_ID,
-                                    GradleDependenciesColumn.ARTIFACT_ID]].values]))
+    full_names = list({f"{group_id}:{artifact_id}" for group_id, artifact_id
+                       in data[[GradleDependenciesColumn.GROUP_ID,
+                                GradleDependenciesColumn.ARTIFACT_ID]].values})
 
     packages = get_packages(full_names)
     meta = defaultdict(list)
