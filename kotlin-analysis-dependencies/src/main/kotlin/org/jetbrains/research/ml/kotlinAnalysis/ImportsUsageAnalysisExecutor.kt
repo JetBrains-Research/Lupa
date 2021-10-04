@@ -51,21 +51,21 @@ class ImportsUsageAnalysisExecutor(outputDir: Path, filename: String = "imports_
                 })
             }
 
-        val references = project.extractElementsOfType(KtReferenceExpression::class.java)
-
-        references
-            .mapNotNull { KtReferenceExpressionPsiAnalyzer.analyze(it) }
-            .filter { importDirective ->
-                projectPackageFqNames.isNotEmpty() and !projectPackageFqNames.any {
-                    importDirective.startsWith(
-                        it
-                    )
-                }
-            }
-            .ifNotEmpty {
-                importsUsageDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, "reference").joinToString(separator = ",")
-                })
-            }
+//        val references = project.extractElementsOfType(KtReferenceExpression::class.java)
+//
+//        references
+//            .mapNotNull { KtReferenceExpressionPsiAnalyzer.analyze(it) }
+//            .filter { importDirective ->
+//                projectPackageFqNames.isNotEmpty() and !projectPackageFqNames.any {
+//                    importDirective.startsWith(
+//                        it
+//                    )
+//                }
+//            }
+//            .ifNotEmpty {
+//                importsUsageDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
+//                    listOf(project.name, it, "reference").joinToString(separator = ",")
+//                })
+//            }
     }
 }
