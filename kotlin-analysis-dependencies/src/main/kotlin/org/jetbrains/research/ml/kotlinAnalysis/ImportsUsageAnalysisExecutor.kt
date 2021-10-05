@@ -18,7 +18,7 @@ class ImportsUsageAnalysisExecutor(outputDir: Path, filename: String = "imports_
 
     private val importsUsageDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        header = listOf("project_name", "fq_name", "type").joinToString(separator = ",")
+        header = listOf("project_full_path", "project_name", "fq_name", "type").joinToString(separator = ",")
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(importsUsageDataWriter)
@@ -36,7 +36,7 @@ class ImportsUsageAnalysisExecutor(outputDir: Path, filename: String = "imports_
             .filter { importDirective -> !projectPackageFqNames.any { importDirective.startsWith(it) } }
             .ifNotEmpty {
                 importsUsageDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, "call_expression").joinToString(separator = ",")
+                    listOf(project.basePath, project.name, it, "call_expression").joinToString(separator = ",")
                 })
             }
 

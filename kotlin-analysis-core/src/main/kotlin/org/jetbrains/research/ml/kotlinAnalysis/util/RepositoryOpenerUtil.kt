@@ -22,11 +22,19 @@ class RepositoryOpenerUtil {
          */
         fun openReloadRepositoryOpener(repositoryPath: Path, action: (Project) -> Unit) {
             var projectIndex = 0
+            val repositoriesNames: MutableSet<String> = mutableSetOf()
+            var repositoryIndex = 0
             if (getKotlinJavaRepositoryOpener().openRepository(
                     repositoryPath.toFile()
                 ) { project ->
-                    runAction(project, projectIndex, action)
+                    val projectFullName = repositoryPath.relativize(Path.of(project.basePath))
+                    val repositoryName = projectFullName.first().toString()
+                    runAction(project, projectIndex, repositoryIndex, action, projectFullName.toString())
                     projectIndex += 1
+                    if (!repositoriesNames.contains(repositoryName)) {
+                        repositoriesNames.add(repositoryName)
+                        repositoryIndex += 1
+                    }
                 }
             ) {
                 println("Not all projects from $repositoryPath was opened successfully")
@@ -46,7 +54,7 @@ class RepositoryOpenerUtil {
                         OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
                     )?.let { project ->
                         try {
-                            runAction(project, projectIndex, action)
+                            runAction(project, projectIndex, projectIndex, action)
                         } catch (ex: Exception) {
                             logger.error(ex)
                         } finally {
@@ -54,16 +62,25 @@ class RepositoryOpenerUtil {
                                 val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
                                 logger.info("Project ${project.name} is closed = $closeStatus")
                             }
+                            val builder = ProcessBuilder(listOf("pkill", "-f", "'.*GradleDaemon.*'"))
+                            builder.redirectErrorStream(true)
+                            val p = builder.start()
+                            p.waitFor()
                         }
                     }
                 }
             }
         }
 
-        private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
-            println("Start action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
+        private fun runAction(
+            project: Project, projectIndex: Int, repositoryIndex: Int, action: (Project) -> Unit,
+            projectFullName: String = project.name
+        ) {
+            println("Start action on project $projectFullName index=$projectIndex repositoryIndex=$repositoryIndex " +
+                    "time=${System.currentTimeMillis()}")
             action(project)
-            println("Finish action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
+            println("Finish action on project $projectFullName index=$projectIndex repositoryIndex=$repositoryIndex " +
+                    "time=${System.currentTimeMillis()}")
         }
     }
 }

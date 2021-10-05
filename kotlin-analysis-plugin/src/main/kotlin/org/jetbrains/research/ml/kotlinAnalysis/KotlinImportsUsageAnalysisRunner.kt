@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import org.jetbrains.research.ml.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.pluginUtilities.preprocessing.getKotlinJavaPreprocessorManager
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
@@ -9,6 +10,8 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinImportsUsageAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-imports-usage-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
+        getKotlinJavaPreprocessorManager(System.getenv("ANDROID_HOME"))
+            .preprocessDatasetInplace(args.inputDir.toFile())
         ImportsUsageAnalysisExecutor(args.outputDir)
             .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener)
     }

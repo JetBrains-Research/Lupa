@@ -14,6 +14,6 @@ def get_github_token() -> str:
 
 def get_repo(repo_name: str) -> Optional[Repository]:
     token = get_github_token()
-    github = Github(token, retry=Retry(total=50, backoff_factor=10, status_forcelist=[403]))
+    github = Github(token, retry=Retry(total=50, backoff_factor=10, status_forcelist=[403, 500, 502]))
     repo = github.get_repo(repo_name)
     return repo
