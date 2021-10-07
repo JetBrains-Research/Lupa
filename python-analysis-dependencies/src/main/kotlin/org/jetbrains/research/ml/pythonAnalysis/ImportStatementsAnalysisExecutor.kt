@@ -63,6 +63,9 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
         private fun isPackage(file: VirtualFile, fileIndex: ProjectFileIndex): Boolean =
             !fileIndex.isExcluded(file) && file.isDirectory && file.findChild(INIT_DOT_PY) != null
 
+        /**
+         * Finds the packages that are closest to the [content root][contentRoot] in the [project].
+         */
         private fun collectPackageRoots(project: Project, contentRoot: VirtualFile): List<VirtualFile> {
             val packageRoots = mutableListOf<VirtualFile>()
 
@@ -81,6 +84,9 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
             return packageRoots
         }
 
+        /**
+         * Finds the packages that are contained inside the [package root][packageRoot] in the [project].
+         */
         private fun collectPackageNames(project: Project, packageRoot: VirtualFile): List<String> {
             val packageNames = mutableListOf<String>()
 
@@ -105,6 +111,10 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
         }
 
         private fun isLocalImport(importName: String, packageNames: Set<String>): Boolean {
+            // Add a dot at the end of the import name and at the end of the package names.
+            // This is necessary to correctly identify the local import.
+            // For example, if the project has a package named `plot` and imports with a third-party library `plotly`,
+            // we should not ignore `plotly`, so we add a dot to the beginning of each of the names.
             val importNameWithDot = "$importName."
             val packageNamesWithDot = packageNames.map { "$it." }
             return packageNamesWithDot.any { packageNameWithDot -> importNameWithDot.startsWith(packageNameWithDot) }
