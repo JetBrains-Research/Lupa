@@ -69,7 +69,7 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
             val fileIndex = ProjectRootManager.getInstance(project).fileIndex
             VfsUtilCore.visitChildrenRecursively(contentRoot, object : VirtualFileVisitor<Unit>() {
                 override fun visitFile(file: VirtualFile): Boolean {
-                    return if (isPackage(file, fileIndex)) {
+                    return if (isPackage(file, fileIndex) && file != contentRoot) {
                         packageRoots.add(file)
                         false
                     } else {
