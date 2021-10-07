@@ -91,7 +91,7 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
                         true
                     } else if (isPackage(file, fileIndex)) {
                         VfsUtilCore.getRelativePath(file, packageRoot, '.')
-                            ?.let { packageNames.add("${packageRoot.name}.${it}") }
+                            ?.let { packageNames.add("${packageRoot.name}.$it") }
                         true
                     } else {
                         false
