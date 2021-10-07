@@ -44,8 +44,8 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
             }
         )
 
-        // Local imports that are contained in projects without __init__.py files,
-        // as well as those in projects that are not linked to package roots, will not be filtered out.
+        // Local imports that are contained in projects without __init__.py files
+        // and that are not associated with package roots will not be filtered out.
         val contentRoots = project.modules.flatMap { ModuleRootManager.getInstance(it).contentRoots.toList() }.toSet()
         val packageRoots = contentRoots.flatMap { collectPackageRoots(project, it) }.toSet()
         val packageNames = packageRoots.flatMap { collectPackageNames(project, it) }.toSet()
