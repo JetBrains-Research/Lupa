@@ -38,4 +38,14 @@ object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<
             }
         }
     }
+
+    /** Get fully qualified name of given [from import statement][PyFromImportStatement].
+     * If [ignoreRelativeImports] is enabled, relative imports will be ignored. */
+    fun analyze(psiElement: PyFromImportStatement, ignoreRelativeImports: Boolean): List<String> {
+        if (ignoreRelativeImports && psiElement.relativeLevel != RELATIVE_LEVEL_OF_ABSOLUTE_IMPORT) {
+            return emptyList()
+        }
+
+        return analyze(psiElement)
+    }
 }
