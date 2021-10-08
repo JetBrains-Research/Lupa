@@ -1,17 +1,16 @@
 import argparse
-import itertools
 import json
 import os
 import sys
-from collections import Counter
-from typing import List, Callable, Dict, Set
+from collections import Counter, defaultdict
+from typing import Callable, Dict, List, Set
 
 import pandas as pd
 
 from column_names_utils import ImportDirectivesColumn
-from fq_names_tree import save_to_txt, save_to_png, build_fq_name_tree_decomposition, FqNameNode
-from fq_names_types import FqNamesStats, FqNamesGroups, FqNamesDict
-from utils import Extensions, get_file_lines, create_directory
+from fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
+from fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
+from utils import Extensions, create_directory, get_file_lines
 from visualization.diagram import show_bar_plot
 
 """
@@ -81,8 +80,10 @@ def get_longest_common_prefix(fq_names: List[str]) -> str:
 
 
 def group_fq_names_by(fq_names: List[str], group_by_function: Callable[[str], str]) -> FqNamesGroups:
-    return {group_name: list(group_members) for group_name, group_members in
-            itertools.groupby(sorted(fq_names), group_by_function)}
+    grouped_fq_names = defaultdict(list)
+    for fq_name in fq_names:
+        grouped_fq_names[group_by_function(fq_name)].append(fq_name)
+    return grouped_fq_names
 
 
 def fq_names_groups_to_stats(fq_names_groups: FqNamesGroups) -> FqNamesStats:
@@ -188,10 +189,10 @@ def get_ignored_projects(path_to_tagged_projects: str, tags: List[str]) -> Set[s
 
 
 def get_fq_names(
-    path_to_fq_names: str,
-    path_to_ignored_packages: str,
-    path_to_tagged_projects: str,
-    tags: List[str],
+        path_to_fq_names: str,
+        path_to_ignored_packages: str,
+        path_to_tagged_projects: str,
+        tags: List[str],
 ) -> List[str]:
     fq_names_with_project = pd.read_csv(path_to_fq_names).astype(str).values.tolist()
     ignored_packages = get_ignored_packages(path_to_ignored_packages)
@@ -202,11 +203,8 @@ def get_fq_names(
 
 
 def get_imports_count_stats(fq_names_with_project: List[List[str]]) -> Dict[str, int]:
-    # TODO: rewrite with default dict
-    imports_count_by_project = {}
+    imports_count_by_project = defaultdict(int)
     for project, _fq_name in fq_names_with_project:
-        if project not in imports_count_by_project:
-            imports_count_by_project[project] = 0
         imports_count_by_project[project] += 1
     return imports_count_by_project
 
