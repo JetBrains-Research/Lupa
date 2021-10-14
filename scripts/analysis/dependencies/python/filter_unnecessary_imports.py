@@ -270,13 +270,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--input',
         type=lambda value: Path(value).absolute(),
-        help='path to csv file with fq_names',
+        help='path to csv file with imports',
         required=True,
     )
     parser.add_argument(
         '--output',
         type=lambda value: Path(value).absolute(),
-        help='path to output csv file with filtered fq_names',
+        help='path to output csv file with filtered imports',
         required=True,
     )
     parser.add_argument(
