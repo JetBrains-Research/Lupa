@@ -38,4 +38,4 @@ gradle :kotlin-analysis-plugin:cli -Prunner=python-dependencies-analysis -Pinput
 
 #### 5. Run statistics visualisation
 
-**TODO**
+To read more about import directives statistics visualization go to `scripts/analysis/dependencies/README.md`.
