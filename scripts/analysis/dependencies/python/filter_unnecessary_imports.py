@@ -238,19 +238,25 @@ def _is_private_import(fq_import_name: str):
     )
 
 
-def main(path_to_fq_names: Path, path_to_result: Path, filter_private_imports: bool, filter_stdlib_imports) -> None:
+def main(
+    path_to_fq_names: Path,
+    path_to_result: Path,
+    column_name: str,
+    filter_private_imports: bool,
+    filter_stdlib_imports,
+) -> None:
     fq_names = pd.read_csv(path_to_fq_names)
 
     print(f'Received {len(fq_names)} imports.')
 
     filtered_fq_names = fq_names
     if filter_private_imports:
-        mask = filtered_fq_names.apply(lambda row: _is_private_import(row['import']), axis=1)
+        mask = filtered_fq_names.apply(lambda row: _is_private_import(row[column_name]), axis=1)
         filtered_fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} private imports.')
 
     if filter_stdlib_imports:
-        mask = filtered_fq_names.apply(lambda row: _is_stdlib_import(row['import']), axis=1)
+        mask = filtered_fq_names.apply(lambda row: _is_stdlib_import(row[column_name]), axis=1)
         filtered_fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} stdlib imports.')
 
@@ -274,6 +280,12 @@ if __name__ == '__main__':
         required=True,
     )
     parser.add_argument(
+        '--column-name',
+        type=str,
+        help='the name of the column to filter by',
+        default='import',
+    )
+    parser.add_argument(
         '--filter-private-imports',
         help='if specified, private imports will be filtered out',
         action='store_true',
@@ -286,4 +298,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    main(args.input, args.output, args.filter_private_imports, args.filter_stdlib_imports)
+    main(args.input, args.output, args.column_name, args.filter_private_imports, args.filter_stdlib_imports)
