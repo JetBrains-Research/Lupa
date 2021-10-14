@@ -193,11 +193,11 @@ def get_ignored_projects(path_to_tagged_projects: str, tags: List[str]) -> Set[s
 
 
 def get_fq_names(
-        path_to_fq_names: str,
-        path_to_ignored_packages: str,
-        path_to_tagged_projects: str,
-        tags: List[str],
-        allow_noise_imports: bool,
+    path_to_fq_names: str,
+    path_to_ignored_packages: str,
+    path_to_tagged_projects: str,
+    tags: List[str],
+    allow_noise_imports: bool,
 ) -> List[str]:
     fq_names_with_project = pd.read_csv(path_to_fq_names).astype(str).values.tolist()
     ignored_packages = get_ignored_packages(path_to_ignored_packages)
