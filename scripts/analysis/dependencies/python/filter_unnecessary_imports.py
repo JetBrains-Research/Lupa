@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
+# A list of all standard modules is obtained from the Python Module Index: https://docs.python.org/3.10/py-modindex.html
 STDLIB_MODULES = [
     '__future__',
     '__main__',
