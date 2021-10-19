@@ -31,7 +31,6 @@ object FromImportStatementPsiAnalyzer : PsiAnalyzer<PyFromImportStatement, List<
                     importElements.map { importElement -> "$importSource.$importElement" }
                 } ?: emptyList()
             }
-
         }
     }
 

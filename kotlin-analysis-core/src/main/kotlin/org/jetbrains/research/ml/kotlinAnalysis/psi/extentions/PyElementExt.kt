@@ -2,7 +2,6 @@ package org.jetbrains.research.ml.kotlinAnalysis.psi.extentions
 
 import com.jetbrains.python.psi.PyFromImportStatement
 
-
 private const val RELATIVE_LEVEL_OF_ABSOLUTE_IMPORT = 0
 
 /**
