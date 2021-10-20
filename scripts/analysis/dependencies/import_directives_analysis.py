@@ -80,6 +80,9 @@ def get_longest_common_prefix(fq_names: List[str]) -> str:
 
 
 def group_fq_names_by(fq_names: List[str], group_by_function: Callable[[str], str]) -> FqNamesGroups:
+    # We do not use ittertools.groupby here because
+    # order is important for groupby, which can cause some imports to miss.
+    # See: https://docs.python.org/3/library/itertools.html#itertools.groupby
     grouped_fq_names = defaultdict(list)
     for fq_name in fq_names:
         grouped_fq_names[group_by_function(fq_name)].append(fq_name)
