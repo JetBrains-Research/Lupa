@@ -1,17 +1,16 @@
 import argparse
-import itertools
 import json
 import os
 import sys
-from collections import Counter
-from typing import List, Callable, Dict, Set
+from collections import Counter, defaultdict
+from typing import Callable, Dict, List, Set
 
 import pandas as pd
 
 from column_names_utils import ImportDirectivesColumn
-from fq_names_tree import save_to_txt, save_to_png, build_fq_name_tree_decomposition, FqNameNode
-from fq_names_types import FqNamesStats, FqNamesGroups, FqNamesDict
-from utils import Extensions, get_file_lines, create_directory
+from fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
+from fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
+from utils import Extensions, create_directory, get_file_lines
 from visualization.diagram import show_bar_plot
 
 """
@@ -81,8 +80,13 @@ def get_longest_common_prefix(fq_names: List[str]) -> str:
 
 
 def group_fq_names_by(fq_names: List[str], group_by_function: Callable[[str], str]) -> FqNamesGroups:
-    return {group_name: list(group_members) for group_name, group_members in
-            itertools.groupby(sorted(fq_names), group_by_function)}
+    # We do not use itertools.groupby here because
+    # order is important for groupby, which can cause some imports to miss.
+    # See: https://docs.python.org/3/library/itertools.html#itertools.groupby
+    grouped_fq_names = defaultdict(list)
+    for fq_name in fq_names:
+        grouped_fq_names[group_by_function(fq_name)].append(fq_name)
+    return grouped_fq_names
 
 
 def fq_names_groups_to_stats(fq_names_groups: FqNamesGroups) -> FqNamesStats:
@@ -161,11 +165,15 @@ def fq_names_to_trees(root: FqNameNode, sub_roots: List[FqNameNode],
 
 def filter_fq_names(fq_names_with_project: List[List[str]],
                     ignored_packages: Set[str],
-                    ignored_projects: Set[str]) -> List[List[str]]:
+                    ignored_projects: Set[str],
+                    allow_noise_imports: bool) -> List[List[str]]:
+    filtered_fq_names = fq_names_with_project
+    if not allow_noise_imports:
+        filtered_fq_names = list(filter(lambda x: "." in x[1], filtered_fq_names))  # filter noise import fq names
+
     return list(filter(lambda x:
-                       "." in x[1]  # filter noise import fq names
-                       and not any(x[1].startswith(package) for package in ignored_packages)  # filter ignored packages
-                       and x[0] not in ignored_projects, fq_names_with_project))  # filter ignored projects
+                       not any(x[1].startswith(package) for package in ignored_packages)  # filter ignored packages
+                       and x[0] not in ignored_projects, filtered_fq_names))  # filter ignored projects
 
 
 def get_ignored_packages(path_to_ignored_packages: str) -> Set[str]:
@@ -192,33 +200,33 @@ def get_fq_names(
     path_to_ignored_packages: str,
     path_to_tagged_projects: str,
     tags: List[str],
+    allow_noise_imports: bool,
 ) -> List[str]:
     fq_names_with_project = pd.read_csv(path_to_fq_names).astype(str).values.tolist()
     ignored_packages = get_ignored_packages(path_to_ignored_packages)
     ignored_projects = get_ignored_projects(path_to_tagged_projects, tags)
-    filtered_fq_names_with_project = filter_fq_names(fq_names_with_project, ignored_packages, ignored_projects)
+    filtered_fq_names_with_project = filter_fq_names(fq_names_with_project, ignored_packages,
+                                                     ignored_projects, allow_noise_imports)
 
     return [fq_name for _, fq_name in filtered_fq_names_with_project]
 
 
 def get_imports_count_stats(fq_names_with_project: List[List[str]]) -> Dict[str, int]:
-    # TODO: rewrite with default dict
-    imports_count_by_project = {}
+    imports_count_by_project = defaultdict(int)
     for project, _fq_name in fq_names_with_project:
-        if project not in imports_count_by_project:
-            imports_count_by_project[project] = 0
         imports_count_by_project[project] += 1
     return imports_count_by_project
 
 
 def analyze(path_to_fq_names: str, path_to_result_dir: str, path_to_ignored_packages: str,
-            path_to_tagged_projects: str, tags: List[str],
+            path_to_tagged_projects: str, tags: List[str], allow_noise_imports: bool,
             max_package_len: int, max_subpackages: int, max_leaf_subpackages: int,
             min_occurrence: int, max_occurrence: int, max_u_occurrence: int,
             show_dot_trees: bool, show_txt_tree: bool, show_bar_plots: bool, show_csv: bool, show_package_csv: bool):
     create_directory(path_to_result_dir)
 
-    fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages, path_to_tagged_projects, tags)
+    fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages,
+                            path_to_tagged_projects, tags, allow_noise_imports)
     print(f"Got {len(fq_names)} imports")
 
     fq_names_dict = fq_names_to_dict(fq_names)
@@ -250,6 +258,8 @@ if __name__ == '__main__':
     parser.add_argument('--ignore', type=str, default=None, help='path to csv file with imports to ignore')
     parser.add_argument('--tagged_projects', type=str, default=None, help='path to csv file with tagged projects')
     parser.add_argument('--tags', help='path to csv file with tagged projects', nargs='+', default=['android', 'other'])
+    parser.add_argument('--allow-noise-imports', help='If specified, imports not containing "." will not be ignored',
+                        action='store_true')
 
     parser.add_argument('--max-package-len', type=int, default=3,
                         help='max length of package name to group by')
@@ -279,7 +289,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
-    analyze(args.input, args.output, args.ignore, args.tagged_projects, args.tags,
+    analyze(args.input, args.output, args.ignore, args.tagged_projects, args.tags, args.allow_noise_imports,
             args.max_package_len, args.max_subpackages, args.max_leaf_subpackages,
             args.min_occurrence, args.max_occurrence, args.max_u_occurrence,
             args.show_dot_trees, args.show_txt_trees, args.show_bar_plots, args.show_csv, args.show_package_csv)
