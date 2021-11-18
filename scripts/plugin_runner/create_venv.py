@@ -192,7 +192,7 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
             '-m',
             'venv',
             str(venv_path),
-        ]
+        ],
     )
 
     pip_command = [
