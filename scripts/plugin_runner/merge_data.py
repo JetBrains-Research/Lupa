@@ -15,6 +15,12 @@ PROJECT_TAGS_DATA = "project_tags_data.csv"
 GRADLE_DEPENDENCIES_DATA = "gradle_dependencies_data.csv"
 GRADLE_PROPERTIES_DATA = "gradle_properties_data.csv"
 GRADLE_PLUGINS_DATA = "gradle_plugins_data.csv"
+GRADLE_DEPENDENCIES_BY_MODULES_DATA = "gradle_dependencies_by_modules_data.csv"
+REFLECTION_DATA = "reflection_data.csv"
+PROJECT_METRICS_DATA = "project_metrics_data.csv"
+IMPORTS_USAGE_DATA = "imports_usage_data.csv"
+SUPER_CALL_INLINE_FUN_DATA = "super_call_from_inline_functions_data.csv"
+CONSTRUCTOR_CALL_INLINE_FUN_DATA = "constructor_call_from_inline_functions_data.csv"
 
 
 def merge(batch_output_paths: List[str], output_dir: str, data: str):
@@ -32,6 +38,16 @@ def merge(batch_output_paths: List[str], output_dir: str, data: str):
         merge_gradle_properties(batch_output_paths, output_dir)
     elif data == "gradle-plugins":
         merge_gradle_plugins(batch_output_paths, output_dir)
+    elif data == "imports-usage":
+        merge_imports_usage(batch_output_paths, output_dir)
+    elif data == "gradle-dependencies-by-modules":
+        merge_gradle_dependencies_by_modules(batch_output_paths, output_dir)
+    elif data == "java-reflections":
+        merge_java_reflections_projects(batch_output_paths, output_dir)
+    elif data == "project-metrics":
+        merge_project_metrics(batch_output_paths, output_dir)
+    elif data == "inline-function":
+        merge_inline_function(batch_output_paths, output_dir)
     else:
         logging.error("Can't merge results")
 
@@ -47,6 +63,15 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
         result_df.to_csv(fout, index=False, sep='\t')
 
 
+def merge_inline_function(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, SUPER_CALL_INLINE_FUN_DATA, output_dir)
+    merge_csv(batch_output_paths, CONSTRUCTOR_CALL_INLINE_FUN_DATA, output_dir)
+
+
+def merge_imports_usage(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, IMPORTS_USAGE_DATA, output_dir)
+
+
 def merge_gradle_plugins(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, GRADLE_PLUGINS_DATA, output_dir)
 
@@ -59,6 +84,10 @@ def merge_gradle_dependencies(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, GRADLE_DEPENDENCIES_DATA, output_dir)
 
 
+def merge_gradle_dependencies_by_modules(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, GRADLE_DEPENDENCIES_BY_MODULES_DATA, output_dir)
+
+
 def merge_project_tags(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, PROJECT_TAGS_DATA, output_dir)
 
@@ -69,6 +98,14 @@ def merge_dependencies(batch_output_paths: List[str], output_dir: str):
 
 def merge_ranges(batch_output_paths: List[str], output_dir: str):
     merge_csv(batch_output_paths, RANGES_DATA, output_dir)
+
+
+def merge_java_reflections_projects(batch_output_paths: List[str], output_dir: str):
+    merge_csv(batch_output_paths, REFLECTION_DATA, output_dir)
+
+
+def merge_project_metrics(batch_output_paths, output_dir):
+    merge_csv(batch_output_paths, PROJECT_METRICS_DATA, output_dir)
 
 
 def merge_clones(batch_output_paths: List[str], output_dir: str):

@@ -10,7 +10,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinProjectMetricsAnalysisAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-project-metrics-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ProjectMetricsAnalysisExecutor(args.outputDir)
-            .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener)
+        ProjectMetricsAnalysisExecutor(args.outputDir).execute(args.inputDir)
     }
 }

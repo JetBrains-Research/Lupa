@@ -34,7 +34,7 @@ def main():
         if args.start_from == 0:
             results_fout.write("full_name\n")
         unique_names = set()
-        for index, project in enumerate(dataset.name[args.start_from:]):
+        for index, project in enumerate(dataset.Name[args.start_from:]):
             username, project_name = project.split('/')
             query_url = f"https://api.github.com/repos/{username}/{project_name}"
             r = session.get(query_url, headers=headers)
@@ -78,7 +78,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
     parser.add_argument('--save-metadata', help="Enable saving jsons containing project metadata", action='store_true')
-    parser.add_argument("--start-from", help="Index of the project to start from", nargs='?', const=0, type=int)
+    parser.add_argument("--start-from", help="Index of the project to start from", nargs='?', default=0, type=int)
     return parser.parse_args()
 
 

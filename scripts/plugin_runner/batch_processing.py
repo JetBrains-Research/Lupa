@@ -37,8 +37,10 @@ def main():
         create_directory(batch_output_path)
         with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.{Extensions.TXT}")),
                   "w+") as fout:
+            data_to_analyse = f"kotlin-{args.data}-analysis" if not args.data.startswith(
+                "java") else f"{args.data}-analysis"
             process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli",
-                                        f"-Prunner=kotlin-{args.data}-analysis",
+                                        f"-Prunner={data_to_analyse}",
                                         f"-Pinput={batch_path}",
                                         f"-Poutput={batch_output_path}"],
                                        stdout=fout, stderr=fout, cwd=PROJECT_DIR)
@@ -73,7 +75,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("output", help="Path to the output directory")
     parser.add_argument("data", help="Data to analyse: clones or ranges",
                         choices=["dependencies", "clones", "ranges", "project-tags", "gradle-dependencies",
-                                 "gradle-properties", "gradle-plugins"])
+                                 "gradle-properties", "gradle-plugins", "java-reflections", "project-metrics",
+                                 "imports-usage", "inline-function"])
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
