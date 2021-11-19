@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 def configure_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         'dataset_path',
-        help='Path to dataset with projects from which you want to get dependencies and create a virtual environment.',
+        help='Path to dataset with projects from which you want to get requirements and create a virtual environment.',
         type=lambda value: Path(value).absolute(),
     )
 
@@ -68,7 +68,6 @@ def gather_requirements(dataset_path: Path) -> Dict[str, Requirements]:
     """
 
     requirements_by_package_name = defaultdict(set)
-
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
         with open(file_path) as file:
             try:
@@ -89,7 +88,7 @@ def _get_available_versions(package_name: str) -> Optional[Set[Version]]:
     By a given package, collects a list of all the versions available on PyPI.
 
     :param package_name: PyPI package name.
-    :return: list of available versions.
+    :return: set of available versions. If the version could not be obtained, None will be returned.
     """
 
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
@@ -117,7 +116,6 @@ def filter_unavailable_versions(requirements_by_package_name: Dict[str, Requirem
     """
 
     filtered_requirements_by_package_name = {}
-
     for name, requirements in requirements_by_package_name.items():
         logger.info(f'Checking {name} versions.')
 
@@ -152,7 +150,7 @@ def merge_requirements(requirements_by_package_name: Dict[str, Requirements]) ->
     return version_by_package_name
 
 
-def create_requirements_file(version_by_package_name: Dict[str, Optional[str]], requirements_dir: Path) -> Path:
+def create_requirements_file(version_by_package_name: Dict[str, Optional[Version]], requirements_dir: Path) -> Path:
     """
     Creates a requirements file from the passed dictionary.
 
@@ -181,8 +179,9 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     :param venv_path: the path where the virtual environment will be created.
     :param requirements_path: the path to the requirements file.
     :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
-    :return: none
+    :return: None
     """
+
     venv_path.mkdir(exist_ok=True, parents=True)
     pip_path = venv_path / 'bin' / 'pip'
 
