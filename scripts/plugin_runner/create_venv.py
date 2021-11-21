@@ -147,7 +147,7 @@ def _get_available_versions(package_name: str) -> Set[Version]:
     try:
         metadata = session.get(url).json()
     except requests.exceptions.RequestException as exception:
-        logger.error(f'An error occurred when accessing the PyPI. Skipping.', exception)
+        logger.error('An error occurred when accessing the PyPI. Skipping.', exception)
         return set()
     except json.JSONDecodeError as exception:
         logger.error(f'Failed to get a version for the {package_name} package. Skipping', exception)
