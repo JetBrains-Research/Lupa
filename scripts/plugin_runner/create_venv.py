@@ -83,8 +83,9 @@ def gather_requirements(dataset_path: Path) -> Dict[str, Requirements]:
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
         with open(file_path) as file:
             try:
-                requirements = pkg_resources.parse_requirements(file)
-            except pkg_resources.RequirementParseError:
+                requirements = list(pkg_resources.parse_requirements(file))
+            except Exception:
+                # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
                 logger.info(f'Unable to parse {str(file_path)}. Skipping.')
                 continue
 
