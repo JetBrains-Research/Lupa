@@ -13,6 +13,7 @@ import argparse
 import json
 import logging
 import subprocess
+import sys
 from collections import defaultdict
 from distutils.version import Version
 from pathlib import Path
@@ -20,6 +21,8 @@ from typing import Dict, Optional, Set, Tuple
 
 import pkg_resources
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
 REQUIREMENTS_FILE_NAME_REGEXP = '*requirements*.txt'
@@ -40,6 +43,12 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
         'venv_path',
         help='Path to the folder where you want to create the virtual environment.',
         type=lambda value: Path(value).absolute(),
+    )
+
+    parser.add_argument(
+        '--no-package-name-validation',
+        help='If specified, no package name validation will be performed using PyPI.',
+        action='store_true',
     )
 
     parser.add_argument(
@@ -67,23 +76,65 @@ def gather_requirements(dataset_path: Path) -> Dict[str, Requirements]:
              The requirement is a pair of operator and version.
     """
 
+    logger.info('Collecting requirements.')
+
     requirements_by_package_name = defaultdict(set)
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
         with open(file_path) as file:
             try:
                 requirements = pkg_resources.parse_requirements(file)
             except pkg_resources.RequirementParseError:
-                logger.info(f'Unable to parse {str(file_path)}.')
+                logger.info(f'Unable to parse {str(file_path)}. Skipping.')
                 continue
 
             for requirement in requirements:
                 specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
                 requirements_by_package_name[requirement.key] |= specs
 
+    logger.info(f'Collected {len(requirements_by_package_name)} packages.')
+
     return requirements_by_package_name
 
 
-def _get_available_versions(package_name: str) -> Optional[Set[Version]]:
+def _create_session() -> requests.Session:
+    session = requests.Session()
+    retries = Retry(total=5, backoff_factor=10)
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    return session
+
+
+def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirements]) -> Dict[str, Requirements]:
+    logger.info('Filtering unavailable packages.')
+
+    session = _create_session()
+    filtered_requirements_by_package_name = requirements_by_package_name
+    for package_name in requirements_by_package_name.keys():
+        logger.info(f'Checking {package_name}.')
+
+        try:
+            response = session.get(PYPI_PACKAGE_METADATA_URL.format(package_name=package_name))
+
+            if response.status_code == 200:
+                continue
+
+            if response.status_code == 404:
+                logger.warning(
+                    f'The {package_name} package does not exist on PyPI. Removing the package from requirements.',
+                )
+                filtered_requirements_by_package_name.pop(package_name)
+            else:
+                logger.warning(
+                    f'PyPI returned an unexpected code ({response.status_code}). Skipping.',
+                )
+
+        except requests.exceptions.RequestException as exception:
+            logger.error('An error occurred when accessing the PyPI. Skipping.', exception)
+
+    logger.info(f'Filtered {len(requirements_by_package_name) - len(filtered_requirements_by_package_name)} packages.')
+    return filtered_requirements_by_package_name
+
+
+def _get_available_versions(package_name: str) -> Set[Version]:
     """
     By a given package, collects a list of all the versions available on PyPI.
 
@@ -91,17 +142,23 @@ def _get_available_versions(package_name: str) -> Optional[Set[Version]]:
     :return: set of available versions. If the version could not be obtained, None will be returned.
     """
 
+    session = _create_session()
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
     try:
-        metadata = requests.get(url).json()
+        metadata = session.get(url).json()
     except requests.exceptions.RequestException as exception:
-        logger.error(f'An error occurred when accessing the PyPI (package name: {package_name}).', exception)
-        return None
-    except json.JSONDecodeError:
-        logger.error(f'Failed to get a version for the {package_name} package.')
-        return None
+        logger.error(f'An error occurred when accessing the PyPI. Skipping.', exception)
+        return set()
+    except json.JSONDecodeError as exception:
+        logger.error(f'Failed to get a version for the {package_name} package. Skipping', exception)
+        return set()
 
-    versions = metadata['releases'].keys()
+    if 'releases' in metadata.keys():
+        versions = metadata['releases'].keys()
+    else:
+        logger.error('The PyPI response does not contain the "releases" field. Skipping.')
+        return set()
+
     return set(map(pkg_resources.parse_version, versions))
 
 
@@ -115,15 +172,17 @@ def filter_unavailable_versions(requirements_by_package_name: Dict[str, Requirem
              The requirements contain only those versions which are available on the PyPI.
     """
 
+    logger.info('Filtering unavailable versions.')
+
     filtered_requirements_by_package_name = {}
     for name, requirements in requirements_by_package_name.items():
         logger.info(f'Checking {name} versions.')
 
         available_versions = _get_available_versions(name)
 
-        specs = {}
-        if available_versions is not None:
-            specs = {(operator, version) for operator, version in requirements if version in available_versions}
+        specs = requirements
+        if available_versions:
+            specs = {(operator, version) for operator, version in specs if version in available_versions}
         else:
             logger.warning(f'Unable to check {name} versions.')
 
@@ -140,6 +199,8 @@ def merge_requirements(requirements_by_package_name: Dict[str, Requirements]) ->
                                          The requirement is a pair of operator and version.
     :return: dictionary, where a version is specified for each package.
     """
+
+    logger.info('Merging requirements.')
 
     version_by_package_name = {}
     for name, requirements in requirements_by_package_name.items():
@@ -159,6 +220,8 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     :return: the path to the created requirements file.
     """
 
+    logger.info('Creating requirements file.')
+
     requirements_dir.mkdir(exist_ok=True, parents=True)
     path_to_requirements = requirements_dir / 'requirements.txt'
 
@@ -172,15 +235,17 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     return path_to_requirements
 
 
-def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool) -> None:
+def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool) -> int:
     """
     In the passed path creates a virtual environment and installs the passed requirements.
 
     :param venv_path: the path where the virtual environment will be created.
     :param requirements_path: the path to the requirements file.
     :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
-    :return: None
+    :return: pip return code
     """
+
+    logger.info('Creating virtual environment.')
 
     venv_path.mkdir(exist_ok=True, parents=True)
     pip_path = venv_path / 'bin' / 'pip'
@@ -204,7 +269,7 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     if no_package_dependencies:
         pip_command.append('--no-deps')
 
-    subprocess.run(pip_command)
+    return subprocess.run(pip_command).returncode
 
 
 def main():
@@ -216,12 +281,18 @@ def main():
     args = parser.parse_args()
 
     requirements_by_package_name = gather_requirements(args.dataset_path)
+
+    if not args.no_package_name_validation:
+        requirements_by_package_name = filter_unavailable_packages(requirements_by_package_name)
     if not args.no_version_validation:
         requirements_by_package_name = filter_unavailable_versions(requirements_by_package_name)
+
     version_by_package_name = merge_requirements(requirements_by_package_name)
     requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
-    create_venv(args.venv_path, requirements_path, args.no_package_dependencies)
+    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies)
+
+    return exit_code
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
