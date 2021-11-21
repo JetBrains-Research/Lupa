@@ -6,6 +6,7 @@ It accepts
     * path to the folder with python projects
     * path to the folder where you want to create the environment
     * flag that allows you not to do version validation using PyPI.
+    * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
 """
 
@@ -104,6 +105,13 @@ def _create_session() -> requests.Session:
 
 
 def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirements]) -> Dict[str, Requirements]:
+    """
+    Removes all package names that are not on PyPI.
+
+    :param requirements_by_package_name: dictionary, where for each package the collected requirements are listed.
+                                         The requirement is a pair of operator and version.
+    :return: dictionary, where for each package the collected requirements are listed.
+    """
     logger.info('Filtering unavailable packages.')
 
     session = _create_session()
