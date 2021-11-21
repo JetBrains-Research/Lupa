@@ -292,6 +292,7 @@ def main():
 
     if not args.no_package_name_validation:
         requirements_by_package_name = filter_unavailable_packages(requirements_by_package_name)
+
     if not args.no_version_validation:
         requirements_by_package_name = filter_unavailable_versions(requirements_by_package_name)
 
