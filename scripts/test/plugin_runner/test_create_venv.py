@@ -1,10 +1,11 @@
 from distutils.version import Version
 from typing import Dict, Set, Tuple
 
+import httpretty
 import pkg_resources
 import pytest as pytest
 
-from plugin_runner.create_venv import gather_requirements
+from plugin_runner.create_venv import PYPI_PACKAGE_METADATA_URL, filter_unavailable_packages, gather_requirements
 from test.plugin_runner import CREATE_VENV_TEST_FOLDER
 
 GATHER_REQUIREMENTS_TEST_DATA = [
@@ -37,3 +38,35 @@ def test_gather_requirements(
 ):
     actual_requirements_by_package_name = gather_requirements(CREATE_VENV_TEST_FOLDER / folder_name)
     assert actual_requirements_by_package_name == expected_requirements_by_package_name
+
+
+FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
+    (
+        'numpy',
+        200,
+        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+    ),
+    (
+        'numpy',
+        404,
+        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+        {},
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ('package_name', 'status', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
+    FILTER_UNAVAILABLE_PACKAGES_TEST_DATA,
+)
+def test_filter_unavailable_packages(
+    package_name: str,
+    status: int,
+    original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+):
+    httpretty.enable()
+    httpretty.register_uri(httpretty.GET, PYPI_PACKAGE_METADATA_URL.format(package_name=package_name), status=status)
+    assert expected_requirements_by_package_name == filter_unavailable_packages(original_requirements_by_package_name)
+    httpretty.disable()
