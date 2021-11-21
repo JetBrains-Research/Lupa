@@ -83,6 +83,14 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run koltin tests
         run: ./gradlew test
+      
+      - name: Cache Python virtual enviroment
+        id: pip-cache
+        uses: actions/cache@v2
+        with:
+          path: ./scripts/venv
+          key: ${{ runner.os }}-pip-cache-${{ hashFiles('./scripts/requirements*.txt') }}
+      
       - name: Run python tests
         run: pytest scripts/ -vv
 
