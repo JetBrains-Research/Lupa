@@ -16,6 +16,7 @@ import logging
 import subprocess
 import sys
 from collections import defaultdict
+from copy import copy
 from distutils.version import Version
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
@@ -116,7 +117,7 @@ def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirem
     logger.info('Filtering unavailable packages.')
 
     session = _create_session()
-    filtered_requirements_by_package_name = requirements_by_package_name
+    filtered_requirements_by_package_name = copy(requirements_by_package_name)
     for package_name in requirements_by_package_name.keys():
         logger.info(f'Checking {package_name}.')
 
