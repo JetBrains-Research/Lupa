@@ -81,8 +81,10 @@ jobs:
         with:
           java-version: 11
       - uses: actions/checkout@v2
-      - name: Run tests
+      - name: Run koltin tests
         run: ./gradlew test
+      - name: Run python tests
+        run: pytest scripts/ -vv
 
 
   code-style:
