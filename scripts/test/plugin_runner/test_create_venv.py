@@ -9,6 +9,7 @@ from plugin_runner.create_venv import (
     PYPI_PACKAGE_METADATA_URL,
     _get_available_versions,
     filter_unavailable_packages,
+    filter_unavailable_versions,
     gather_requirements,
 )
 from test.plugin_runner import CREATE_VENV_TEST_FOLDER
@@ -164,8 +165,138 @@ def test_get_available_versions(
     httpretty.register_uri(
         httpretty.GET,
         PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
-        status=200,
         body=response_json,
     )
     assert expected_versions == _get_available_versions(package_name)
-    httpretty.disable()
+
+
+FILTER_UNAVAILABLE_VERSIONS_TEST_DATA = [
+    (
+        {
+            'numpy': """
+            {
+                "releases": {
+                    "1.2.3": {},
+                    "3.2.1": {}
+                }
+            }
+            """,
+            'pandas': """
+            {
+                "releases": {
+                    "4.5.6": {},
+                    "6.5.4": {}
+                }
+            }
+            """,
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+    ),
+    (
+        {
+            'numpy': """
+        {
+            "releases": {
+                "1.2.3": {}
+            }
+        }
+        """,
+            'pandas': """
+        {
+            "releases": {
+                "4.5.6": {},
+                "6.5.4": {}
+            }
+        }
+        """,
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+        {
+            'numpy': {('==', pkg_resources.parse_version('1.2.3'))},
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+    ),
+    (
+        {
+            'numpy': """
+        {
+            "releases": {
+                "1.2.3": {},
+                "3.2.1": {}
+            }
+        }
+        """,
+            'pandas': """
+        {
+            "releases": {
+                "4.5.6": {},
+                "6.5.4": {}
+            }
+        }
+        """,
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['7.8.9', '9.8.7']))),
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(),
+        },
+    ),
+    (
+        {
+            'numpy': """
+        {
+            "releases": {
+                "1.2.3": {},
+                "3.2.1": {}
+            }
+        }
+        """,
+            'pandas': """
+        {
+            "releases": {}
+        }
+        """,
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ('json_response_by_package_name', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
+    FILTER_UNAVAILABLE_VERSIONS_TEST_DATA,
+)
+def test_filter_unavailable_versions(
+    _httpretty_fixture,
+    json_response_by_package_name: Dict[str, str],
+    original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+):
+    for package_name, json_response in json_response_by_package_name.items():
+        httpretty.register_uri(
+            httpretty.GET,
+            PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
+            body=json_response,
+        )
+
+    assert expected_requirements_by_package_name == filter_unavailable_versions(original_requirements_by_package_name)
