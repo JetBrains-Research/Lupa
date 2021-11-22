@@ -9,6 +9,7 @@ import pytest as pytest
 
 from plugin_runner.create_venv import (
     PYPI_PACKAGE_METADATA_URL,
+    Requirements,
     _get_available_versions,
     create_requirements_file,
     filter_unavailable_packages,
@@ -49,13 +50,9 @@ GATHER_REQUIREMENTS_TEST_DATA = [
 ]
 
 
-@pytest.mark.parametrize(('folder_name', 'expected_requirements_by_package_name'), GATHER_REQUIREMENTS_TEST_DATA)
-def test_gather_requirements(
-    folder_name: str,
-    expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
-):
-    actual_requirements_by_package_name = gather_requirements(CREATE_VENV_TEST_DATA_FOLDER / folder_name)
-    assert actual_requirements_by_package_name == expected_requirements_by_package_name
+@pytest.mark.parametrize(('folder_name', 'expected_requirements'), GATHER_REQUIREMENTS_TEST_DATA)
+def test_gather_requirements(folder_name: str, expected_requirements: Requirements):
+    assert expected_requirements == gather_requirements(CREATE_VENV_TEST_DATA_FOLDER / folder_name)
 
 
 FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
@@ -97,14 +94,14 @@ FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
 
 
 @pytest.mark.parametrize(
-    ('status_code_by_package_name', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
+    ('status_code_by_package_name', 'requirements', 'expected_requirements'),
     FILTER_UNAVAILABLE_PACKAGES_TEST_DATA,
 )
 def test_filter_unavailable_packages(
     _httpretty_fixture,
     status_code_by_package_name: Dict[str, int],
-    original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
-    expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    requirements: Requirements,
+    expected_requirements: Requirements,
 ):
     for package_name, status_code in status_code_by_package_name.items():
         httpretty.register_uri(
@@ -112,7 +109,8 @@ def test_filter_unavailable_packages(
             PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
             status=status_code,
         )
-    assert expected_requirements_by_package_name == filter_unavailable_packages(original_requirements_by_package_name)
+
+    assert expected_requirements == filter_unavailable_packages(requirements)
 
 
 GET_AVAILABLE_VERSIONS_TEST_DATA = [
@@ -171,6 +169,7 @@ def test_get_available_versions(
         PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
         body=response_json,
     )
+
     assert expected_versions == _get_available_versions(package_name)
 
 
@@ -287,14 +286,14 @@ FILTER_UNAVAILABLE_VERSIONS_TEST_DATA = [
 
 
 @pytest.mark.parametrize(
-    ('json_response_by_package_name', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
+    ('json_response_by_package_name', 'requirements', 'expected_requirements'),
     FILTER_UNAVAILABLE_VERSIONS_TEST_DATA,
 )
 def test_filter_unavailable_versions(
     _httpretty_fixture,
     json_response_by_package_name: Dict[str, str],
-    original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
-    expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    requirements: Requirements,
+    expected_requirements: Requirements,
 ):
     for package_name, json_response in json_response_by_package_name.items():
         httpretty.register_uri(
@@ -303,7 +302,7 @@ def test_filter_unavailable_versions(
             body=json_response,
         )
 
-    assert expected_requirements_by_package_name == filter_unavailable_versions(original_requirements_by_package_name)
+    assert expected_requirements == filter_unavailable_versions(requirements)
 
 
 MERGE_REQUIREMENTS_TEST_DATA = [
@@ -331,14 +330,14 @@ MERGE_REQUIREMENTS_TEST_DATA = [
 
 
 @pytest.mark.parametrize(
-    ('requirements_by_package_name', 'expected_version_by_package_name'),
+    ('requirements', 'expected_version_by_package_name'),
     MERGE_REQUIREMENTS_TEST_DATA,
 )
 def test_merge_requirements(
-    requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    requirements: Requirements,
     expected_version_by_package_name: Dict[str, Optional[Version]],
 ):
-    assert expected_version_by_package_name == merge_requirements(requirements_by_package_name)
+    assert expected_version_by_package_name == merge_requirements(requirements)
 
 
 CREATE_REQUIREMENTS_FILES_TEST_DATA = [
