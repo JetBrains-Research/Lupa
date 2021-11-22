@@ -29,7 +29,8 @@ from urllib3 import Retry
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
 REQUIREMENTS_FILE_NAME_REGEXP = '*requirements*.txt'
 
-Requirements = Set[Tuple[str, Version]]
+Specs = Set[Tuple[str, Version]]
+Requirements = Dict[str, Specs]
 
 logger = logging.getLogger(__name__)
 
@@ -69,34 +70,34 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def gather_requirements(dataset_path: Path) -> Dict[str, Requirements]:
+def gather_requirements(dataset_path: Path) -> Requirements:
     """
     Collects requirements from all projects.
 
     :param dataset_path: the path to the folder with the projects that contain the requirements files.
-    :return: dictionary, where for each package the collected requirements are listed.
-             The requirement is a pair of operator and version.
+    :return: dictionary, where for each package the collected specs are listed.
+             The spec is a pair of operator and version.
     """
 
     logger.info('Collecting requirements.')
 
-    requirements_by_package_name = defaultdict(set)
+    requirements = defaultdict(set)
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
         with open(file_path) as file:
             try:
-                requirements = list(pkg_resources.parse_requirements(file))
+                file_requirements = list(pkg_resources.parse_requirements(file))
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
                 logger.info(f'Unable to parse {str(file_path)}. Skipping.')
                 continue
 
-            for requirement in requirements:
+            for requirement in file_requirements:
                 specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
-                requirements_by_package_name[requirement.key] |= specs
+                requirements[requirement.key] |= specs
 
-    logger.info(f'Collected {len(requirements_by_package_name)} packages.')
+    logger.info(f'Collected {len(requirements)} packages.')
 
-    return requirements_by_package_name
+    return requirements
 
 
 def _create_session() -> requests.Session:
@@ -106,19 +107,19 @@ def _create_session() -> requests.Session:
     return session
 
 
-def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirements]) -> Dict[str, Requirements]:
+def filter_unavailable_packages(requirements: Requirements) -> Requirements:
     """
     Removes all package names that are not on PyPI.
 
-    :param requirements_by_package_name: dictionary, where for each package the collected requirements are listed.
-                                         The requirement is a pair of operator and version.
-    :return: dictionary, where for each package the collected requirements are listed.
+    :param requirements: dictionary, where for each package the specs are listed.
+                         The spec is a pair of operator and version.
+    :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
     """
     logger.info('Filtering unavailable packages.')
 
     session = _create_session()
-    filtered_requirements_by_package_name = copy(requirements_by_package_name)
-    for package_name in requirements_by_package_name.keys():
+    filtered_requirements = copy(requirements)
+    for package_name in requirements.keys():
         logger.info(f'Checking {package_name}.')
 
         try:
@@ -131,7 +132,7 @@ def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirem
                 logger.warning(
                     f'The {package_name} package does not exist on PyPI. Removing the package from requirements.',
                 )
-                filtered_requirements_by_package_name.pop(package_name)
+                filtered_requirements.pop(package_name)
             else:
                 logger.warning(
                     f'PyPI returned an unexpected code ({response.status_code}). Skipping.',
@@ -140,8 +141,8 @@ def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirem
         except requests.exceptions.RequestException:
             logger.error('An error occurred when accessing the PyPI. Skipping.')
 
-    logger.info(f'Filtered {len(requirements_by_package_name) - len(filtered_requirements_by_package_name)} packages.')
-    return filtered_requirements_by_package_name
+    logger.info(f'Filtered {len(requirements) - len(filtered_requirements)} packages.')
+    return filtered_requirements
 
 
 def _get_available_versions(package_name: str) -> Set[Version]:
@@ -172,52 +173,54 @@ def _get_available_versions(package_name: str) -> Set[Version]:
     return set(map(pkg_resources.parse_version, versions))
 
 
-def filter_unavailable_versions(requirements_by_package_name: Dict[str, Requirements]) -> Dict[str, Requirements]:
+def filter_unavailable_versions(specs: Requirements) -> Requirements:
     """
     Removes all versions of packages that are not on PyPI.
 
-    :param requirements_by_package_name: dictionary, where for each package the collected requirements are listed.
-                                         The requirement is a pair of operator and version.
-    :return: dictionary, where for each package the collected requirements are listed.
-             The requirements contain only those versions which are available on the PyPI.
+    :param specs: dictionary, where for each package the specs are listed.
+                  The spec is a pair of operator and version.
+    :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
+             The specs contain only those versions which are available on the PyPI.
     """
 
     logger.info('Filtering unavailable versions.')
 
-    filtered_requirements_by_package_name = {}
-    for name, requirements in requirements_by_package_name.items():
-        logger.info(f'Checking {name} versions.')
+    filtered_requirements = {}
+    for package_name, specs in specs.items():
+        logger.info(f'Checking {package_name} versions.')
 
-        available_versions = _get_available_versions(name)
+        available_versions = _get_available_versions(package_name)
 
-        specs = requirements
+        filtered_specs = specs
         if available_versions:
-            specs = {(operator, version) for operator, version in specs if version in available_versions}
+            filtered_specs = {
+                (operator, version) for operator, version in filtered_specs if version in available_versions
+            }
         else:
-            logger.warning(f'Unable to check {name} versions.')
+            logger.warning(f'Unable to check {package_name} versions.')
 
-        filtered_requirements_by_package_name[name] = specs
+        filtered_requirements[package_name] = filtered_specs
 
-    return filtered_requirements_by_package_name
+    return filtered_requirements
 
 
-def merge_requirements(requirements_by_package_name: Dict[str, Requirements]) -> Dict[str, Optional[Version]]:
+def merge_requirements(requirements: Requirements) -> Dict[str, Optional[Version]]:
     """
     For each package leaves only the highest version of requirements.
 
-    :param requirements_by_package_name: dictionary, where for each package the collected requirements are listed.
-                                         The requirement is a pair of operator and version.
+    :param requirements: dictionary, where for each package the specs are listed.
+                         The spec is a pair of operator and version.
     :return: dictionary, where a version is specified for each package.
     """
 
     logger.info('Merging requirements.')
 
     version_by_package_name = {}
-    for name, requirements in requirements_by_package_name.items():
+    for package_name, specs in requirements.items():
         max_version = None
-        if requirements:
-            max_version = max(version for _, version in requirements)
-        version_by_package_name[name] = max_version
+        if specs:
+            max_version = max(version for _, version in specs)
+        version_by_package_name[package_name] = max_version
     return version_by_package_name
 
 
