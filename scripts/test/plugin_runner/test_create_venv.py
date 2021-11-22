@@ -13,6 +13,14 @@ from plugin_runner.create_venv import (
 )
 from test.plugin_runner import CREATE_VENV_TEST_FOLDER
 
+
+@pytest.fixture
+def _httpretty_fixture():
+    httpretty.enable(allow_net_connect=False)
+    yield
+    httpretty.disable()
+
+
 GATHER_REQUIREMENTS_TEST_DATA = [
     ('project_with_incorrect_requirement_file', {}),
     ('project_without_requirements_files', {}),
@@ -88,11 +96,11 @@ FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
     FILTER_UNAVAILABLE_PACKAGES_TEST_DATA,
 )
 def test_filter_unavailable_packages(
+    _httpretty_fixture,
     status_code_by_package_name: Dict[str, int],
     original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
     expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
 ):
-    httpretty.enable(allow_net_connect=False)
     for package_name, status_code in status_code_by_package_name.items():
         httpretty.register_uri(
             httpretty.GET,
@@ -100,7 +108,6 @@ def test_filter_unavailable_packages(
             status=status_code,
         )
     assert expected_requirements_by_package_name == filter_unavailable_packages(original_requirements_by_package_name)
-    httpretty.disable()
 
 
 GET_AVAILABLE_VERSIONS_TEST_DATA = [
@@ -148,8 +155,12 @@ GET_AVAILABLE_VERSIONS_TEST_DATA = [
 
 
 @pytest.mark.parametrize(('package_name', 'response_json', 'expected_versions'), GET_AVAILABLE_VERSIONS_TEST_DATA)
-def test_get_available_versions(package_name: str, response_json: str, expected_versions: Set[Version]):
-    httpretty.enable(allow_net_connect=False)
+def test_get_available_versions(
+    _httpretty_fixture,
+    package_name: str,
+    response_json: str,
+    expected_versions: Set[Version],
+):
     httpretty.register_uri(
         httpretty.GET,
         PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
