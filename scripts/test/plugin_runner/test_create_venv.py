@@ -5,7 +5,12 @@ import httpretty
 import pkg_resources
 import pytest as pytest
 
-from plugin_runner.create_venv import PYPI_PACKAGE_METADATA_URL, filter_unavailable_packages, gather_requirements
+from plugin_runner.create_venv import (
+    PYPI_PACKAGE_METADATA_URL,
+    _get_available_versions,
+    filter_unavailable_packages,
+    gather_requirements,
+)
 from test.plugin_runner import CREATE_VENV_TEST_FOLDER
 
 GATHER_REQUIREMENTS_TEST_DATA = [
@@ -95,4 +100,61 @@ def test_filter_unavailable_packages(
             status=status_code,
         )
     assert expected_requirements_by_package_name == filter_unavailable_packages(original_requirements_by_package_name)
+    httpretty.disable()
+
+
+GET_AVAILABLE_VERSIONS_TEST_DATA = [
+    (
+        'numpy',
+        """
+        {
+            "releases": {
+                "1.2.3": {},
+                "3.4.5": {},
+                "6.7.8": {}
+            }
+        }
+        """,
+        set(map(pkg_resources.parse_version, ['1.2.3', '3.4.5', '6.7.8'])),
+    ),
+    (
+        'numpy',
+        """
+        {
+            "releases": {}
+        }
+        """,
+        set(),
+    ),
+    (
+        'numpy',
+        'This is not a json.',
+        set(),
+    ),
+    (
+        'numpy',
+        """
+        {
+            "incorrect_key": {
+                "1.2.3": {},
+                "3.4.5": {},
+                "6.7.8": {}
+            }
+        }
+        """,
+        set(),
+    ),
+]
+
+
+@pytest.mark.parametrize(('package_name', 'response_json', 'expected_versions'), GET_AVAILABLE_VERSIONS_TEST_DATA)
+def test_get_available_versions(package_name: str, response_json: str, expected_versions: Set[Version]):
+    httpretty.enable(allow_net_connect=False)
+    httpretty.register_uri(
+        httpretty.GET,
+        PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
+        status=200,
+        body=response_json,
+    )
+    assert expected_versions == _get_available_versions(package_name)
     httpretty.disable()
