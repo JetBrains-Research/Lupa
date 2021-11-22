@@ -3,8 +3,8 @@ This script allows you to create a virtual environment
 and install the requirements gathered from a given dataset with python projects.
 
 It accepts
-    * path to the folder with python projects
-    * path to the folder where you want to create the environment
+    * path to the folder with python projects.
+    * path to the folder where you want to create the environment.
     * flag that allows you not to do version validation using PyPI.
     * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
@@ -102,7 +102,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
 
 def _create_session() -> requests.Session:
     session = requests.Session()
-    retries = Retry(total=5, backoff_factor=10)
+    retries = Retry(total=10, backoff_factor=0.1)
     session.mount('https://', HTTPAdapter(max_retries=retries))
     return session
 
@@ -115,6 +115,7 @@ def filter_unavailable_packages(requirements: Requirements) -> Requirements:
                          The spec is a pair of operator and version.
     :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
     """
+
     logger.info('Filtering unavailable packages.')
 
     session = _create_session()
@@ -239,11 +240,11 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     path_to_requirements = requirements_dir / 'requirements.txt'
 
     with open(path_to_requirements, mode='w+') as file:
-        for name, version in version_by_package_name.items():
+        for package_name, version in version_by_package_name.items():
             if version is None:
-                file.write(f'{name}\n')
+                file.write(f'{package_name}\n')
             else:
-                file.write(f'{name}=={version}\n')
+                file.write(f'{package_name}=={version}\n')
 
     return path_to_requirements
 
@@ -293,15 +294,15 @@ def main():
 
     args = parser.parse_args()
 
-    requirements_by_package_name = gather_requirements(args.dataset_path)
+    requirements = gather_requirements(args.dataset_path)
 
     if not args.no_package_name_validation:
-        requirements_by_package_name = filter_unavailable_packages(requirements_by_package_name)
+        requirements = filter_unavailable_packages(requirements)
 
     if not args.no_version_validation:
-        requirements_by_package_name = filter_unavailable_versions(requirements_by_package_name)
+        requirements = filter_unavailable_versions(requirements)
 
-    version_by_package_name = merge_requirements(requirements_by_package_name)
+    version_by_package_name = merge_requirements(requirements)
     requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
     exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies)
 
