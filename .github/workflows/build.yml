@@ -92,7 +92,9 @@ jobs:
           key: ${{ runner.os }}-pip-cache-v2-${{ hashFiles('./scripts/requirements*.txt') }}
       
       - name: Run python tests
-        run: pytest scripts/ -vv
+        run: |
+          source ./scripts/venv/bin/activate
+          pytest ./scripts/ -vv
 
 
   code-style:
