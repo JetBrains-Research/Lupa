@@ -1,5 +1,7 @@
+import tempfile
 from distutils.version import Version
-from typing import Dict, Set, Tuple
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Tuple
 
 import httpretty
 import pkg_resources
@@ -8,9 +10,11 @@ import pytest as pytest
 from plugin_runner.create_venv import (
     PYPI_PACKAGE_METADATA_URL,
     _get_available_versions,
+    create_requirements_file,
     filter_unavailable_packages,
     filter_unavailable_versions,
     gather_requirements,
+    merge_requirements,
 )
 from test.plugin_runner import CREATE_VENV_TEST_FOLDER
 
@@ -300,3 +304,71 @@ def test_filter_unavailable_versions(
         )
 
     assert expected_requirements_by_package_name == filter_unavailable_versions(original_requirements_by_package_name)
+
+
+MERGE_REQUIREMENTS_TEST_DATA = [
+    (
+        {
+            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+        {
+            'numpy': pkg_resources.parse_version('3.2.1'),
+            'pandas': pkg_resources.parse_version('6.5.4'),
+        },
+    ),
+    (
+        {
+            'numpy': set(),
+            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
+        },
+        {
+            'numpy': None,
+            'pandas': pkg_resources.parse_version('6.5.4'),
+        },
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    ('requirements_by_package_name', 'expected_version_by_package_name'),
+    MERGE_REQUIREMENTS_TEST_DATA,
+)
+def test_merge_requirements(
+    requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
+    expected_version_by_package_name: Dict[str, Optional[Version]],
+):
+    assert expected_version_by_package_name == merge_requirements(requirements_by_package_name)
+
+
+CREATE_REQUIREMENTS_FILES_TEST_DATA = [
+    (
+        {
+            'numpy': pkg_resources.parse_version('3.2.1'),
+            'pandas': pkg_resources.parse_version('6.5.4'),
+        },
+        [
+            'numpy==3.2.1',
+            'pandas==6.5.4',
+        ],
+    ),
+    (
+        {
+            'numpy': None,
+            'pandas': pkg_resources.parse_version('6.5.4'),
+        },
+        [
+            'numpy',
+            'pandas==6.5.4',
+        ],
+    ),
+]
+
+
+@pytest.mark.parametrize(('version_by_package_name', 'expected_lines'), CREATE_REQUIREMENTS_FILES_TEST_DATA)
+def test_create_requirements_file(version_by_package_name: Dict[str, Optional[Version]], expected_lines: List[str]):
+    with tempfile.TemporaryDirectory() as temp_dir:
+        requirements_file_path = create_requirements_file(version_by_package_name, Path(temp_dir))
+        with open(requirements_file_path) as requirements_file:
+            actual_lines = list(map(str.strip, requirements_file.readlines()))
+            assert actual_lines == expected_lines
