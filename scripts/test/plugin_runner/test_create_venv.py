@@ -42,31 +42,57 @@ def test_gather_requirements(
 
 FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
     (
-        'numpy',
-        200,
-        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
-        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+        {'numpy': 200, 'pandas': 200},
+        {
+            'numpy': {('==', pkg_resources.parse_version('1.2.3'))},
+            'pandas': {('==', pkg_resources.parse_version('4.5.6'))},
+        },
+        {
+            'numpy': {('==', pkg_resources.parse_version('1.2.3'))},
+            'pandas': {('==', pkg_resources.parse_version('4.5.6'))},
+        },
     ),
     (
-        'numpy',
-        404,
-        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+        {'numpy': 404, 'pandas': 200},
+        {
+            'numpy': {('==', pkg_resources.parse_version('1.2.3'))},
+            'pandas': {('==', pkg_resources.parse_version('4.5.6'))},
+        },
+        {
+            'pandas': {('==', pkg_resources.parse_version('4.5.6'))},
+        },
+    ),
+    (
+        {'numpy': 404, 'pandas': 404},
+        {
+            'numpy': {('==', pkg_resources.parse_version('1.2.3'))},
+            'pandas': {('==', pkg_resources.parse_version('4.5.6'))},
+        },
         {},
+    ),
+    (
+        {'numpy': 505},  # Unexpected code
+        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
+        {'numpy': {('==', pkg_resources.parse_version('1.2.3'))}},
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    ('package_name', 'status', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
+    ('status_code_by_package_name', 'original_requirements_by_package_name', 'expected_requirements_by_package_name'),
     FILTER_UNAVAILABLE_PACKAGES_TEST_DATA,
 )
 def test_filter_unavailable_packages(
-    package_name: str,
-    status: int,
+    status_code_by_package_name: Dict[str, int],
     original_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
     expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
 ):
-    httpretty.enable()
-    httpretty.register_uri(httpretty.GET, PYPI_PACKAGE_METADATA_URL.format(package_name=package_name), status=status)
+    httpretty.enable(allow_net_connect=False)
+    for package_name, status_code in status_code_by_package_name.items():
+        httpretty.register_uri(
+            httpretty.GET,
+            PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
+            status=status_code,
+        )
     assert expected_requirements_by_package_name == filter_unavailable_packages(original_requirements_by_package_name)
     httpretty.disable()
