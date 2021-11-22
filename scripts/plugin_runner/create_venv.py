@@ -137,8 +137,8 @@ def filter_unavailable_packages(requirements_by_package_name: Dict[str, Requirem
                     f'PyPI returned an unexpected code ({response.status_code}). Skipping.',
                 )
 
-        except requests.exceptions.RequestException as exception:
-            logger.error('An error occurred when accessing the PyPI. Skipping.', exception)
+        except requests.exceptions.RequestException:
+            logger.error('An error occurred when accessing the PyPI. Skipping.')
 
     logger.info(f'Filtered {len(requirements_by_package_name) - len(filtered_requirements_by_package_name)} packages.')
     return filtered_requirements_by_package_name
@@ -156,11 +156,11 @@ def _get_available_versions(package_name: str) -> Set[Version]:
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
     try:
         metadata = session.get(url).json()
-    except requests.exceptions.RequestException as exception:
-        logger.error('An error occurred when accessing the PyPI. Skipping.', exception)
+    except requests.exceptions.RequestException:
+        logger.error('An error occurred when accessing the PyPI. Skipping.')
         return set()
-    except json.JSONDecodeError as exception:
-        logger.error(f'Failed to get a version for the {package_name} package. Skipping', exception)
+    except json.JSONDecodeError:
+        logger.error(f'Failed to get a version for the {package_name} package. Skipping')
         return set()
 
     if 'releases' in metadata.keys():
