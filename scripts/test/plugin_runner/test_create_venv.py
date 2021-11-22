@@ -1,7 +1,7 @@
 import tempfile
 from distutils.version import Version
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set
 
 import httpretty
 import pkg_resources
