@@ -32,7 +32,7 @@ jobs:
         run: |
           virtualenv ./scripts/venv/
           source ./scripts/venv/bin/activate
-          pip install -r ./scripts/requirements.txt -r ./scripts/requirements-code-style.txt
+          pip install -r ./scripts/requirements.txt -r ./scripts/requirements-code-style.txt -r ./scripts/requirements-test.txt
           
       # Cache Gradle dependencies
       - name: Setup Gradle Dependencies Cache
