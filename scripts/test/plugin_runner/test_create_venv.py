@@ -16,7 +16,7 @@ from plugin_runner.create_venv import (
     gather_requirements,
     merge_requirements,
 )
-from test.plugin_runner import CREATE_VENV_TEST_FOLDER
+from test.plugin_runner import CREATE_VENV_TEST_DATA_FOLDER
 
 
 @pytest.fixture
@@ -54,7 +54,7 @@ def test_gather_requirements(
     folder_name: str,
     expected_requirements_by_package_name: Dict[str, Set[Tuple[str, Version]]],
 ):
-    actual_requirements_by_package_name = gather_requirements(CREATE_VENV_TEST_FOLDER / folder_name)
+    actual_requirements_by_package_name = gather_requirements(CREATE_VENV_TEST_DATA_FOLDER / folder_name)
     assert actual_requirements_by_package_name == expected_requirements_by_package_name
 
 
