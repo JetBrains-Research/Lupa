@@ -6,7 +6,7 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 
 object PythonCallExpressionsAnalysisRunner :
-    BaseRunner<IORunnerArgs, IORunnerArgsParser>("python-functions-analysis", IORunnerArgsParser) {
+    BaseRunner<IORunnerArgs, IORunnerArgsParser>("python-call-expressions-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
         CallExpressionsAnalysisExecutor(args.outputDir).execute(args.inputDir)
     }

@@ -28,19 +28,19 @@ class CallExpressionsAnalysisExecutor(
 ) : AnalysisExecutor() {
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        header = listOf("project_name", "fq_name", "type").joinToString(separator = ","),
+        header = listOf("project_name", "fq_name", "category").joinToString(separator = ","),
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        setSdkToProject(project, "/home/ilya/Desktop/temp")
+        setSdkToProject(project, "/home/ilya/Desktop/temp") // TODO
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
         val fqNamesProvider = PyQualifiedNameProvider()
 
-        val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java).toMutableList()
+        val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java)
         val packageNames = PyPackageUtil.gatherPackageNames(project)
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
