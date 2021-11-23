@@ -55,7 +55,7 @@ class CallExpressionsAnalysisExecutor(
 
         fqNamesByCategory.forEach { (_, fqNames) ->
             fqNames.removeAll { fqName ->
-                PyPackageUtil.isLocalFqName(
+                PyPackageUtil.isFqNameInAnyPackage(
                     fqName,
                     packageNames
                 )
