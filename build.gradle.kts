@@ -38,6 +38,11 @@ allprojects {
                 branch = "main"
             }
         }
+        implementation("$utilitiesProjectName:plugin-utilities-python") {
+            version {
+                branch = "main"
+            }
+        }
         implementation("$utilitiesProjectName:plugin-utilities-test") {
             version {
                 branch = "main"
