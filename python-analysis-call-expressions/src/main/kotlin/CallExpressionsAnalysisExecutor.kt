@@ -18,7 +18,6 @@ import org.jetbrains.research.ml.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import java.nio.file.Path
 
-
 /**
  * Executor for call expressions analysis which collects full qualified names of all call expressions in projects
  * and stores them to file in [output directory][outputDir].
