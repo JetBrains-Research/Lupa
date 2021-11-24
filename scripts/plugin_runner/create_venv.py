@@ -8,6 +8,9 @@ It accepts
     * flag that allows you not to do version validation using PyPI.
     * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
+
+In the current version of the script, if we find different versions of the same library
+in different requirement files, we will choose the newest (largest) version.
 """
 
 import argparse
