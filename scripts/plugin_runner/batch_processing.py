@@ -73,8 +73,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("data", help=f"Data to analyse: {', '.join(Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS))}",
-                        choices=AVAILABLE_ANALYZERS)
+    analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
+    parser.add_argument("data", help=f"Data to analyse: {', '.join(analyzers_names)}",
+                        choices=analyzers_names)
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
