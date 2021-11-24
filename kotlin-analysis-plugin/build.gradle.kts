@@ -32,23 +32,9 @@ open class BaseAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
 }
 
 open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
-
-    // TODO
-    @Input
-    @Optional
-    val venv = objectFactory.property<String>()
-
-    init {
-        jvmArgs = listOf(
-            "-Djava.awt.headless=true",
-            "--add-exports",
-            "java.base/jdk.internal.vm=ALL-UNNAMED",
-            "-Djdk.module.illegalAccess.silent=true"
-        )
-        maxHeapSize = "20g"
-        standardInput = System.`in`
-        standardOutput = System.`out`
-    }
+    // Virtual environment directory for Python
+    @get:Input
+    val venv: String? by project
 }
 
 dependencies {
@@ -78,7 +64,7 @@ tasks {
             runner,
             input?.let { "--input=$it" },
             output?.let { "--output=$it" },
-            venv.let { "--venv=$it" }
+            venv?.let { "--venv=$it" }
         )
     }
 }

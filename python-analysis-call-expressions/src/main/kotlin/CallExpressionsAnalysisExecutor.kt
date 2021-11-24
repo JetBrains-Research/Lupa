@@ -23,7 +23,7 @@ import java.nio.file.Path
  * and stores them to file in [output directory][outputDir].
  */
 class CallExpressionsAnalysisExecutor(
-    outputDir: Path, filename: String = "call_expressions_data.csv", private val venv: Path,
+    outputDir: Path, filename: String = "call_expressions_data.csv", private val venv: Path?,
 ) : AnalysisExecutor() {
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -33,8 +33,7 @@ class CallExpressionsAnalysisExecutor(
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        println(venv.toString())
-        // setSdkToProject(project, venv.toString()) // TODO
+        venv?.let { setSdkToProject(project, venv.toString()) }
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)

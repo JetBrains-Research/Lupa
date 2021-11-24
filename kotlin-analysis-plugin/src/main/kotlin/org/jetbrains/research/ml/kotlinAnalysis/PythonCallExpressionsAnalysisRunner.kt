@@ -12,7 +12,9 @@ class IORunnerArgsWithVenv(parser: ArgParser) : IORunnerArgs(parser) {
     val venvDir by parser.storing(
         "--venv",
         help = "The path to the virtual environment"
-    ) { Paths.get(this) }
+    ) {
+        if (this == "") null else Paths.get(this)
+    }
 }
 
 // TODO
@@ -22,7 +24,7 @@ object IORunnerArgsWithVenvParser : RunnerArgsParser<IORunnerArgsWithVenv> {
             .run {
                 require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
                 outputDir.toFile().mkdirs()
-                require(venvDir.toFile().isDirectory) { "Argument has to be directory" }
+                venvDir?.let { require(it.toFile().isDirectory) { "Argument has to be directory" } }
                 this
             }
     }
