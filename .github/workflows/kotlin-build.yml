@@ -1,0 +1,75 @@
+name: build
+
+on: [push]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Setup Java 11 environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          
+      # Cache Gradle dependencies
+      - name: Setup Gradle Dependencies Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+
+      # Cache Gradle Wrapper
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    
+      # Setup Java 11 environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+    
+      - uses: actions/checkout@v2
+      - run: ./gradlew build
+      
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: test-report
+          path: kotlin-analysis-*/build/reports/**
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Setup Java 11 environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: actions/checkout@v2
+      - name: Run koltin tests
+        run: ./gradlew test
+
+  code-style:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Setup Java 11 environment for the next steps
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: actions/checkout@v2
+      - run: ./gradlew ktlintCheck
