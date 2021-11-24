@@ -36,6 +36,36 @@ open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     }
 }
 
+open class PythonAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+    // Name of the analysis runner
+    @get:Input
+    val runner: String? by project
+
+    // Input directory with kotlin files
+    @get:Input
+    val input: String? by project
+
+    // Output directory to store indexes and methods data
+    @get:Input
+    val output: String? by project
+
+    // TODO
+    @get:Input
+    val venv: String? by project
+
+    init {
+        jvmArgs = listOf(
+            "-Djava.awt.headless=true",
+            "--add-exports",
+            "java.base/jdk.internal.vm=ALL-UNNAMED",
+            "-Djdk.module.illegalAccess.silent=true"
+        )
+        maxHeapSize = "20g"
+        standardInput = System.`in`
+        standardOutput = System.`out`
+    }
+}
+
 dependencies {
     implementation(project(":kotlin-analysis-core"))
     implementation(project(":kotlin-analysis-clones"))
@@ -60,6 +90,16 @@ tasks {
             runner,
             input?.let { "--input=$it" },
             output?.let { "--output=$it" }
+        )
+    }
+
+    register<PythonAnalysisCliTask>("python-cli") {
+        dependsOn("buildPlugin")
+        args = listOfNotNull(
+            runner,
+            input?.let { "--input=$it" },
+            output?.let { "--output=$it" },
+            venv?.let { "--venv=$it" } ?: "--venv=''"
         )
     }
 }
