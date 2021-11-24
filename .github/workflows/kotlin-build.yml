@@ -59,7 +59,7 @@ jobs:
         with:
           java-version: 11
       - uses: actions/checkout@v2
-      - name: Run koltin tests
+      - name: Run tests
         run: ./gradlew test
 
   code-style:
