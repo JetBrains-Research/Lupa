@@ -1,4 +1,4 @@
-name: build
+name: Python build
 
 on: [push]
 
