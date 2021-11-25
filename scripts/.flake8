@@ -7,6 +7,7 @@ ignore=WPS, # TODO: Do not ignore WPS inspections
        Q, # TODO: Do not ignore inspections related to quote checking
        W503, # Line break occurred before a binary operator. According to PEP8 the line break must come before the binary operator.
        RST301, # Unexpected indentation (in docstring).
+       S101, # Use of assert detected.
        S404, # Consider possible security implications associated with subprocess module. TODO: Maybe we shouldn't ignore this inspection
        S603, # Subprocess call - check for execution of untrusted input. TODO: Maybe we shouldn't ignore this inspection
        S607, # Starting a process with a partial executable path TODO: Maybe we shouldn't ignore this inspection
