@@ -41,7 +41,7 @@ python3 scripts/plugin_runner/create_venv.py /path/to/dataset/dir /path/to/venv
 #### 5. Extract import directives full-qualified names from dataset
 
 ``` 
-gradle :kotlin-analysis-plugin:cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir -Pvenv=/path/to/venv
+gradle :kotlin-analysis-plugin:python-cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir -Pvenv=/path/to/venv
 ```
 
 Note: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`
