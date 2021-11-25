@@ -3,10 +3,10 @@
 #### Extract methods from dataset
 
 ``` 
-python3 -m plugin_runner.batch_processing.py data_to_analyze /path/to/dataset/dir /path/to/extracted_methods/dir 
+python3 -m plugin_runner.batch_processing data_to_analyze /path/to/dataset/dir /path/to/statistcis/dir 
 ```
 
-where ```data_to_analyze``` can be ```clones``` or ```ranges```
+where ```data_to_analyze``` can be any analyzer name fto the [AVAILABLE_ANALYZERS](./analyzers.py)
 
 You can use the ```--batch-size n``` option (default value is 300).
 Also, there is ```--start-from n``` option to start from batch with a given number.

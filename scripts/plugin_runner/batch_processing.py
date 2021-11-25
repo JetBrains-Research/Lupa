@@ -14,6 +14,8 @@ import subprocess
 from pathlib import Path
 from typing import List
 import time
+
+from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 from plugin_runner.merge_data import merge
 from utils import get_subdirectories, create_directory, Extensions
 
@@ -38,7 +40,7 @@ def main():
         with open(os.path.join(PROJECT_DIR, os.path.join(logs_path, f"log_batch_{index}.{Extensions.TXT}")),
                   "w+") as fout:
             process = subprocess.Popen(["./gradlew", ":kotlin-analysis-plugin:cli",
-                                        f"-Prunner=kotlin-{args.data}-analysis",
+                                        f"-Prunner={args.data}-analysis",
                                         f"-Pinput={batch_path}",
                                         f"-Poutput={batch_output_path}"],
                                        stdout=fout, stderr=fout, cwd=PROJECT_DIR)
@@ -71,9 +73,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
     parser.add_argument("output", help="Path to the output directory")
-    parser.add_argument("data", help="Data to analyse: clones or ranges",
-                        choices=["dependencies", "clones", "ranges", "project-tags", "gradle-dependencies",
-                                 "gradle-properties", "gradle-plugins"])
+    analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
+    parser.add_argument("data", help=f"Data to analyse: {', '.join(analyzers_names)}",
+                        choices=analyzers_names)
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300,
                         type=int)
     parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
