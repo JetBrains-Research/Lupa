@@ -5,7 +5,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.RunnerArgsParser
 import java.nio.file.Paths
 
-
 /** Arguments data class for input and output directory names arguments,
  *  and also for the path to the virtual environment.*/
 class IORunnerArgsWithVenv(parser: ArgParser) : IORunnerArgs(parser) {
