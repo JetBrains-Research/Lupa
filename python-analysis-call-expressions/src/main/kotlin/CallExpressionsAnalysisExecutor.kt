@@ -39,17 +39,15 @@ class CallExpressionsAnalysisExecutor(
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
         val fqNamesProvider = PyQualifiedNameProvider()
 
+        val analyzerContext = CallExpressionAnalyzerContext(pyResolveContext, fqNamesProvider)
+
         val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java)
         val packageNames = PyPackageUtil.gatherPackageNames(project)
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
 
         val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
-            callExpressions.mapNotNull {
-                fqNamesProvider.getQualifiedName(
-                    it.multiResolveCalleeFunction(pyResolveContext).firstOrNull()
-                )
-            }.toMutableSet()
+            callExpressions.mapNotNull { CallExpressionAnalyzer.analyze(it, analyzerContext) }.toMutableSet()
         }
 
         fqNamesByCategory.forEach { (_, fqNames) ->
