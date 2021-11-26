@@ -8,7 +8,9 @@ import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzerWithContextImpl
  * Analysis consists of fully qualified name extraction.
  */
 object CallExpressionAnalyzer :
-    PsiAnalyzerWithContextImpl<PyCallExpressionImpl, CallExpressionAnalyzerContext, String>(PyCallExpressionImpl::class.java) {
+    PsiAnalyzerWithContextImpl<PyCallExpressionImpl, CallExpressionAnalyzerContext, String>(
+        PyCallExpressionImpl::class.java
+    ) {
 
     /** Get fully qualified name of given [call expression][PyCallExpressionImpl]. **/
     override fun analyzeWithContext(
