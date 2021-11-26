@@ -46,8 +46,13 @@ class CallExpressionsAnalysisExecutor(
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
 
-        val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
-            callExpressions.mapNotNull { CallExpressionAnalyzer.analyze(it, analyzerContext) }.toMutableSet()
+        val fqNamesByCategory = callExpressionsByCategory.mapValues { (category, callExpressions) ->
+            callExpressions.mapNotNull {
+                when (category) {
+                    ExpressionCategory.DECORATOR -> DecoratorAnalyzer.analyze(it, analyzerContext)
+                    else -> CallExpressionAnalyzer.analyze(it, analyzerContext)
+                }
+            }.toMutableSet()
         }
 
         fqNamesByCategory.forEach { (_, fqNames) ->
