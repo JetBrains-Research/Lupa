@@ -34,6 +34,7 @@ class CallExpressionsAnalysisExecutor(
 
     override fun analyse(project: Project) {
         venv?.let { setSdkToProject(project, venv.toString()) }
+            ?: println("The path to the virtual environment has not been passed. The analysis will run without the SDK.")
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
@@ -42,9 +43,14 @@ class CallExpressionsAnalysisExecutor(
         val analyzerContext = CallExpressionAnalyzerContext(pyResolveContext, fqNamesProvider)
 
         val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java)
+        println("${callExpressions.size} call expressions were extracted.")
+
         val packageNames = PyPackageUtil.gatherPackageNames(project)
+        println("${packageNames.size} package names were gathered.")
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
+        callExpressionsByCategory[ExpressionCategory.UNKNOWN]
+            ?.let { println("${it.size} call expressions were not categorized.") }
 
         val fqNamesByCategory = callExpressionsByCategory.mapValues { (category, callExpressions) ->
             callExpressions.mapNotNull {
@@ -70,6 +76,7 @@ class CallExpressionsAnalysisExecutor(
                     listOf(project.name, it, key.name.lowercase()).joinToString(separator = ",")
                 })
             }
+            println("In the $key category were collected ${value.size} unique full qualified names.")
         }
     }
 
