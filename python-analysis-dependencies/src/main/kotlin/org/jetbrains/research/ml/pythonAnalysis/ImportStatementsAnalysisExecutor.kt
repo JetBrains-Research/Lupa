@@ -26,9 +26,13 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
 
     override fun analyse(project: Project) {
         val importStatements = project.extractPyElementsOfType(PyImportStatement::class.java)
+        println("${importStatements.size} import statements were extracted.")
+
         val fqNames = importStatements.flatMap { ImportStatementPsiAnalyzer.analyze(it) }.toMutableSet()
 
         val fromImportStatements = project.extractPyElementsOfType(PyFromImportStatement::class.java)
+        println("${importStatements.size} from import statements were extracted.")
+
         fqNames.addAll(
             fromImportStatements.flatMap {
                 FromImportStatementPsiAnalyzer.analyze(
@@ -39,12 +43,15 @@ class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "impo
         )
 
         val packageNames = PyPackageUtil.gatherPackageNames(project)
+        println("${packageNames.size} package names were gathered.")
+
         fqNames.removeAll { importName -> PyPackageUtil.isFqNameInAnyPackage(importName, packageNames) }
 
         fqNames.ifNotEmpty {
             dependenciesDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
                 listOf(project.name, it).joinToString(separator = ",")
             })
+            println("$size unique full qualified names were collected.")
         }
     }
 }
