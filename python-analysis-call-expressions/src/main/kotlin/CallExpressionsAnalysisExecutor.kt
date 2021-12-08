@@ -33,8 +33,9 @@ class CallExpressionsAnalysisExecutor(
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        venv?.let { setSdkToProject(project, venv.toString()) }
-            ?: println("The path to the virtual environment has not been passed. The analysis will run without the SDK.")
+        venv?.let { setSdkToProject(project, venv.toString()) } ?: println(
+            "The path to the virtual environment has not been passed. The analysis will run without the SDK."
+        )
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
