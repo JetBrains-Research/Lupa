@@ -25,12 +25,12 @@ import java.nio.file.Path
 class CallExpressionsAnalysisExecutor(
     outputDir: Path, filename: String = "call_expressions_data.csv", private val venv: Path?,
 ) : AnalysisExecutor() {
-    private val dependenciesDataWriter = PrintWriterResourceManager(
+    private val expressionsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         header = listOf("project_name", "fq_name", "category").joinToString(separator = ","),
     )
 
-    override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
 
     override fun analyse(project: Project) {
         venv?.let { setSdkToProject(project, venv.toString()) }
@@ -66,7 +66,7 @@ class CallExpressionsAnalysisExecutor(
 
         fqNamesByCategory.forEach { (key, value) ->
             value.ifNotEmpty {
-                dependenciesDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
+                expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
                     listOf(project.name, it, key.name.lowercase()).joinToString(separator = ",")
                 })
             }
