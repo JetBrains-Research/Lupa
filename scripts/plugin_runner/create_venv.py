@@ -16,11 +16,14 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
+import os
+import re
 import subprocess
 import sys
 from collections import defaultdict
 from copy import copy
 from distutils.version import Version
+from enum import unique, Enum
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
@@ -73,6 +76,14 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
+# TODO: move into utils
+@unique
+class FileSystemItem(Enum):
+    PATH = 0
+    SUBDIR = 1
+    FILE = 2
+
+
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
     Collects requirements from all projects.
@@ -85,21 +96,26 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
-    for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-        with open(file_path, encoding='utf8', errors='ignore') as file:
-            file_requirements = []
-            for index, line in enumerate(file.readlines()):
-                try:
-                    file_requirements.extend(list(pkg_resources.parse_requirements(line)))
-                except Exception:
-                    # For some reason you can't catch RequirementParseError
-                    # (or InvalidRequirement), so we catch Exception.
-                    logger.info(f'Unable to parse line number {index} in the file {str(file_path)}. Skipping.')
-                    continue
+    # TODO: create an util function
+    for fs_tuple in os.walk(dataset_path):
+        for file_path in fs_tuple[FileSystemItem.FILE.value]:
+            if not re.match(REQUIREMENTS_FILE_NAME_REGEXP, file_path):
+                continue
+    # for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
+            with open(file_path, encoding='utf8', errors='ignore') as file:
+                file_requirements = []
+                for index, line in enumerate(file.readlines()):
+                    try:
+                        file_requirements.extend(list(pkg_resources.parse_requirements(line)))
+                    except Exception:
+                        # For some reason you can't catch RequirementParseError
+                        # (or InvalidRequirement), so we catch Exception.
+                        logger.info(f'Unable to parse line number {index} in the file {str(file_path)}. Skipping.')
+                        continue
 
-            for requirement in file_requirements:
-                specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
-                requirements[requirement.key] |= specs
+                for requirement in file_requirements:
+                    specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
+                    requirements[requirement.key] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
