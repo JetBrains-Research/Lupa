@@ -86,7 +86,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
 
     requirements = defaultdict(set)
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-        with open(file_path) as file:
+        with open(file_path, encoding='utf8', errors='ignore') as file:
             file_requirements = []
             for index, line in enumerate(file.readlines()):
                 try:
