@@ -87,12 +87,15 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     requirements = defaultdict(set)
     for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
         with open(file_path) as file:
-            try:
-                file_requirements = list(pkg_resources.parse_requirements(file))
-            except Exception:
-                # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(f'Unable to parse {str(file_path)}. Skipping.')
-                continue
+            file_requirements = []
+            for index, line in enumerate(file.readlines()):
+                try:
+                    file_requirements.extend(list(pkg_resources.parse_requirements(line)))
+                except Exception:
+                    # For some reason you can't catch RequirementParseError
+                    # (or InvalidRequirement), so we catch Exception.
+                    logger.info(f'Unable to parse line number {index} in the file {str(file_path)}. Skipping.')
+                    continue
 
             for requirement in file_requirements:
                 specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
