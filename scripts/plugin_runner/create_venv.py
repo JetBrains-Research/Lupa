@@ -33,7 +33,7 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
-REQUIREMENTS_FILE_NAME_REGEXP = '*requirements*.txt'
+REQUIREMENTS_FILE_NAME_REGEXP = r'[\S]*requirements[\S]*.txt'
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
