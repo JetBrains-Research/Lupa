@@ -102,7 +102,8 @@ def gather_requirements(dataset_path: Path) -> Requirements:
             if not re.match(REQUIREMENTS_FILE_NAME_REGEXP, file_path):
                 continue
     # for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-            with open(file_path, encoding='utf8', errors='ignore') as file:
+            absolute_path = Path(os.path.join(fs_tuple[FileSystemItem.PATH.value], file_path))
+            with open(absolute_path, encoding='utf8', errors='ignore') as file:
                 file_requirements = []
                 for index, line in enumerate(file.readlines()):
                     try:
@@ -110,7 +111,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
                     except Exception:
                         # For some reason you can't catch RequirementParseError
                         # (or InvalidRequirement), so we catch Exception.
-                        logger.info(f'Unable to parse line number {index} in the file {str(file_path)}. Skipping.')
+                        logger.info(f'Unable to parse line number {index} in the file {str(absolute_path)}. Skipping.')
                         continue
 
                 for requirement in file_requirements:
