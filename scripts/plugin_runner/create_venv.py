@@ -99,28 +99,25 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     pip_sessions = PipSession()
 
     for file_path in requirements_file_paths:
-        with open(file_path, encoding='utf8', errors='ignore') as file:
+        try:
+            file_requirements_lines = list(parse_requirements(str(file_path), pip_sessions))
+        except PipError:
+            logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+            continue
+
+        file_requirements = []
+        for file_requirements_line in file_requirements_lines:
             try:
-                file_requirements_lines = list(parse_requirements(str(file_path), pip_sessions))
-            except PipError:
-                logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+                file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
+            except Exception:
+                # For some reason you can't catch RequirementParseError
+                # (or InvalidRequirement), so we catch Exception.
+                logger.info(f'Unable to parse line "{file_requirements_line}" in the file {str(file_path)}. Skipping.')
                 continue
 
-            file_requirements = []
-            for file_requirements_line in file_requirements_lines:
-                try:
-                    file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
-                except Exception:
-                    # For some reason you can't catch RequirementParseError
-                    # (or InvalidRequirement), so we catch Exception.
-                    logger.info(
-                        f'Unable to parse line "{file_requirements_line}" in the file {str(file_path)}. Skipping.'
-                    )
-                    continue
-
-            for requirement in file_requirements:
-                specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
-                requirements[requirement.key] |= specs
+        for requirement in file_requirements:
+            specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
+            requirements[requirement.key] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
