@@ -1,39 +1,21 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
-import logging
 import os
 import pandas as pd
 from typing import List
+from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 
-METHOD_DATA = "method_data.txt"
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
-RANGES_DATA = "ranges_data.csv"
-DEPENDENCIES_DATA = "import_directives_data.csv"
-PROJECT_TAGS_DATA = "project_tags_data.csv"
-GRADLE_DEPENDENCIES_DATA = "gradle_dependencies_data.csv"
-GRADLE_PROPERTIES_DATA = "gradle_properties_data.csv"
-GRADLE_PLUGINS_DATA = "gradle_plugins_data.csv"
 
 
-def merge(batch_output_paths: List[str], output_dir: str, data: str):
-    if data == "clones":
-        merge_clones(batch_output_paths, output_dir)
-    elif data == "ranges":
-        merge_ranges(batch_output_paths, output_dir)
-    elif data == "dependencies":
-        merge_dependencies(batch_output_paths, output_dir)
-    elif data == "project-tags":
-        merge_project_tags(batch_output_paths, output_dir)
-    elif data == "gradle-dependencies":
-        merge_gradle_dependencies(batch_output_paths, output_dir)
-    elif data == "gradle-properties":
-        merge_gradle_properties(batch_output_paths, output_dir)
-    elif data == "gradle-plugins":
-        merge_gradle_plugins(batch_output_paths, output_dir)
+def merge(batch_output_paths: List[str], output_dir: str, analyzer_name: str):
+    analyzer = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, analyzer_name)
+    if analyzer.name == "kotlin-clones":
+        merge_clones(batch_output_paths, output_dir, analyzer.output_file)
     else:
-        logging.error("Can't merge results")
+        merge_csv(batch_output_paths, analyzer.output_file, output_dir)
 
 
 def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str):
@@ -47,38 +29,15 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
         result_df.to_csv(fout, index=False, sep='\t')
 
 
-def merge_gradle_plugins(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, GRADLE_PLUGINS_DATA, output_dir)
-
-
-def merge_gradle_properties(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, GRADLE_PROPERTIES_DATA, output_dir)
-
-
-def merge_gradle_dependencies(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, GRADLE_DEPENDENCIES_DATA, output_dir)
-
-
-def merge_project_tags(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, PROJECT_TAGS_DATA, output_dir)
-
-
-def merge_dependencies(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, DEPENDENCIES_DATA, output_dir)
-
-
-def merge_ranges(batch_output_paths: List[str], output_dir: str):
-    merge_csv(batch_output_paths, RANGES_DATA, output_dir)
-
-
-def merge_clones(batch_output_paths: List[str], output_dir: str):
+def merge_clones(batch_output_paths: List[str], output_dir: str, result_file_name: str):
     last_project_index = -1
     last_method_index = -1
     for batch_output_path in batch_output_paths:
         project_df = move_indexes_dataframe(batch_output_path, output_dir, PROJECT_INDEX, last_project_index + 1)
         method_df = move_indexes_dataframe(batch_output_path, output_dir, METHOD_INDEX, last_project_index + 1,
                                            last_method_index + 1)
-        move_indexes_file(batch_output_path, output_dir, METHOD_DATA, last_project_index + 1, last_method_index + 1)
+        move_indexes_file(batch_output_path, output_dir, result_file_name,
+                          last_project_index + 1, last_method_index + 1)
 
         last_project_index = project_df[0].max()
         last_method_index = method_df[1].max()
