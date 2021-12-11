@@ -115,7 +115,9 @@ def gather_requirements(dataset_path: Path) -> Requirements:
                         continue
 
                 for requirement in file_requirements:
-                    specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
+                    specs = {
+                        (operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs
+                    }
                     requirements[requirement.key] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
