@@ -5,7 +5,7 @@ from typing import List, Dict
 
 class AdditionalArguments(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        setattr(namespace, self.dest, dict())
+        setattr(namespace, self.dest, {})
 
         for value in values:
             key, value = value.split('=')
