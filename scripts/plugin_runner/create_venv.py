@@ -16,14 +16,12 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
-import os
 import re
 import subprocess
 import sys
 from collections import defaultdict
 from copy import copy
 from distutils.version import Version
-from enum import unique, Enum
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
@@ -31,6 +29,8 @@ import pkg_resources
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
+
+from plugin_runner.utils.file_system import get_all_file_system_items
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
 REQUIREMENTS_FILE_NAME_REGEXP = r'[\S]*requirements[\S]*.txt'
@@ -76,14 +76,6 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
-# TODO: move into utils
-@unique
-class FileSystemItem(Enum):
-    PATH = 0
-    SUBDIR = 1
-    FILE = 2
-
-
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
     Collects requirements from all projects.
@@ -96,29 +88,25 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
-    # TODO: create an util function
-    for fs_tuple in os.walk(dataset_path):
-        for file_path in fs_tuple[FileSystemItem.FILE.value]:
-            if not re.match(REQUIREMENTS_FILE_NAME_REGEXP, file_path):
-                continue
-    # for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-            absolute_path = Path(os.path.join(fs_tuple[FileSystemItem.PATH.value], file_path))
-            with open(absolute_path, encoding='utf8', errors='ignore') as file:
-                file_requirements = []
-                for index, line in enumerate(file.readlines()):
-                    try:
-                        file_requirements.extend(list(pkg_resources.parse_requirements(line)))
-                    except Exception:
-                        # For some reason you can't catch RequirementParseError
-                        # (or InvalidRequirement), so we catch Exception.
-                        logger.info(f'Unable to parse line number {index} in the file {str(absolute_path)}. Skipping.')
-                        continue
+    requirements_file_paths = get_all_file_system_items(
+        root=dataset_path,
+        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+    )
+    for file_path in requirements_file_paths:
+        with open(file_path, encoding='utf8', errors='ignore') as file:
+            file_requirements = []
+            for index, line in enumerate(file.readlines()):
+                try:
+                    file_requirements.extend(list(pkg_resources.parse_requirements(line)))
+                except Exception:
+                    # For some reason you can't catch RequirementParseError
+                    # (or InvalidRequirement), so we catch Exception.
+                    logger.info(f'Unable to parse line number {index} in the file {str(file_path)}. Skipping.')
+                    continue
 
-                for requirement in file_requirements:
-                    specs = {
-                        (operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs
-                    }
-                    requirements[requirement.key] |= specs
+            for requirement in file_requirements:
+                specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
+                requirements[requirement.key] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
