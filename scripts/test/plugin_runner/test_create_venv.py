@@ -11,6 +11,7 @@ from plugin_runner.create_venv import (
     PYPI_PACKAGE_METADATA_URL,
     Requirements,
     _get_available_versions,
+    _normalize_requirement_name,
     create_requirements_file,
     filter_unavailable_packages,
     filter_unavailable_versions,
@@ -25,6 +26,21 @@ def _httpretty_fixture():
     httpretty.enable(allow_net_connect=False)
     yield
     httpretty.disable()
+
+
+NORMALIZE_REQUIREMENT_NAME_TEST_DATA = [
+    ('', ''),
+    ('numpy', 'numpy'),
+    ('PaNdAs', 'pandas'),
+    ('sphinxcontrib.napoleon', 'sphinxcontrib-napoleon'),
+    ('rUaMeL_yAmL', 'ruamel-yaml'),
+    ('sOmE.lOnG_pAcKaGe-NaMe', 'some-long-package-name'),
+]
+
+
+@pytest.mark.parametrize(('given_name', 'expected_name'), NORMALIZE_REQUIREMENT_NAME_TEST_DATA)
+def test_normalize_requirement_name(given_name: str, expected_name: str):
+    assert _normalize_requirement_name(given_name) == expected_name
 
 
 GATHER_REQUIREMENTS_TEST_DATA = [

@@ -79,6 +79,20 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _normalize_requirement_name(name: str) -> str:
+    """
+    Normalizes the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
+
+    :param name: name of package
+    :return: normalized name of package
+    """
+
+    normalized_name = name.lower()
+    normalized_name = normalized_name.replace('.', '-')
+    normalized_name = normalized_name.replace('_', '-')
+    return normalized_name
+
+
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
     Collects requirements from all projects.
@@ -116,7 +130,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
 
         for requirement in file_requirements:
             specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
-            requirements[requirement.key] |= specs
+            requirements[_normalize_requirement_name(requirement.key)] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
