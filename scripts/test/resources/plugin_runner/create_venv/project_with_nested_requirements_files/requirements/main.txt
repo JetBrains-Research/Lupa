@@ -1,0 +1,3 @@
+numpy
+pandas==1.2.3
+sphinxcontrib.napoleon==0.0.1
