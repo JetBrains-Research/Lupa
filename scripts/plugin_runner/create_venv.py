@@ -16,6 +16,7 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
+import re
 import subprocess
 import sys
 from collections import defaultdict
@@ -24,13 +25,18 @@ from distutils.version import Version
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
-import pkg_resources
 import requests
+from pip._internal.exceptions import PipError
+from pip._internal.network.session import PipSession
+from pip._internal.req import parse_requirements
+from pkg_resources import parse_requirements as parse_line, parse_version
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+from plugin_runner.utils.file_system import get_all_file_system_items
+
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
-REQUIREMENTS_FILE_NAME_REGEXP = '*requirements*.txt'
+REQUIREMENTS_FILE_NAME_REGEXP = r'[\S]*requirements[\S]*.txt'
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
@@ -73,6 +79,20 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def _normalize_requirement_name(name: str) -> str:
+    """
+    Normalizes the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
+
+    :param name: name of package
+    :return: normalized name of package
+    """
+
+    normalized_name = name.lower()
+    normalized_name = normalized_name.replace('.', '-')
+    normalized_name = normalized_name.replace('_', '-')
+    return normalized_name
+
+
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
     Collects requirements from all projects.
@@ -85,18 +105,32 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
-    for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-        with open(file_path) as file:
+    requirements_file_paths = get_all_file_system_items(
+        root=dataset_path,
+        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+    )
+
+    pip_sessions = PipSession()
+
+    for file_path in requirements_file_paths:
+        try:
+            file_requirements_lines = list(parse_requirements(str(file_path), pip_sessions))
+        except PipError:
+            logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+            continue
+
+        file_requirements = []
+        for file_requirements_line in file_requirements_lines:
             try:
-                file_requirements = list(pkg_resources.parse_requirements(file))
+                file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+                logger.info(f'Unable to parse line "{file_requirements_line}" in the file {str(file_path)}. Skipping.')
                 continue
 
-            for requirement in file_requirements:
-                specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
-                requirements[requirement.key] |= specs
+        for requirement in file_requirements:
+            specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
+            requirements[_normalize_requirement_name(requirement.key)] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
@@ -174,7 +208,7 @@ def _get_available_versions(package_name: str) -> Set[Version]:
         logger.error('The PyPI response does not contain the "releases" field. Skipping.')
         return set()
 
-    return set(map(pkg_resources.parse_version, versions))
+    return set(map(parse_version, versions))
 
 
 def filter_unavailable_versions(specs: Requirements) -> Requirements:
