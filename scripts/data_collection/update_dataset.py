@@ -2,11 +2,13 @@
 This script allows the user to clone repositories listed in dataset from GitHub
 or pull changes from repository, if it is already stored.
 Each repository is cloned without history.
-The date of the last pull of each repository is saved to the database configured by `database.ini` file.
+When the argument `save-to-db` is passed,
+the date of the last pull of each repository is saved to the database configured by `database.ini` file
 Script accepts
     * path to CSV file --  dataset downloaded from https://seart-ghs.si.usi.ch/
     * path to the output directory, where repositories are cloned
     * index to start from
+    * whether to use database or not
 """
 import datetime
 import logging
@@ -22,9 +24,10 @@ from utils import create_directory
 logging.basicConfig(level=logging.DEBUG)
 
 
-def update_dataset(input_path: str, output_path: str, start_from: int):
+def update_dataset(input_path: str, output_path: str, start_from: int, save_to_db: bool):
     create_directory(output_path)
-    db_conn = DatabaseConn()
+
+    db_conn = DatabaseConn() if save_to_db else None
     repositories_table = RepositoriesTable(db_conn)
     repositories_table.create()
 
@@ -50,7 +53,7 @@ def update_dataset(input_path: str, output_path: str, start_from: int):
             else:
                 logging.info(
                     f"Repository {project} is stored on disk, but there is no information about it in the database. "
-                    f"Adding {project} to database...")
+                    f"Adding {project} to database if needed...")
                 repositories_table.insert(username, project_name, cur_date)
 
         else:
@@ -70,8 +73,9 @@ def main():
     parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
     parser.add_argument("output", help="Output directory")
     parser.add_argument("--start-from", help="Index of repository to start from", nargs='?', default=0, type=int)
+    parser.add_argument('--save-to-db', help="Save date of repository last pull to the database", action='store_true')
     args = parser.parse_args()
-    update_dataset(args.csv_path, args.output, args.start_from)
+    update_dataset(args.csv_path, args.output, args.start_from, args.save_to_db)
 
 
 if __name__ == "__main__":
