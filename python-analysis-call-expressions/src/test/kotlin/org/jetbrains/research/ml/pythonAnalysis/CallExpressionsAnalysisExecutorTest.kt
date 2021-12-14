@@ -72,7 +72,6 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
         super.tearDown()
     }
 
-
     @Test
     fun testCallExpressionsFqNamesInProject() {
         assertOutEqualsToGolden { inFile, outFile ->
