@@ -1,7 +1,6 @@
 package org.jetbrains.research.ml.pythonAnalysis.psi
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
@@ -10,13 +9,11 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyDecorator
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.psi.types.TypeEvalContext
-import com.jetbrains.python.sdk.configuration.PyProjectVirtualEnvConfiguration
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
 import org.jetbrains.research.ml.pythonAnalysis.CallExpressionAnalyzer
 import org.jetbrains.research.ml.pythonAnalysis.CallExpressionAnalyzerContext
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
-import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile
@@ -51,10 +48,9 @@ class CallExpressionPsiAnalyzerTest : ParametrizedBaseTest(
             getInAndOutArray(
                 ::CallExpressionPsiAnalyzerTest,
                 resourcesRootName = "callExpressionPsiAnalyzerTestData",
-                inExtension = Extension.EMPTY,
+                inExtension = Extension.PY,
                 outExtension = Extension.TXT,
             )
-
     }
 
     private val VENV_SCRIPT_PATH = "../scripts/plugin_runner/create_venv.py"

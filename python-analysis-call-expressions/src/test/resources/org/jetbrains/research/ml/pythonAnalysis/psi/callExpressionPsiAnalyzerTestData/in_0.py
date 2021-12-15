@@ -1,3 +1,1 @@
-import numpy as np
-
-np.zeros()
+print("Hello, world!")
