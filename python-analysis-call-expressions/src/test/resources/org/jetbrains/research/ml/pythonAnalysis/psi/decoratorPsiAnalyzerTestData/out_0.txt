@@ -1,0 +1,3 @@
+classmethod.__init__
+staticmethod.__init__
+property.__init__
