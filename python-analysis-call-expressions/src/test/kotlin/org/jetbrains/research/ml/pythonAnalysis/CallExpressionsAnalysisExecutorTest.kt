@@ -32,7 +32,6 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
             inExtension = Extension.EMPTY,
             outExtension = Extension.CSV
         )
-
     }
 
     private val venvScriptPath = "../scripts/plugin_runner/create_venv.py"
