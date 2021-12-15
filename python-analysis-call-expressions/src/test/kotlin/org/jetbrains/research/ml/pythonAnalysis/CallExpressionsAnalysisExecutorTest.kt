@@ -13,7 +13,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 import java.util.concurrent.TimeUnit
-import kotlin.io.path.createTempDirectory
 
 @RunWith(Parameterized::class)
 open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
@@ -34,9 +33,10 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
             outExtension = Extension.CSV
         )
 
-        private const val VENV_SCRIPT_PATH = "../scripts/plugin_runner/create_venv.py"
-        private val VENV_PATH = createTempDirectory().toAbsolutePath()
     }
+
+    private val venvScriptPath = "../scripts/plugin_runner/create_venv.py"
+    private val venvPath = File("$testDataPath/venv/")
 
     private fun setupSdk() {
         val project = myFixture.project
@@ -49,11 +49,13 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     override fun setUp() {
         super.setUp()
 
+        venvPath.mkdir()
+
         val command = arrayOf(
             "python3",
-            File(VENV_SCRIPT_PATH).absolutePath,
+            File(venvScriptPath).absolutePath,
             getResourcesRootPath(::CallExpressionsAnalysisExecutorTest, "callExpressionsAnalysisExecutorData"),
-            VENV_PATH.toString(),
+            venvPath.toString(),
         )
 
         ProcessBuilder(*command)
@@ -70,13 +72,14 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
             ProjectJdkTable.getInstance().removeJdk(sdk)
         }
         super.tearDown()
+        venvPath.deleteRecursively()
     }
 
     @Test
     fun testCallExpressionsFqNamesInProject() {
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
-                CallExpressionsAnalysisExecutor(outFile.parentFile.toPath(), outFile.name, venv = VENV_PATH)
+                CallExpressionsAnalysisExecutor(outFile.parentFile.toPath(), outFile.name, venv = venvPath.toPath())
             analysisExecutor.execute(inFile.toPath())
         }
     }
