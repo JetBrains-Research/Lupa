@@ -18,3 +18,4 @@ Run the [filter_unnecessary_fq_names.py](filter_unnecessary_fq_names.py) with th
 | **&#8209;&#8209;filter&#8209;private&#8209;names** | If specified, private names will be filtered out. |
 | **&#8209;&#8209;filter&#8209;stdlib&#8209;names** | If specified, Python Standard Library names will be filtered out. |
 | **&#8209;&#8209;filter&#8209;dunder&#8209;names** | If specified, dunder names (names which begin and end with double underscores) will be filtered out. |
+| **&#8209;&#8209;filter&#8209;builtin&#8209;names** | If specified, Python builtin names will be filtered out. |

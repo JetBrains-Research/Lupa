@@ -217,6 +217,101 @@ STDLIB_MODULES = [
     'zoneinfo',
 ]
 
+# A list of all builtins is obtained from: https://docs.python.org/3.10/library/functions.html
+BUILTINS = [
+    # A
+    'abs',
+    'aiter',
+    'all',
+    'any',
+    'anext',
+    'ascii',
+    # B
+    'bin',
+    'bool',
+    'breakpoint',
+    'bytearray',
+    'bytes',
+    # C
+    'callable',
+    'chr',
+    'classmethod',
+    'compile',
+    'complex',
+    # D
+    'delattr',
+    'dict',
+    'dir',
+    'divmod',
+    # E
+    'enumerate',
+    'eval',
+    'exec',
+    # F
+    'filter',
+    'float',
+    'format',
+    'frozenset',
+    # G
+    'getattr',
+    'globals',
+    # H
+    'hasattr',
+    'hash',
+    'help',
+    'hex',
+    # I
+    'id',
+    'input',
+    'int',
+    'isinstance',
+    'issubclass',
+    'iter',
+    # L
+    'len',
+    'list',
+    'locals',
+    # M
+    'map',
+    'max',
+    'memoryview',
+    'min',
+    # N
+    'next',
+    # O
+    'object',
+    'oct',
+    'open',
+    'ord',
+    # P
+    'pow',
+    'print',
+    'property',
+    # R
+    'range',
+    'repr',
+    'reversed',
+    'round',
+    # S
+    'set',
+    'setattr',
+    'slice',
+    'sorted',
+    'staticmethod',
+    'str',
+    'sum',
+    'super',
+    # T
+    'tuple',
+    'type',
+    # V
+    'vars',
+    # Z
+    'zip',
+    # _
+    '__import__',
+]
+
 
 def _is_stdlib_name(fq_name: str) -> bool:
     """
@@ -255,6 +350,18 @@ def _is_private_name(fq_name: str) -> bool:
     )
 
 
+def _is_builtin_name(fq_name: str) -> bool:
+    """
+    Checks if the FQ name starts with the Python builtin name.
+    """
+    # Add a dot at the end of the FQ name and at the end of the builtin names.
+    # This is necessary to correctly identify FQ names that start with the name of builtin.
+    builtins_with_dot = list(map(lambda builtin_name: f'{builtin_name}.', BUILTINS))
+    fq_name_with_dot = f'{fq_name}.'
+
+    return any(fq_name_with_dot.startswith(builtin) for builtin in builtins_with_dot)
+
+
 def main(
     path_to_fq_names: Path,
     path_to_result: Path,
@@ -262,6 +369,7 @@ def main(
     filter_private_names: bool,
     filter_stdlib_names: bool,
     filter_dunder_names: bool,
+    filter_builtin_names: bool,
 ) -> None:
     fq_names = pd.read_csv(path_to_fq_names)
 
@@ -284,6 +392,11 @@ def main(
         )
         fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} dunder names.')
+
+    if filter_builtin_names:
+        mask = fq_names.apply(lambda row: _is_builtin_name(row[column_name]), axis=1)
+        fq_names = fq_names[~mask]
+        print(f'Filtered {mask.values.sum()} builtin names.')
 
     path_to_result.parent.mkdir(parents=True, exist_ok=True)
     fq_names.to_csv(path_to_result, index=False)
@@ -317,14 +430,18 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--filter-dunder-names',
-        help=(
-            'if specified, dunder names (names which begin and end with double underscores) will be filtered out'
-        ),
+        help='if specified, dunder names (names which begin and end with double underscores) will be filtered out',
         action='store_true',
     )
     parser.add_argument(
         '--filter-stdlib-names',
         help='if specified, Python Standard Library names will be filtered out',
+        action='store_true',
+    )
+
+    parser.add_argument(
+        '--filter-builtin-names',
+        help='if specified, Python builtin names will be filtered out',
         action='store_true',
     )
 
@@ -337,4 +454,5 @@ if __name__ == '__main__':
         args.filter_private_names,
         args.filter_stdlib_names,
         args.filter_dunder_names,
+        args.filter_builtin_names,
     )
