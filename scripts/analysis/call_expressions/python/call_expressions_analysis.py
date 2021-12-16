@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from analysis.call_expressions.python.call_expressions_column import CallExpressionsColumn
+from call_expressions_column import CallExpressionsColumn
 
 
 def configure_parser(parser: argparse.ArgumentParser):
