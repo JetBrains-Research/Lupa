@@ -10,7 +10,7 @@ def configure_parser(parser: argparse.ArgumentParser):
     parser.add_argument(
         '--input',
         type=lambda value: Path(value).absolute(),
-        help='path to csv file with fq_names',
+        help='path to csv file with FQ names',
         required=True,
     )
     parser.add_argument(
