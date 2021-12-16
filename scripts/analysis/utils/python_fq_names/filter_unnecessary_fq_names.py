@@ -241,7 +241,7 @@ def _is_private_name(fq_name: str) -> bool:
     """
     Checks if the FQ name is private.
 
-    FQ name is considered private if at least one part of it starts with underscore.
+    A FQ name is considered private if at least one part of it starts with underscore.
     Private modules of the standard library and dunder names are ignored.
     """
     fq_parts = fq_name.split('.')
