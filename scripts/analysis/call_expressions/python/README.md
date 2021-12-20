@@ -7,5 +7,5 @@ python projects, keeping their category.
 
 ### Usage
 ```bash
-python3 call_expressions_analysis.py --input /path/to/file/with/gathered/stats.csv --output /path/to/file/with/grouped/stats.csv
+python3 -m call_expressions_analysis --input /path/to/file/with/gathered/stats.csv --output /path/to/file/with/grouped/stats.csv
 ```
