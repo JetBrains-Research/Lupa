@@ -8,6 +8,7 @@ It accepts
     * flag that allows you not to do version validation using PyPI.
     * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
+    * flag that allows you to install requirements individually.
 
 In the current version of the script, if we find different versions of the same library
 in different requirement files, we will choose the newest (largest) version.
@@ -74,6 +75,15 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
         help=(
             'If specified, no dependencies will be installed for each package '
             '(the --no-deps flag will be passed to pip).'
+        ),
+        action='store_true',
+    )
+
+    parser.add_argument(
+        '--pip-for-each',
+        help=(
+            'Call `pip install` for each requirement individually. '
+            'By default, `pip install` will be applied to the entire file with the collected requirements.'
         ),
         action='store_true',
     )
@@ -286,14 +296,15 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     return path_to_requirements
 
 
-def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool) -> int:
+def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool) -> int:
     """
     In the passed path creates a virtual environment and installs the passed requirements.
 
     :param venv_path: the path where the virtual environment will be created.
     :param requirements_path: the path to the requirements file.
     :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
-    :return: pip return code
+    :param for_each: is it necessary to call `pip install` for each requirement individually or for the whole file.
+    :return: pip return code or number of pip errors if for_each flag is specified.
     """
 
     logger.info('Creating virtual environment.')
@@ -313,14 +324,20 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     pip_command = [
         str(pip_path),
         'install',
-        '-r',
-        str(requirements_path),
+        '--disable-pip-version-check',
     ]
 
     if no_package_dependencies:
         pip_command.append('--no-deps')
 
-    return subprocess.run(pip_command).returncode
+    if for_each:
+        errors = 0
+        with open(requirements_path, 'r') as requirements_file:
+            for requirement in requirements_file:
+                errors += subprocess.run(pip_command + [requirement.strip()]).returncode != 0
+        return errors
+
+    return subprocess.run(pip_command + ['-r', str(requirements_path)]).returncode
 
 
 def main():
@@ -341,7 +358,7 @@ def main():
 
     version_by_package_name = merge_requirements(requirements)
     requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
-    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies)
+    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies, args.pip_for_each)
 
     return exit_code
 
