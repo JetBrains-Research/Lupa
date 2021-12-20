@@ -333,20 +333,10 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
         errors = 0
         with open(requirements_path, 'r') as requirements_file:
             for requirement in requirements_file:
-                try:
-                    # timeout = 5 minutes
-                    errors += subprocess.run(pip_command + [requirement.strip()], timeout=60 * 5).returncode != 0
-                except subprocess.TimeoutExpired:
-                    logger.warning(f'`{requirement.strip()}` cannot be installed. Time out. Skipping.')
-                    errors += 1
+                errors += subprocess.run(pip_command + [requirement.strip()]).returncode != 0
         return errors
 
-    try:
-        # timeout = 5 minutes
-        return subprocess.run(pip_command + ['-r', str(requirements_path)], timeout=60 * 5).returncode
-    except subprocess.TimeoutExpired as exception:
-        logger.error(exception)
-        return 1
+    return subprocess.run(pip_command + ['-r', str(requirements_path)]).returncode
 
 
 def main():
