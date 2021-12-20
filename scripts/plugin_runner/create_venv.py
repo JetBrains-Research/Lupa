@@ -345,7 +345,7 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
         # timeout = 5 minutes
         return subprocess.run(pip_command + ['-r', str(requirements_path)], timeout=60 * 5).returncode
     except subprocess.TimeoutExpired as exception:
-        logger.warning(exception)
+        logger.error(exception)
         return 1
 
 
