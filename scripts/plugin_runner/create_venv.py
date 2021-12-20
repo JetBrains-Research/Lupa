@@ -82,7 +82,7 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '--pip-for-each',
         help=(
-            'Call pip install for each requirement individually. '
+            'Call `pip install` for each requirement individually. '
             'By default, `pip install` will be applied to the entire file with the collected requirements.'
         ),
         action='store_true',
