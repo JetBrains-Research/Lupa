@@ -304,7 +304,7 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     :param requirements_path: the path to the requirements file.
     :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
     :param for_each: is it necessary to call `pip install` for each requirement individually or for the whole file.
-    :return: pip return code
+    :return: pip return code or number of pip errors if for_each flag is specified.
     """
 
     logger.info('Creating virtual environment.')
