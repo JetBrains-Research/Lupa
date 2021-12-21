@@ -135,7 +135,10 @@ def gather_requirements(dataset_path: Path) -> Requirements:
                 file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(f'Unable to parse line "{file_requirements_line}" in the file {str(file_path)}. Skipping.')
+                logger.info(
+                    f'Unable to parse line "{file_requirements_line.requirement}" '
+                    f'in the {file_requirements_line.line_source}. Skipping.',
+                )
                 continue
 
         for requirement in file_requirements:
