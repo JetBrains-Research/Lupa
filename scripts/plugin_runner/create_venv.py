@@ -27,9 +27,6 @@ from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
 import requests
-from pip._internal.exceptions import PipError
-from pip._internal.network.session import PipSession
-from pip._internal.req import parse_requirements
 from pkg_resources import parse_requirements as parse_line, parse_version
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -120,26 +117,17 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
     )
 
-    pip_sessions = PipSession()
-
     for file_path in requirements_file_paths:
-        try:
-            file_requirements_lines = list(parse_requirements(str(file_path), session=pip_sessions))
-        except PipError:
-            logger.warning(f'Unable to parse {str(file_path)}. Skipping.')
-            continue
-
         file_requirements = []
-        for file_requirements_line in file_requirements_lines:
-            try:
-                file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
-            except AttributeError:
-                file_requirements.extend(list(parse_line(file_requirements_line.req)))
-                logger.info(f'{file_requirements_line} uses the attribute "req".')
-            except Exception:
-                # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.warning(f'Unable to parse {file_requirements_line} . Skipping.')
-                continue
+        with open(file_path, encoding='utf8', errors='ignore') as file:
+            for line in file.readlines():
+                try:
+                    file_requirements.extend(list(parse_line(line)))
+                except Exception:
+                    # For some reason you can't catch RequirementParseError
+                    # (or InvalidRequirement), so we catch Exception.
+                    logger.warning(f'Unable to parse line "{line}" in the file {str(file_path)}. Skipping.')
+                    continue
 
         for requirement in file_requirements:
             specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
