@@ -124,18 +124,30 @@ def gather_requirements(dataset_path: Path) -> Requirements:
 
     for file_path in requirements_file_paths:
         try:
-            file_requirements_lines = list(parse_requirements(str(file_path), session=pip_sessions))
+            install_reqs = parse_requirements(str(file_path), session=pip_sessions)
         except PipError:
             logger.warning(f'Unable to parse {str(file_path)}. Skipping.')
             continue
 
+        try:
+            # newest versions.
+            # pip>=21.x.x
+            from pip._internal.req.constructors import (
+                install_req_from_parsed_requirement,
+            )
+        except ImportError:
+            # pip<=20.x.x
+            def install_req_from_parsed_requirement(x):
+                return x
+
         file_requirements = []
-        for file_requirements_line in file_requirements_lines:
+        install_reqs = [install_req_from_parsed_requirement(req) for req in install_reqs]
+        for file_requirements_line in install_reqs:
             try:
                 file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
-            except AttributeError:
-                file_requirements.extend(list(parse_line(file_requirements_line.req)))
-                logger.info(f'{file_requirements_line} uses the attribute "req".')
+            # except AttributeError:
+            #     file_requirements.extend(list(parse_line(file_requirements_line.req)))
+            #     logger.info(f'{file_requirements_line} uses the attribute "req".')
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
                 logger.warning(f'Unable to parse {file_requirements_line} . Skipping.')
