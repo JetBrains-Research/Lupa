@@ -126,7 +126,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         try:
             file_requirements_lines = list(parse_requirements(str(file_path), session=pip_sessions))
         except PipError:
-            logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+            logger.warning(f'Unable to parse {str(file_path)}. Skipping.')
             continue
 
         file_requirements = []
@@ -135,12 +135,10 @@ def gather_requirements(dataset_path: Path) -> Requirements:
                 file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
             except AttributeError:
                 file_requirements.extend(list(parse_line(file_requirements_line.req)))
+                logger.info(f'{file_requirements_line} uses the attribute "req".')
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(
-                    f'Unable to parse line "{file_requirements_line.requirement}" '
-                    f'in the {file_requirements_line.line_source}. Skipping.',
-                )
+                logger.warning(f'Unable to parse {file_requirements_line} . Skipping.')
                 continue
 
         for requirement in file_requirements:
