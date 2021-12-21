@@ -114,7 +114,8 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     requirements = defaultdict(set)
     requirements_file_paths = get_all_file_system_items(
         root=dataset_path,
-        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+        # TODO: REQUIREMENTS_FILE_NAME_REGEXP does not work
+        item_condition=lambda n: re.match(REQUIREMENTS_FILE_NAME_REGEXP, n) is not None and n.endendswith('.txt'),
     )
 
     for file_path in requirements_file_paths:
