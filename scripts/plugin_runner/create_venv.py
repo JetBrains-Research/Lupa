@@ -120,11 +120,11 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
     )
 
-    pip_sessions = PipSession()
+    # pip_sessions = PipSession()
 
     for file_path in requirements_file_paths:
         try:
-            file_requirements_lines = list(parse_requirements(str(file_path), pip_sessions))
+            file_requirements_lines = list(parse_requirements(str(file_path), session=None))
         except PipError:
             logger.info(f'Unable to parse {str(file_path)}. Skipping.')
             continue
