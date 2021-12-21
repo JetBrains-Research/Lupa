@@ -46,10 +46,10 @@ class CallExpressionsAnalysisExecutor(
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
 
-        val fqNamesByCategory = callExpressionsByCategory.mapValues { (category, callExpressions) ->
+        val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
             callExpressions.mapNotNull {
-                when (category) {
-                    ExpressionCategory.DECORATOR -> DecoratorAnalyzer.analyze(it, analyzerContext)
+                when (it) {
+                    is PyDecorator -> DecoratorAnalyzer.analyze(it, analyzerContext)
                     else -> CallExpressionAnalyzer.analyze(it, analyzerContext)
                 }
             }.toMutableSet()
@@ -81,7 +81,7 @@ class CallExpressionsAnalysisExecutor(
 
         companion object {
             fun getCategory(callExpression: PyCallExpression, context: TypeEvalContext): ExpressionCategory {
-                if (callExpression is PyDecorator) {
+                if (callExpression is PyDecorator || callExpression.parent is PyDecorator) {
                     return DECORATOR
                 }
 
