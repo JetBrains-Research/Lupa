@@ -120,11 +120,11 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
     )
 
-    # pip_sessions = PipSession()
+    pip_sessions = PipSession()
 
     for file_path in requirements_file_paths:
         try:
-            file_requirements_lines = list(parse_requirements(str(file_path), session=None))
+            file_requirements_lines = list(parse_requirements(str(file_path), session=pip_sessions))
         except PipError:
             logger.info(f'Unable to parse {str(file_path)}. Skipping.')
             continue
@@ -133,6 +133,8 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         for file_requirements_line in file_requirements_lines:
             try:
                 file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
+            except AttributeError:
+                file_requirements.extend(list(parse_line(file_requirements_line.req)))
             except Exception:
                 # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
                 logger.info(
