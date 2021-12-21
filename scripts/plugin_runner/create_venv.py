@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
 import requests
-from pip._internal.exceptions import PipError
+from pip._internal.exceptions import PipError, InstallationError
 from pip._internal.network.session import PipSession
 from pip._internal.req import parse_requirements
 from pkg_resources import parse_requirements as parse_line, parse_version
@@ -141,7 +141,11 @@ def gather_requirements(dataset_path: Path) -> Requirements:
                 return x
 
         file_requirements = []
-        install_reqs = [install_req_from_parsed_requirement(req) for req in install_reqs]
+        try:
+            install_reqs = [install_req_from_parsed_requirement(req) for req in install_reqs]
+        except InstallationError:
+            logger.warning(f'Unable to parse install reqs of {file_path}. Skipping.')
+            continue
         for file_requirements_line in install_reqs:
             try:
                 file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
