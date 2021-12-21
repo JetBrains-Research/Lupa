@@ -14,10 +14,11 @@ class RepositoriesTable:
             self._conn.execute(
                 sql.SQL("""
                 create table if not exists kotlin_repositories_updates (
-                repository_id   serial      primary key,
-                username        char(50)    not null,
-                repo_name       char(50)    not null,
-                last_pull_date  date        not null,
+                repository_id       serial      primary key,
+                username            varchar(64)   not null,
+                repo_name           varchar(255)   not null,
+                last_pull_date      date        not null,
+                last_analysis_date  date,
                 unique (username, repo_name))"""))
 
     def update_date(self, username: str, repo_name: str, last_pull_date: datetime.date):

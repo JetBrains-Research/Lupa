@@ -1,3 +1,4 @@
+import logging
 from configparser import ConfigParser
 from pathlib import Path
 from typing import List, Tuple, Optional, Any, Dict
@@ -26,8 +27,11 @@ def config(filename: Path = CONFIG_FILENAME, section: str = 'postgresql') -> Dic
 class DatabaseConn:
     def __init__(self, config_filename=CONFIG_FILENAME):
         params = config(config_filename)
-        self._conn = psycopg2.connect(**params)
-        self._conn.autocommit = True
+        try:
+            self._conn = psycopg2.connect(**params)
+            self._conn.autocommit = True
+        except psycopg2.OperationalError as e:
+            logging.error(f"Failed to connect to database: {e}")
 
     def __del__(self):
         self._conn.close()
@@ -44,9 +48,12 @@ class DatabaseConn:
         :return: If `has_res` is `True`, then a list of tuples.
         """
         cur = self._conn.cursor()
-        cur.execute(query_or_stmt)
-        if has_res:
-            return cur.fetchall()
+        try:
+            cur.execute(query_or_stmt)
+            if has_res:
+                return cur.fetchall()
+        except psycopg2.OperationalError as e:
+            logging.error(f"Unable to execute query: {e}")
 
     def return_cursor(self):
         """

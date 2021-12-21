@@ -1,7 +1,7 @@
 """
 This script allows the user to clone repositories listed in dataset from GitHub
 or pull changes from repository, if it is already stored.
-Each repository is cloned without history.
+Each repository is cloned without history (or with, if necessary and argument `store-history` is passed).
 When the argument `save-to-db` is passed,
 the date of the last pull of each repository is saved to the database configured by `database.ini` file
 Script accepts
@@ -24,7 +24,7 @@ from utils import create_directory
 logging.basicConfig(level=logging.DEBUG)
 
 
-def update_dataset(input_path: str, output_path: str, start_from: int, save_to_db: bool):
+def update_dataset(input_path: str, output_path: str, start_from: int, save_to_db: bool, store_history: bool):
     create_directory(output_path)
 
     db_conn = DatabaseConn() if save_to_db else None
@@ -39,13 +39,13 @@ def update_dataset(input_path: str, output_path: str, start_from: int, save_to_d
         username, project_name = project.split('/')
         project_directory_name = f"{username}#{project_name}"
         project_directory = os.path.abspath(os.path.join(output_path, project_directory_name))
-        git_repo = GitRepository(project, project_directory)
+        git_repo = GitRepository(project, project_directory, store_history)
 
         cur_date = datetime.datetime.today().date()
         exists_in_db = repositories_table.exists_repository(username, project_name)
 
         if os.path.exists(project_directory):
-            was_updated = git_repo.pull_changes_without_history()
+            was_updated = git_repo.pull_changes()
             if exists_in_db and was_updated:
                 repositories_table.update_date(username, project_name, cur_date)
             elif exists_in_db:
@@ -74,8 +74,9 @@ def main():
     parser.add_argument("output", help="Output directory")
     parser.add_argument("--start-from", help="Index of repository to start from", nargs='?', default=0, type=int)
     parser.add_argument('--save-to-db', help="Save date of repository last pull to the database", action='store_true')
+    parser.add_argument('--store-history', help="Store the whole commit history of repositories", action='store_true')
     args = parser.parse_args()
-    update_dataset(args.csv_path, args.output, args.start_from, args.save_to_db)
+    update_dataset(args.csv_path, args.output, args.start_from, args.save_to_db, args.store_history)
 
 
 if __name__ == "__main__":
