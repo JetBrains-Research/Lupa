@@ -17,6 +17,7 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -114,12 +115,14 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     requirements = defaultdict(set)
     requirements_file_paths = get_all_file_system_items(
         root=dataset_path,
-        # TODO: REQUIREMENTS_FILE_NAME_REGEXP does not work
-        item_condition=lambda n: re.match(REQUIREMENTS_FILE_NAME_REGEXP, n) is not None and n.endswith('.txt'),
+        item_condition=lambda n: re.match(REQUIREMENTS_FILE_NAME_REGEXP, n) is not None,
     )
 
     for file_path in requirements_file_paths:
         file_requirements = []
+        # TODO: REQUIREMENTS_FILE_NAME_REGEXP does not work
+        if not os.path.isfile(file_path):
+            continue
         with open(file_path, encoding='utf8', errors='ignore') as file:
             for line in file.readlines():
                 try:
