@@ -217,17 +217,112 @@ STDLIB_MODULES = [
     'zoneinfo',
 ]
 
+# A list of all builtins is obtained from: https://docs.python.org/3.10/library/functions.html
+BUILTINS = [
+    # A
+    'abs',
+    'aiter',
+    'all',
+    'any',
+    'anext',
+    'ascii',
+    # B
+    'bin',
+    'bool',
+    'breakpoint',
+    'bytearray',
+    'bytes',
+    # C
+    'callable',
+    'chr',
+    'classmethod',
+    'compile',
+    'complex',
+    # D
+    'delattr',
+    'dict',
+    'dir',
+    'divmod',
+    # E
+    'enumerate',
+    'eval',
+    'exec',
+    # F
+    'filter',
+    'float',
+    'format',
+    'frozenset',
+    # G
+    'getattr',
+    'globals',
+    # H
+    'hasattr',
+    'hash',
+    'help',
+    'hex',
+    # I
+    'id',
+    'input',
+    'int',
+    'isinstance',
+    'issubclass',
+    'iter',
+    # L
+    'len',
+    'list',
+    'locals',
+    # M
+    'map',
+    'max',
+    'memoryview',
+    'min',
+    # N
+    'next',
+    # O
+    'object',
+    'oct',
+    'open',
+    'ord',
+    # P
+    'pow',
+    'print',
+    'property',
+    # R
+    'range',
+    'repr',
+    'reversed',
+    'round',
+    # S
+    'set',
+    'setattr',
+    'slice',
+    'sorted',
+    'staticmethod',
+    'str',
+    'sum',
+    'super',
+    # T
+    'tuple',
+    'type',
+    # V
+    'vars',
+    # Z
+    'zip',
+    # _
+    '__import__',
+]
 
-def _is_stdlib_import(fq_import_name: str) -> bool:
+
+def _is_stdlib_name(fq_name: str) -> bool:
     """
-    Checks if the import starts with the name of the standard module.
+    Checks if the FQ name starts with the name of the standard module.
     """
-    # Add a dot at the end of the import name and at the end of the module names.
-    # This is necessary to correctly identify the stdlib import.
+    # Add a dot at the end of the FQ name and at the end of the module names.
+    # This is necessary to correctly identify FQ names that start with the name of the standard library.
     stdlib_modules_with_dot = list(map(lambda module_name: f'{module_name}.', STDLIB_MODULES))
-    import_name_with_dot = f'{fq_import_name}.'
+    fq_name_with_dot = f'{fq_name}.'
 
-    return any(import_name_with_dot.startswith(stdlib_module) for stdlib_module in stdlib_modules_with_dot)
+    return any(fq_name_with_dot.startswith(stdlib_module) for stdlib_module in stdlib_modules_with_dot)
 
 
 def __is_dunder_name(name: str) -> bool:
@@ -237,53 +332,71 @@ def __is_dunder_name(name: str) -> bool:
     return re.match(r'__.*__', name) is not None
 
 
-def _is_private_import(fq_import_name: str) -> bool:
+def _is_private_name(fq_name: str) -> bool:
     """
-    Checks if the import is private.
+    Checks if the FQ name is private.
 
-    A private import is an import that begins with underscore.
+    A FQ name is considered private if at least one part of it starts with underscore.
     Private modules of the standard library and dunder names are ignored.
     """
-    import_parts = fq_import_name.split('.')
+    fq_parts = fq_name.split('.')
 
     # `_thread` is a module of the Python Standard Library
-    if import_parts[0] == '_thread':
+    if fq_parts[0] == '_thread':
         return False
 
     return any(
-        [import_part.startswith('_') and not __is_dunder_name(import_part) for import_part in import_parts],
+        [fq_part.startswith('_') and not __is_dunder_name(fq_part) for fq_part in fq_parts],
     )
+
+
+def _is_builtin_name(fq_name: str) -> bool:
+    """
+    Checks if the FQ name starts with the Python builtin name.
+    """
+    # Add a dot at the end of the FQ name and at the end of the builtin names.
+    # This is necessary to correctly identify FQ names that start with the name of builtin.
+    builtins_with_dot = list(map(lambda builtin_name: f'{builtin_name}.', BUILTINS))
+    fq_name_with_dot = f'{fq_name}.'
+
+    return any(fq_name_with_dot.startswith(builtin) for builtin in builtins_with_dot)
 
 
 def main(
     path_to_fq_names: Path,
     path_to_result: Path,
     column_name: str,
-    filter_private_imports: bool,
-    filter_stdlib_imports: bool,
+    filter_private_names: bool,
+    filter_stdlib_names: bool,
     filter_dunder_names: bool,
+    filter_builtin_names: bool,
 ) -> None:
     fq_names = pd.read_csv(path_to_fq_names)
 
-    print(f'Received {len(fq_names)} imports.')
+    print(f'Received {len(fq_names)} FQ names.')
 
-    if filter_private_imports:
-        mask = fq_names.apply(lambda row: _is_private_import(row[column_name]), axis=1)
+    if filter_private_names:
+        mask = fq_names.apply(lambda row: _is_private_name(row[column_name]), axis=1)
         fq_names = fq_names[~mask]
-        print(f'Filtered {mask.values.sum()} private imports.')
+        print(f'Filtered {mask.values.sum()} private names.')
 
-    if filter_stdlib_imports:
-        mask = fq_names.apply(lambda row: _is_stdlib_import(row[column_name]), axis=1)
+    if filter_stdlib_names:
+        mask = fq_names.apply(lambda row: _is_stdlib_name(row[column_name]), axis=1)
         fq_names = fq_names[~mask]
-        print(f'Filtered {mask.values.sum()} stdlib imports.')
+        print(f'Filtered {mask.values.sum()} stdlib names.')
 
     if filter_dunder_names:
         mask = fq_names.apply(
-            lambda row: any(__is_dunder_name(import_part) for import_part in row[column_name].split('.')),
+            lambda row: any(__is_dunder_name(fq_part) for fq_part in row[column_name].split('.')),
             axis=1,
         )
         fq_names = fq_names[~mask]
-        print(f'Filtered {mask.values.sum()} imports with dunder names.')
+        print(f'Filtered {mask.values.sum()} dunder names.')
+
+    if filter_builtin_names:
+        mask = fq_names.apply(lambda row: _is_builtin_name(row[column_name]), axis=1)
+        fq_names = fq_names[~mask]
+        print(f'Filtered {mask.values.sum()} builtin names.')
 
     path_to_result.parent.mkdir(parents=True, exist_ok=True)
     fq_names.to_csv(path_to_result, index=False)
@@ -295,37 +408,40 @@ if __name__ == '__main__':
     parser.add_argument(
         '--input',
         type=lambda value: Path(value).absolute(),
-        help='path to csv file with imports',
+        help='path to csv file with FQ names',
         required=True,
     )
     parser.add_argument(
         '--output',
         type=lambda value: Path(value).absolute(),
-        help='path to output csv file with filtered imports',
+        help='path to output csv file with filtered FQ names',
         required=True,
     )
     parser.add_argument(
         '--column-name',
         type=str,
         help='the name of the column to filter by',
-        default='import',
+        default='fq_name',
     )
     parser.add_argument(
-        '--filter-private-imports',
-        help='if specified, private imports will be filtered out',
+        '--filter-private-names',
+        help='if specified, private names will be filtered out',
         action='store_true',
     )
     parser.add_argument(
         '--filter-dunder-names',
-        help=(
-            'if specified, imports with dunder names '
-            '(which begin and end with double underscores) will be filtered out'
-        ),
+        help='if specified, dunder names (names which begin and end with double underscores) will be filtered out',
         action='store_true',
     )
     parser.add_argument(
-        '--filter-stdlib-imports',
-        help='if specified, Python Standard Library imports will be filtered out',
+        '--filter-stdlib-names',
+        help='if specified, Python Standard Library names will be filtered out',
+        action='store_true',
+    )
+
+    parser.add_argument(
+        '--filter-builtin-names',
+        help='if specified, Python builtin names will be filtered out',
         action='store_true',
     )
 
@@ -335,7 +451,8 @@ if __name__ == '__main__':
         args.input,
         args.output,
         args.column_name,
-        args.filter_private_imports,
-        args.filter_stdlib_imports,
+        args.filter_private_names,
+        args.filter_stdlib_names,
         args.filter_dunder_names,
+        args.filter_builtin_names,
     )
