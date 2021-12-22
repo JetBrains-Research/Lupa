@@ -28,12 +28,12 @@ class CallExpressionsAnalysisExecutor(
 ) : AnalysisExecutor() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val dependenciesDataWriter = PrintWriterResourceManager(
+    private val expressionsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         header = listOf("project_name", "fq_name", "category").joinToString(separator = ","),
     )
 
-    override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
+    override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
 
     override fun analyse(project: Project) {
         venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(
@@ -56,10 +56,10 @@ class CallExpressionsAnalysisExecutor(
         callExpressionsByCategory[ExpressionCategory.UNKNOWN]
             ?.let { logger.info("${it.size} call expressions were not categorized.") }
 
-        val fqNamesByCategory = callExpressionsByCategory.mapValues { (category, callExpressions) ->
+        val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
             callExpressions.mapNotNull {
-                when (category) {
-                    ExpressionCategory.DECORATOR -> DecoratorAnalyzer.analyze(it, analyzerContext)
+                when (it) {
+                    is PyDecorator -> DecoratorAnalyzer.analyze(it, analyzerContext)
                     else -> CallExpressionAnalyzer.analyze(it, analyzerContext)
                 }
             }.toMutableSet()
@@ -76,7 +76,7 @@ class CallExpressionsAnalysisExecutor(
 
         fqNamesByCategory.forEach { (key, value) ->
             value.ifNotEmpty {
-                dependenciesDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
+                expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
                     listOf(project.name, it, key.name.lowercase()).joinToString(separator = ",")
                 })
             }
@@ -92,7 +92,7 @@ class CallExpressionsAnalysisExecutor(
 
         companion object {
             fun getCategory(callExpression: PyCallExpression, context: TypeEvalContext): ExpressionCategory {
-                if (callExpression is PyDecorator) {
+                if (callExpression is PyDecorator || callExpression.parent is PyDecorator) {
                     return DECORATOR
                 }
 
