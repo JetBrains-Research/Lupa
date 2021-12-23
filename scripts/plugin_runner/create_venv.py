@@ -35,7 +35,7 @@ from urllib3 import Retry
 from plugin_runner.utils.file_system import get_all_file_system_items
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
-REQUIREMENTS_FILE_NAME_REGEXP = r'[\S]*requirements[\S]*(\.txt)$'
+REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirements[\S]*\.txt$'
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
@@ -119,10 +119,11 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     )
 
     for file_path in requirements_file_paths:
-        file_requirements = []
-        # TODO: REQUIREMENTS_FILE_NAME_REGEXP does not work
+        # We do this check to ignore links.  TODO: handle links
         if not os.path.isfile(file_path):
             continue
+
+        file_requirements = []
         with open(file_path, encoding='utf8', errors='ignore') as file:
             for line in file.readlines():
                 try:
