@@ -119,7 +119,7 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     )
 
     for file_path in requirements_file_paths:
-        # We do this check to ignore links.  TODO: handle links
+        # We do this check to ignore symlinks.  TODO: handle symlinks
         if not os.path.isfile(file_path):
             continue
 
