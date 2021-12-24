@@ -1,6 +1,8 @@
 # Lupa 🔍
 
 [![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Kotlin build](https://github.com/JetBrains-Research/Lupa/actions/workflows/kotlin-build.yml/badge.svg)](https://github.com/JetBrains-Research/Lupa/actions/workflows/kotlin-build.yml)
+[![Python build](https://github.com/JetBrains-Research/Lupa/actions/workflows/python-build.yml/badge.svg)](https://github.com/JetBrains-Research/Lupa/actions/workflows/python-build.yml)
 
 Lupa 🔍 is a framework for the large scale analysis of programming language usage
 
