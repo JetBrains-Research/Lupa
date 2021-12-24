@@ -41,8 +41,7 @@ def run_in_subprocess(command: List[str], cwd: str) -> tuple[int, str]:
         command,
         cwd=cwd,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
+        stderr=subprocess.PIPE)
 
     stdout = process.stdout.decode()
     stderr = process.stderr.decode()

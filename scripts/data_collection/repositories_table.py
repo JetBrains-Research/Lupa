@@ -34,9 +34,9 @@ class RepositoriesTable:
     def update_date(self, username: str, repo_name: str, last_pull_date: datetime.date):
         if self._conn is not None:
             query = sql.SQL("""
-            update {table_name} 
+            update {table_name}
             set {pull_date_col} = {pull_date}
-            where {username_col} = {username} 
+            where {username_col} = {username}
             and {repo_name_col} = {repo_name}""")
 
             self._conn.execute(self.format_sql(query, username, repo_name, last_pull_date))
@@ -44,7 +44,7 @@ class RepositoriesTable:
     def insert(self, username: str, repo_name: str, last_pull_date: datetime.date):
         if self._conn is not None:
             query = sql.SQL("""
-            insert into {table_name}({username_col}, {repo_name_col}, {pull_date_col}) 
+            insert into {table_name}({username_col}, {repo_name_col}, {pull_date_col})
             values ({username}, {repo_name}, {pull_date})""")
 
             self._conn.execute(self.format_sql(query, username, repo_name, last_pull_date))
