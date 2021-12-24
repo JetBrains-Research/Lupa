@@ -17,6 +17,7 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -27,9 +28,6 @@ from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
 import requests
-from pip._internal.exceptions import PipError
-from pip._internal.network.session import PipSession
-from pip._internal.req import parse_requirements
 from pkg_resources import parse_requirements as parse_line, parse_version
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -37,7 +35,7 @@ from urllib3 import Retry
 from plugin_runner.utils.file_system import get_all_file_system_items
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
-REQUIREMENTS_FILE_NAME_REGEXP = r'[\S]*requirements[\S]*.txt'
+REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirements[\S]*\.txt$'
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
@@ -120,26 +118,21 @@ def gather_requirements(dataset_path: Path) -> Requirements:
         item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
     )
 
-    pip_sessions = PipSession()
-
     for file_path in requirements_file_paths:
-        try:
-            file_requirements_lines = list(parse_requirements(str(file_path), pip_sessions))
-        except PipError:
-            logger.info(f'Unable to parse {str(file_path)}. Skipping.')
+        # We do this check to ignore symlinks.  TODO: handle symlinks
+        if not os.path.isfile(file_path):
             continue
 
         file_requirements = []
-        for file_requirements_line in file_requirements_lines:
-            try:
-                file_requirements.extend(list(parse_line(file_requirements_line.requirement)))
-            except Exception:
-                # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(
-                    f'Unable to parse line "{file_requirements_line.requirement}" '
-                    f'in the {file_requirements_line.line_source}. Skipping.',
-                )
-                continue
+        with open(file_path, encoding='utf8', errors='ignore') as file:
+            for line in file.readlines():
+                try:
+                    file_requirements.extend(list(parse_line(line)))
+                except Exception:
+                    # For some reason you can't catch RequirementParseError
+                    # (or InvalidRequirement), so we catch Exception.
+                    logger.warning(f'Unable to parse line "{line}" in the file {str(file_path)}. Skipping.')
+                    continue
 
         for requirement in file_requirements:
             specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
