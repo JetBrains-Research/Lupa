@@ -8,6 +8,7 @@ It accepts
     * flag that allows you not to do version validation using PyPI.
     * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
+    * flag that allows you to install requirements individually.
 
 In the current version of the script, if we find different versions of the same library
 in different requirement files, we will choose the newest (largest) version.
@@ -16,6 +17,8 @@ in different requirement files, we will choose the newest (largest) version.
 import argparse
 import json
 import logging
+import os
+import re
 import subprocess
 import sys
 from collections import defaultdict
@@ -24,13 +27,15 @@ from distutils.version import Version
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
-import pkg_resources
 import requests
+from pkg_resources import parse_requirements as parse_line, parse_version
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+from plugin_runner.utils.file_system import get_all_file_system_items
+
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
-REQUIREMENTS_FILE_NAME_REGEXP = '*requirements*.txt'
+REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirements[\S]*\.txt$'
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
@@ -72,6 +77,29 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
         action='store_true',
     )
 
+    parser.add_argument(
+        '--pip-for-each',
+        help=(
+            'Call `pip install` for each requirement individually. '
+            'By default, `pip install` will be applied to the entire file with the collected requirements.'
+        ),
+        action='store_true',
+    )
+
+
+def _normalize_requirement_name(name: str) -> str:
+    """
+    Normalizes the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
+
+    :param name: name of package
+    :return: normalized name of package
+    """
+
+    normalized_name = name.lower()
+    normalized_name = normalized_name.replace('.', '-')
+    normalized_name = normalized_name.replace('_', '-')
+    return normalized_name
+
 
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
@@ -85,18 +113,30 @@ def gather_requirements(dataset_path: Path) -> Requirements:
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
-    for file_path in dataset_path.rglob(REQUIREMENTS_FILE_NAME_REGEXP):
-        with open(file_path) as file:
-            try:
-                file_requirements = list(pkg_resources.parse_requirements(file))
-            except Exception:
-                # For some reason you can't catch RequirementParseError (or InvalidRequirement), so we catch Exception.
-                logger.info(f'Unable to parse {str(file_path)}. Skipping.')
-                continue
+    requirements_file_paths = get_all_file_system_items(
+        root=dataset_path,
+        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+    )
 
-            for requirement in file_requirements:
-                specs = {(operator, pkg_resources.parse_version(version)) for operator, version in requirement.specs}
-                requirements[requirement.key] |= specs
+    for file_path in requirements_file_paths:
+        # We do this check to ignore symlinks.  TODO: handle symlinks
+        if not os.path.isfile(file_path):
+            continue
+
+        file_requirements = []
+        with open(file_path, encoding='utf8', errors='ignore') as file:
+            for line in file.readlines():
+                try:
+                    file_requirements.extend(list(parse_line(line)))
+                except Exception:
+                    # For some reason you can't catch RequirementParseError
+                    # (or InvalidRequirement), so we catch Exception.
+                    logger.warning(f'Unable to parse line "{line}" in the file {str(file_path)}. Skipping.')
+                    continue
+
+        for requirement in file_requirements:
+            specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
+            requirements[_normalize_requirement_name(requirement.key)] |= specs
 
     logger.info(f'Collected {len(requirements)} packages.')
 
@@ -174,7 +214,7 @@ def _get_available_versions(package_name: str) -> Set[Version]:
         logger.error('The PyPI response does not contain the "releases" field. Skipping.')
         return set()
 
-    return set(map(pkg_resources.parse_version, versions))
+    return set(map(parse_version, versions))
 
 
 def filter_unavailable_versions(specs: Requirements) -> Requirements:
@@ -252,14 +292,15 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     return path_to_requirements
 
 
-def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool) -> int:
+def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool) -> int:
     """
     In the passed path creates a virtual environment and installs the passed requirements.
 
     :param venv_path: the path where the virtual environment will be created.
     :param requirements_path: the path to the requirements file.
     :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
-    :return: pip return code
+    :param for_each: is it necessary to call `pip install` for each requirement individually or for the whole file.
+    :return: pip return code or number of pip errors if for_each flag is specified.
     """
 
     logger.info('Creating virtual environment.')
@@ -279,14 +320,20 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     pip_command = [
         str(pip_path),
         'install',
-        '-r',
-        str(requirements_path),
+        '--disable-pip-version-check',
     ]
 
     if no_package_dependencies:
         pip_command.append('--no-deps')
 
-    return subprocess.run(pip_command).returncode
+    if for_each:
+        errors = 0
+        with open(requirements_path, 'r') as requirements_file:
+            for requirement in requirements_file:
+                errors += subprocess.run(pip_command + [requirement.strip()]).returncode != 0
+        return errors
+
+    return subprocess.run(pip_command + ['-r', str(requirements_path)]).returncode
 
 
 def main():
@@ -307,7 +354,7 @@ def main():
 
     version_by_package_name = merge_requirements(requirements)
     requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
-    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies)
+    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies, args.pip_for_each)
 
     return exit_code
 

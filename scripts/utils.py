@@ -1,5 +1,7 @@
 import enum
+import logging
 import os
+import subprocess
 from typing import List
 
 
@@ -32,3 +34,21 @@ def get_file_lines(path: str) -> List[str]:
 def write_to_file(path: str, content: str):
     with open(path, "w+") as file:
         file.write(content)
+
+
+def run_in_subprocess(command: List[str], cwd: str) -> tuple[int, str]:
+    process = subprocess.run(
+        command,
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
+
+    stdout = process.stdout.decode()
+    stderr = process.stderr.decode()
+
+    if stdout:
+        logging.debug('%s\'s stdout:\n%s' % (command[0], stdout))
+    if stderr:
+        logging.debug('%s\'s stderr:\n%s' % (command[0], stderr))
+
+    return process.returncode, stdout

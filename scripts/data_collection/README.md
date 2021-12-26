@@ -29,6 +29,18 @@ python3 -m data_collection.load_dataset /path/to/cleaned/data/dir/results.csv /p
 The optional argument ```--allowed-extensions``` accepts a list of extensions. 
 Only files with these extensions will be saved (without this argument all files will be saved).
 
+Or
+
+#### 4. Update dataset
+
+Run the following command to update the dataset:
+
+``` 
+python3 -m data_collection.update_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir
+```
+The optional argument ```--save-to-db``` is used to save the date of last pull for each repository to the database.
+In this case, you need to add "database.ini" to the project a file, containing config settings for some postgres database. 
+
 
 ### Save GitHub metrics
 

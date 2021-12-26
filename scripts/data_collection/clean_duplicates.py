@@ -32,6 +32,7 @@ def main():
 
     with open(results_path, 'a') as results_fout:
         if args.start_from == 0:
+            results_fout.truncate(0)
             results_fout.write("full_name\n")
         unique_names = set()
         for index, project in enumerate(dataset.name[args.start_from:]):
