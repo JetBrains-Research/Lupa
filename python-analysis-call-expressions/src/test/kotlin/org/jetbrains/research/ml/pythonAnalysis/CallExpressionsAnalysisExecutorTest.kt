@@ -36,7 +36,7 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
 
     private fun setupSdk(project: Project) {
         val projectManager = ProjectRootManager.getInstance(project)
-        val sdk = PythonMockSdk(testDataPath).create("3.8")
+        sdk = PythonMockSdk(testDataPath).create("3.8")
         val sdkConfigurer = SdkConfigurer(project, projectManager)
         sdkConfigurer.setProjectSdk(sdk)
     }
