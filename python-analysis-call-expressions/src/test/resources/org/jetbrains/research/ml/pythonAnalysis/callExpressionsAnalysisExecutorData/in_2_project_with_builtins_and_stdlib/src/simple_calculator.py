@@ -1,12 +1,12 @@
 import logging
 from math import cos, sin
+import sys
 
 from utils.option import Option
 
 logger = logging.getLogger(__name__)
 
-
-def simple_calculator():
+if __name__ == '__main__':
     command = input(
         'Enter the command '
         '('
@@ -20,7 +20,7 @@ def simple_calculator():
         option = Option(command)
     except ValueError:
         logger.error(f'Unknown command: {command}.')
-        return
+        sys.exit(1)
 
     if option == Option.SIN:
         number = int(input('Enter a number: '))
@@ -33,7 +33,3 @@ def simple_calculator():
         print(f'abs({number}) = {abs(number)}')
     else:
         logger.error(f'Unknown option: {option}.')
-
-
-if __name__ == '__main__':
-    simple_calculator()
