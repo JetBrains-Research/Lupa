@@ -48,4 +48,4 @@ Note: if you don't want to run the analysis with a virtual environment, just pas
 
 #### 6. Run statistics visualisation
 
-**TODO**
+To read more about call expressions statistics visualization go to `scripts/analysis/call_expressions/python/README.md`.
