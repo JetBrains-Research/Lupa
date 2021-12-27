@@ -15,30 +15,43 @@ class RepositoryOpenerUtil {
         private val logger: Logger = Logger.getInstance(RepositoryOpenerUtil::class.java)
 
         /**
-         * Opens and reloads each project in given repository by [path][repositoryPath] and then
+         * Opens and reloads each project in given dataset by [path][datasetPath] and then
          * runs [action] on opened project.
+         * Also runs [repositoryPostAction] on each repository after processing it
          * This opening method allow to get project structure (all modules), but is more time consuming then
          * [standardRepositoryOpener].
          */
-        fun openReloadRepositoryOpener(repositoryPath: Path, action: (Project) -> Unit) {
+        fun openReloadRepositoryOpener(
+            datasetPath: Path,
+            action: (Project) -> Unit,
+            repositoryPostAction: ((GitRepository) -> Unit)? = null
+        ) {
             var projectIndex = 0
-            if (getKotlinJavaRepositoryOpener().openRepository(
-                    repositoryPath.toFile()
-                ) { project ->
-                    runAction(project, projectIndex, action)
-                    projectIndex += 1
+            getSubdirectories(datasetPath).forEach { repositoryRoot ->
+                if (getKotlinJavaRepositoryOpener().openRepository(
+                        repositoryRoot.toFile()
+                    ) { project ->
+                        runAction(project, projectIndex, action)
+                        projectIndex += 1
+                    }
+                ) {
+                    println("All projects from $repositoryRoot were opened successfully")
+                    repositoryPostAction?.let { it(GitRepository(repositoryRoot)) }
                 }
-            ) {
-                println("Not all projects from $repositoryPath was opened successfully")
             }
         }
 
         /**
          * Just opens each project in given repository by [path][repositoryPath] and then
          * runs [action] on opened project.
+         * Also runs [repositoryPostAction] on each repository after processing it
          * This opening method do not provide right project modules structure, but is fast.
          */
-        fun standardRepositoryOpener(path: Path, action: (Project) -> Unit) {
+        fun standardRepositoryOpener(
+            path: Path,
+            action: (Project) -> Unit,
+            repositoryPostAction: ((GitRepository) -> Unit)? = null
+        ) {
             getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
                 ApplicationManager.getApplication().invokeAndWait {
                     ProjectManagerEx.getInstanceEx().openProject(
@@ -54,6 +67,7 @@ class RepositoryOpenerUtil {
                                 val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
                                 logger.info("Project ${project.name} is closed = $closeStatus")
                             }
+                            repositoryPostAction?.let { it(GitRepository(projectPath)) }
                         }
                     }
                 }
