@@ -16,6 +16,7 @@ import org.jetbrains.research.ml.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractPyElementsOfType
 import org.jetbrains.research.ml.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
+import org.slf4j.LoggerFactory
 import java.nio.file.Path
 
 /**
@@ -25,6 +26,8 @@ import java.nio.file.Path
 class CallExpressionsAnalysisExecutor(
     outputDir: Path, filename: String = "call_expressions_data.csv", private val venv: Path?,
 ) : AnalysisExecutor() {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     private val expressionsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         header = listOf("project_name", "fq_name", "category").joinToString(separator = ","),
@@ -33,7 +36,9 @@ class CallExpressionsAnalysisExecutor(
     override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
 
     override fun analyse(project: Project) {
-        venv?.let { setSdkToProject(project, venv.toString()) }
+        venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(
+            "The path to the virtual environment has not been passed. The analysis will run without the SDK."
+        )
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
@@ -42,9 +47,14 @@ class CallExpressionsAnalysisExecutor(
         val analyzerContext = CallExpressionAnalyzerContext(pyResolveContext, fqNamesProvider)
 
         val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java)
+        logger.info("${callExpressions.size} call expressions were extracted.")
+
         val packageNames = PyPackageUtil.gatherPackageNames(project)
+        logger.info("${packageNames.size} package names were gathered.")
 
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
+        callExpressionsByCategory[ExpressionCategory.UNKNOWN]
+            ?.let { logger.info("${it.size} call expressions were not categorized.") }
 
         val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
             callExpressions.mapNotNull {
@@ -70,6 +80,7 @@ class CallExpressionsAnalysisExecutor(
                     listOf(project.name, it, key.name.lowercase()).joinToString(separator = ",")
                 })
             }
+            logger.info("In the $key category were collected ${value.size} unique full qualified names.")
         }
     }
 
