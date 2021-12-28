@@ -91,6 +91,9 @@ class CallExpressionsAnalysisExecutor(
         UNKNOWN;
 
         companion object {
+            /**
+             * Identifies the [call expression][callExpression] category using [context].
+             */
             fun getCategory(callExpression: PyCallExpression, context: TypeEvalContext): ExpressionCategory {
                 if (callExpression is PyDecorator || callExpression.parent is PyDecorator) {
                     return DECORATOR
