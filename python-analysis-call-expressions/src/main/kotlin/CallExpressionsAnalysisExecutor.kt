@@ -65,6 +65,14 @@ class CallExpressionsAnalysisExecutor(
             }.toMutableSet()
         }
 
+        filterLocalFqNames(fqNamesByCategory, packageNames)
+        writeFqNames(fqNamesByCategory, project)
+    }
+
+    private fun filterLocalFqNames(
+        fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
+        packageNames: Set<String>,
+    ) {
         fqNamesByCategory.forEach { (_, fqNames) ->
             fqNames.removeAll { fqName ->
                 PyPackageUtil.isFqNameInAnyPackage(
@@ -73,14 +81,19 @@ class CallExpressionsAnalysisExecutor(
                 )
             }
         }
+    }
 
-        fqNamesByCategory.forEach { (key, value) ->
-            value.ifNotEmpty {
+    private fun writeFqNames(
+        fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
+        project: Project,
+    ) {
+        fqNamesByCategory.forEach { (category, fqNames) ->
+            fqNames.ifNotEmpty {
                 expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, key.name.lowercase()).joinToString(separator = ",")
+                    listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
                 })
             }
-            logger.info("In the $key category were collected ${value.size} unique full qualified names.")
+            logger.info("In the $category category were collected ${fqNames.size} unique full qualified names.")
         }
     }
 
