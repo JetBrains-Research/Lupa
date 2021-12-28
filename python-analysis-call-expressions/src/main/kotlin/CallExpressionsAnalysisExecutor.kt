@@ -69,6 +69,9 @@ class CallExpressionsAnalysisExecutor(
         writeFqNames(fqNamesByCategory, project)
     }
 
+    /**
+     * Filters local [fully qualified names][fqNamesByCategory] with the obtained local [package names][packageNames].
+     */
     private fun filterLocalFqNames(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
         packageNames: Set<String>,
@@ -83,6 +86,10 @@ class CallExpressionsAnalysisExecutor(
         }
     }
 
+    /**
+     * Using [data writer][expressionsDataWriter] writes the received
+     * [fully qualified names][fqNamesByCategory] into a .csv file.
+     */
     private fun writeFqNames(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
         project: Project,
