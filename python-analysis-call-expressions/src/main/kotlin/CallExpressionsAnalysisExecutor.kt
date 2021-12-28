@@ -49,8 +49,8 @@ class CallExpressionsAnalysisExecutor(
         val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
             callExpressions.mapNotNull {
                 when (it) {
-                    is PyDecorator -> DecoratorAnalyzer.analyze(it, analyzerContext)
-                    else -> CallExpressionAnalyzer.analyze(it, analyzerContext)
+                    is PyDecorator -> PyDecoratorAnalyzer.analyze(it, analyzerContext)
+                    else -> PyCallExpressionAnalyzer.analyze(it, analyzerContext)
                 }
             }.toMutableSet()
         }

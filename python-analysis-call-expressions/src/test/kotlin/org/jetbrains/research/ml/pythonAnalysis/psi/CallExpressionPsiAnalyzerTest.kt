@@ -6,8 +6,8 @@ import com.jetbrains.python.psi.PyDecorator
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.psi.types.TypeEvalContext
 import org.jetbrains.research.ml.kotlinAnalysis.psi.extentions.extractElementsOfType
-import org.jetbrains.research.ml.pythonAnalysis.CallExpressionAnalyzer
 import org.jetbrains.research.ml.pythonAnalysis.CallExpressionAnalyzerContext
+import org.jetbrains.research.ml.pythonAnalysis.PyCallExpressionAnalyzer
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseWithPythonSdkTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile
@@ -57,7 +57,7 @@ class CallExpressionPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
             inPsiFile.extractElementsOfType(PyCallExpression::class.java).filter { it !is PyDecorator }
 
         val actualCallExpressionFqNames =
-            callExpressions.mapNotNull { CallExpressionAnalyzer.analyze(it, analyzerContext) }.sorted()
+            callExpressions.mapNotNull { PyCallExpressionAnalyzer.analyze(it, analyzerContext) }.sorted()
 
         val expectedCallExpressionFqNames = outFile!!.readLines().sorted()
 

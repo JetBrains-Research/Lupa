@@ -1,22 +1,18 @@
 package org.jetbrains.research.ml.pythonAnalysis
 
-import com.jetbrains.python.psi.impl.PyCallExpressionImpl
+import com.jetbrains.python.psi.PyCallExpression
 import org.jetbrains.research.ml.kotlinAnalysis.PsiAnalyzerWithContextImpl
 
 /**
- * Analyzer for [call expression][PyCallExpressionImpl].
+ * Analyzer for call expression with type [P].
  * Analysis consists of fully qualified name extraction.
+ *
+ * @param P the type of [PyCallExpression] for which we want to perform analysis.
+ * @param pClass class of element [P].
  */
-object CallExpressionAnalyzer :
-    PsiAnalyzerWithContextImpl<PyCallExpressionImpl, CallExpressionAnalyzerContext, String>(
-        PyCallExpressionImpl::class.java
-    ) {
-
-    /** Get fully qualified name of given [call expression][PyCallExpressionImpl]. **/
-    override fun analyzeWithContext(
-        psiElement: PyCallExpressionImpl,
-        context: CallExpressionAnalyzerContext?
-    ): String? {
+open class CallExpressionAnalyzer<P : PyCallExpression>(pClass: Class<P>) :
+    PsiAnalyzerWithContextImpl<P, CallExpressionAnalyzerContext, String>(pClass) {
+    override fun analyzeWithContext(psiElement: P, context: CallExpressionAnalyzerContext?): String? {
         return context?.run {
             fqNamesProvider.getQualifiedName(psiElement.multiResolveCalleeFunction(resolveContext).firstOrNull())
         }
