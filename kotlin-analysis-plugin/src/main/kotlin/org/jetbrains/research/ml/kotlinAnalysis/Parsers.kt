@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis
 
 import com.xenomachina.argparser.ArgParser
+import org.jetbrains.research.ml.kotlinAnalysis.util.requireDirectory
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.RunnerArgsParser
 import java.nio.file.Paths
@@ -21,9 +22,9 @@ object IORunnerArgsWithVenvParser : RunnerArgsParser<IORunnerArgsWithVenv> {
     override fun parse(args: List<String>): IORunnerArgsWithVenv {
         return ArgParser(args.drop(1).toTypedArray()).parseInto(::IORunnerArgsWithVenv)
             .run {
-                require(inputDir.toFile().isDirectory) { "Argument has to be directory" }
+                requireDirectory(inputDir)
                 outputDir.toFile().mkdirs()
-                venvDir?.let { require(it.toFile().isDirectory) { "Argument has to be directory" } }
+                venvDir?.let { requireDirectory(it) }
                 this
             }
     }
