@@ -1,0 +1,12 @@
+project_name,fq_name,category
+src,abs,function
+src,enum.Enum.__new__,class
+src,enum.unique,decorator
+src,input,function
+src,int.__new__,class
+src,logging.Logger.error,function
+src,logging.getLogger,function
+src,math.cos,function
+src,math.sin,function
+src,print,function
+src,sys.exit,function

@@ -1,6 +1,7 @@
 package org.jetbrains.research.ml.kotlinAnalysis.util
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.io.isDirectory
 import org.jetbrains.research.pluginUtilities.util.Extension
 import java.io.File
 import java.io.PrintWriter
@@ -19,6 +20,10 @@ fun VirtualFile.isKotlinRelatedFile(): Boolean {
 
 fun VirtualFile.isPythonRelatedFile(): Boolean {
     return this.extension == Extension.PY.value
+}
+
+fun requireDirectory(path: Path) {
+    require(path.isDirectory()) { "Argument has to be directory" }
 }
 
 fun getSubdirectories(path: Path): List<Path> {

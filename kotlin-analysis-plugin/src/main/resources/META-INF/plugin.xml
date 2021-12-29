@@ -23,6 +23,7 @@
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinProjectMetricsAnalysisAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.JavaReflectionsFunctionsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.PythonDependenciesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.PythonCallExpressionsAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>
