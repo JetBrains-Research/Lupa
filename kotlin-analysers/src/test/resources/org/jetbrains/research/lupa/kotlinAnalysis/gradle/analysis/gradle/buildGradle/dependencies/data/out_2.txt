@@ -1,0 +1,12 @@
+project_name,group_id,artifact_id,config
+sample_project,androidx.test,runner,androidTestImplementation
+sample_project,com.android.tools.build,gradle,classpath
+sample_project,com.google.guava,guava,compileOnly
+sample_project,junit,junit,testCompile
+sample_project,junit,junit,testImplementation
+sample_project,junit,junit,testRuntimeOnly
+sample_project,org.apache.commons,commons-math3,implementation
+sample_project,org.jetbrains.kotlin,kotlin-gradle-plugin,classpath
+sample_project,org.jetbrains.kotlin,kotlin-stdlib-jdk8,implementation
+sample_project,org.jetbrains.kotlinx,kotlinx-coroutines-core,implementation
+sample_project,org.junit.jupiter,junit-jupiter-engine,testRuntimeOnly

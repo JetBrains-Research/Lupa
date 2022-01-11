@@ -1,0 +1,5 @@
+project_name,import
+sample_project,kotlinx.coroutines.delay
+sample_project,kotlinx.coroutines.delay
+sample_project,kotlinx.coroutines.delay
+sample_project,org.apache.commons.math3.random.JDKRandomGenerator
