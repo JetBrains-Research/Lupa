@@ -2,7 +2,8 @@ import enum
 import logging
 import os
 import subprocess
-from typing import List
+from pathlib import Path
+from typing import List, Tuple, Union
 
 
 class Extensions(str, enum.Enum):
@@ -36,7 +37,7 @@ def write_to_file(path: str, content: str):
         file.write(content)
 
 
-def run_in_subprocess(command: List[str], cwd: str) -> tuple[int, str]:
+def run_in_subprocess(command: List[str], cwd: Union[Path, str]) -> Tuple[int, str]:
     process = subprocess.run(
         command,
         cwd=cwd,

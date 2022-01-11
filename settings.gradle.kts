@@ -10,7 +10,8 @@ include(
     "kotlin-analysis-statistic",
     "kotlin-analysis-gradle",
     "kotlin-analysis-test",
-    "python-analysis-dependencies"
+    "python-analysis-dependencies",
+    "python-analysis-call-expressions"
 )
 
 val utilitiesRepo = "https://github.com/JetBrains-Research/plugin-utilities.git"
@@ -19,6 +20,7 @@ val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
 sourceControl {
     gitRepository(URI.create(utilitiesRepo)) {
         producesModule("$utilitiesProjectName:plugin-utilities-core")
+        producesModule("$utilitiesProjectName:plugin-utilities-python")
         producesModule("$utilitiesProjectName:plugin-utilities-test")
     }
 }

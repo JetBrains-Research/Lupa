@@ -5,12 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.1.0" apply true
 }
 
-repositories {
-    // Necessary for psiMiner
-//    maven(url = "https://dl.bintray.com/egor-bogomolov/astminer")
-}
-
-open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+open class BaseAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Name of the analysis runner
     @get:Input
     val runner: String? by project
@@ -36,6 +31,12 @@ open class KotlinAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     }
 }
 
+open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
+    // Virtual environment directory for Python
+    @get:Input
+    val venv: String? by project
+}
+
 dependencies {
     implementation(project(":kotlin-analysis-core"))
     implementation(project(":kotlin-analysis-clones"))
@@ -43,22 +44,27 @@ dependencies {
     implementation(project(":kotlin-analysis-statistic"))
     implementation(project(":kotlin-analysis-gradle"))
     implementation(project(":python-analysis-dependencies"))
-//  TODO: psiminer dependency caused an error because of different versions of kotlin and intellij
-//    implementation("org.jetbrains.research.psiminer:psiminer") {
-//        version {
-//            branch = "master"
-//        }
-//    }
+    implementation(project(":python-analysis-call-expressions"))
     implementation("com.xenomachina:kotlin-argparser:2.0.7")
 }
 
 tasks {
-    register<KotlinAnalysisCliTask>("cli") {
+    register<BaseAnalysisCliTask>("cli") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
             runner,
             input?.let { "--input=$it" },
             output?.let { "--output=$it" }
+        )
+    }
+
+    register<PythonAnalysisCliTask>("python-cli") {
+        dependsOn("buildPlugin")
+        args = listOfNotNull(
+            runner,
+            input?.let { "--input=$it" },
+            output?.let { "--output=$it" },
+            venv?.let { "--venv=$it" }
         )
     }
 }
