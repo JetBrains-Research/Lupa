@@ -31,9 +31,9 @@ To perform the analysis, the tool needs two obvious components:
 a _dataset_ and _analyzers_, _i.e._, sets of instructions of what [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) nodes need to be analyzed and how.
 To get more information about data collection see the [data_collection](./scripts/data_collection) module.
 The repository contains several core-modules:
-- [`kotlin-analysis-core`](./kotlin-analysis-core) - functions common to all modules and analyzers;
-- [`kotlin-analysis-test`](./kotlin-analysis-test) - common tests' architecture for all modules;
-- [`kotlin-analysis-plugin`](./kotlin-analysis-plugin) - the module with runners for all analyzers;
+- [`lupa-core`](./lupa-core) - functions common to all modules and analyzers;
+- [`lupa-test`](./lupa-test) - common tests' architecture for all modules;
+- [`lupa-runner`](./lupa-runner) - the module with runners for all analyzers;
 - [`scripts`](./scripts) - common functionality for data gathering, processing and visualization (written in Python).
 
 And several examples of analyzers that we used for our purposes:

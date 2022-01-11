@@ -7,7 +7,7 @@ Each analyzer has:
   [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) to obtain the necessary result;
 - an [executor](./src/main/kotlin/org/jetbrains/research/ml/kotlinAnalysis/AnalysisExecutor.kt) - a simple class that executes one or more analyzers 
   and manage of the resources (e.g. csv file) to write all results into it;
-- a runner that runs an executor with the necessary data (see the `kolin-analysis-plugin` module).
+- a runner that runs an executor with the necessary data (see the `lupa-runner` module).
 
 For each of them we have the common base classes that stores in this module. 
 All these classes have detailed documentation.
@@ -74,4 +74,4 @@ all while statements and write data in the necessary format. This class also reu
 ## Other functions
 
 Also, this module contains some utilities, for example common functions for different PSI elements 
-or utilities for open projects that are used in the `kolin-analysis-plugin` module.
+or utilities for open projects that are used in the `lupa-runner` module.

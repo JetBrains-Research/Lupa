@@ -6,6 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kotlin-analysis-core"))
-    implementation(project(":kotlin-analysis-test"))
+    implementation(project(":lupa-core"))
+    implementation(project(":lupa-test"))
 }

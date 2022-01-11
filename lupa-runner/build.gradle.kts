@@ -40,7 +40,7 @@ open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
 dependencies {
     implementation(project(":kotlin-analysers"))
     implementation(project(":python-analysers"))
-    implementation(project(":kotlin-analysis-core"))
+    implementation(project(":lupa-core"))
     implementation("com.xenomachina:kotlin-argparser:2.0.7")
 }
 

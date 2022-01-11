@@ -3,9 +3,9 @@ import java.net.URI
 rootProject.name = "lupa"
 
 include(
-    "kotlin-analysis-core",
-    "kotlin-analysis-test",
-    "kotlin-analysis-plugin",
+    "lupa-core",
+    "lupa-test",
+    "lupa-runner",
 
     "kotlin-analysers",
     "python-analysers"
