@@ -12,18 +12,18 @@
     <depends>com.intellij.modules.python</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinClonesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinDependenciesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinRangesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.ProjectsTaggingRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradleDependenciesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradleDependenciesByModulesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePropertiesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinGradlePluginsAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.KotlinProjectMetricsAnalysisAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.JavaReflectionsFunctionsAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.PythonDependenciesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.ml.kotlinAnalysis.PythonCallExpressionsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinClonesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinDependenciesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinRangesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.ProjectsTaggingRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradleDependenciesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradleDependenciesByModulesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradlePropertiesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradlePluginsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinProjectMetricsAnalysisAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.JavaReflectionsFunctionsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.PythonDependenciesAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.PythonCallExpressionsAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>
