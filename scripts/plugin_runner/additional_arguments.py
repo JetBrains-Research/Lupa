@@ -1,6 +1,6 @@
 import argparse
 
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class AdditionalArguments(argparse.Action):
@@ -12,8 +12,10 @@ class AdditionalArguments(argparse.Action):
             getattr(namespace, self.dest)[key] = value
 
     @staticmethod
-    def parse_additional_arguments(additional_arguments: Dict[str, str]) -> List[str]:
+    def parse_additional_arguments(additional_arguments: Optional[Dict[str, str]]) -> List[str]:
         arguments = []
+        if additional_arguments is None:
+            return arguments
         for key, value in additional_arguments.items():
             arguments.append(f'-P{key}={value}')
         return arguments

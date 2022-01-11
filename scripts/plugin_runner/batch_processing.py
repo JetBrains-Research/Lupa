@@ -10,7 +10,6 @@ It accepts
 import argparse
 import logging
 import os
-import subprocess
 from pathlib import Path
 from typing import List
 import time
@@ -18,7 +17,7 @@ import time
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 from plugin_runner.merge_data import merge
-from utils import get_subdirectories, create_directory, Extensions
+from utils import get_subdirectories, create_directory, Extensions, run_in_subprocess
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
 
@@ -40,7 +39,7 @@ def main():
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
         log_file = os.path.join(PROJECT_DIR, os.path.join(logs_dir, f"log_batch_{index}.{Extensions.TXT}"))
-        with open(log_file, "w+") as fout:
+        with open(log_file, "w+"):
             command = [
                 "./gradlew",
                 f":kotlin-analysis-plugin:{args.task_name}",
@@ -49,10 +48,8 @@ def main():
                 f"-Poutput={batch_output_path}",
             ]
             command.extend(additional_arguments)
-            process = subprocess.Popen(command, stdout=fout, stderr=fout, cwd=PROJECT_DIR)
-        process.wait()
+            run_in_subprocess(command, PROJECT_DIR)
         end_time = time.time()
-        process.terminate()
         logging.info(f"Finished batch {index} processing in {end_time - start_time}s")
 
     merge(batch_output_paths, args.output, args.data)
