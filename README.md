@@ -25,7 +25,7 @@ run the necessary analysis on every project in the given dataset.
 
 The main pipeline of Lupa 🔍 is demonstrated bellow:
 
-<img src="https://github.com/JetBrains-Research/Lupa/tree/main/assets/readme-pictures/pipeline.png" width="500">
+![An operating pipeline of the tool](./assets/readme-pictures/pipeline.png)
 
 To perform the analysis, the tool needs two obvious components: 
 a _dataset_ and _analyzers_, _i.e._, sets of instructions of what [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) nodes need to be analyzed and how.

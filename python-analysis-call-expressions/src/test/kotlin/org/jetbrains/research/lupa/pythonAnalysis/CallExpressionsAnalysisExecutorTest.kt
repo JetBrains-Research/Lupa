@@ -7,7 +7,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.research.lupa.kotlinAnalysis.util.ParametrizedGoldenFileTest
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
-import org.jetbrains.research.lupa.pythonAnalysis.CallExpressionsAnalysisExecutor
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
 import org.jetbrains.research.pluginUtilities.util.Extension
