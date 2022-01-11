@@ -1,3 +1,0 @@
-src.tasks.task1
-src.tasks.task2
-src.tasks.task3

@@ -1,7 +1,0 @@
-project_name,fq_name,category
-sample_project,input,function
-sample_project,int.__new__,class
-sample_project,list.__init__,class
-sample_project,print,function
-sample_project,range.__init__,class
-sample_project,sum,function

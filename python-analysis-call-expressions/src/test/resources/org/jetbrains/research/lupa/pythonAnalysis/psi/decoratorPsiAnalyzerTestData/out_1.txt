@@ -1,5 +1,0 @@
-functools.cached_property.__init__
-functools.lru_cache
-functools.singledispatch
-functools.total_ordering
-functools.wraps

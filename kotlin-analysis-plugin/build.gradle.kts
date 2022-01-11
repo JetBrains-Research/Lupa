@@ -38,13 +38,9 @@ open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
 }
 
 dependencies {
+    implementation(project(":kotlin-analysers"))
+    implementation(project(":python-analysers"))
     implementation(project(":kotlin-analysis-core"))
-    implementation(project(":kotlin-analysis-clones"))
-    implementation(project(":kotlin-analysis-dependencies"))
-    implementation(project(":kotlin-analysis-statistic"))
-    implementation(project(":kotlin-analysis-gradle"))
-    implementation(project(":python-analysis-dependencies"))
-    implementation(project(":python-analysis-call-expressions"))
     implementation("com.xenomachina:kotlin-argparser:2.0.7")
 }
 

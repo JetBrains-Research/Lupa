@@ -1,3 +1,0 @@
-project_name,property_key,property_value
-sample_project,kotlin.code.style,official
-sample_project,org.gradle.jvmargs,-XX:MaxMetaspaceSize=512m

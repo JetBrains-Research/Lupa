@@ -1,7 +1,0 @@
-datetime.date.__new__
-email.message_from_bytes
-json.decoder.JSONDecoder.__init__
-logging.Logger.__init__
-math.sin
-pathlib.Path.__new__
-string.capwords

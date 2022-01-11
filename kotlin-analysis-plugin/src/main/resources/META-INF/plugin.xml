@@ -22,8 +22,8 @@
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradlePluginsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinProjectMetricsAnalysisAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.JavaReflectionsFunctionsAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.PythonDependenciesAnalysisRunner"/>
-        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.PythonCallExpressionsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.pythonAnalysis.PythonImportsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.pythonAnalysis.PythonCallExpressionsAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>

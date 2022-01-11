@@ -1,6 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
-import org.jetbrains.research.lupa.kotlinAnalysis.metrics.ProjectMetricsAnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.metrics.ProjectMetricsAnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs

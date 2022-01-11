@@ -1,4 +1,0 @@
-math
-cmath
-plotly.express
-pandas

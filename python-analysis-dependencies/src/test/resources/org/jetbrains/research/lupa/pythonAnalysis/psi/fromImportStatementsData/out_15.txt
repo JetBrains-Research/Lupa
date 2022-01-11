@@ -1,3 +1,0 @@
-src.tasks.task1.utils
-src.tasks.task1.common
-src.tasks.task1.other

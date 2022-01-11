@@ -1,6 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
-import org.jetbrains.research.lupa.kotlinAnalysis.ranges.RangesAnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.ranges.RangesAnalysisExecutor
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser

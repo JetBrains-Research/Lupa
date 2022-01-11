@@ -1,4 +1,0 @@
-package org.jetbrains.research.lupa.kotlinAnalysis.data.gradle_projects.in_0_dataset_gradle_groovy_one_module.sample_project
-
-rootProject.name = 'gradle-one-module'
-

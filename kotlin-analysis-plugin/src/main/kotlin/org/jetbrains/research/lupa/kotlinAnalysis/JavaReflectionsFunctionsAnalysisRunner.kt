@@ -1,6 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
-import org.jetbrains.research.lupa.kotlinAnalysis.reflection.ReflectionAnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.reflection.ReflectionAnalysisExecutor
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
