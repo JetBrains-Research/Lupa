@@ -47,7 +47,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: test-report
-          path: kotlin-analysis-*/build/reports/**
+          path: lupa-*/build/reports/**
 
   test:
     needs: build

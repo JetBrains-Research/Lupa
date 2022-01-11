@@ -42,7 +42,7 @@ def main():
         with open(log_file, "w+"):
             command = [
                 "./gradlew",
-                f":kotlin-analysis-plugin:{args.task_name}",
+                f":lupa-runner:{args.task_name}",
                 f"-Prunner={args.data}-analysis",
                 f"-Pinput={batch_path}",
                 f"-Poutput={batch_output_path}",

@@ -31,20 +31,22 @@ To perform the analysis, the tool needs two obvious components:
 a _dataset_ and _analyzers_, _i.e._, sets of instructions of what [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) nodes need to be analyzed and how.
 To get more information about data collection see the [data_collection](./scripts/data_collection) module.
 The repository contains several core-modules:
-- [`kotlin-analysis-core`](./kotlin-analysis-core) - functions common to all modules and analyzers;
-- [`kotlin-analysis-test`](./kotlin-analysis-test) - common tests' architecture for all modules;
-- [`kotlin-analysis-plugin`](./kotlin-analysis-plugin) - the module with runners for all analyzers;
+- [`lupa-core`](./lupa-core) - functions common to all modules and analyzers;
+- [`lupa-test`](./lupa-test) - common tests' architecture for all modules;
+- [`lupa-runner`](./lupa-runner) - the module with runners for all analyzers;
 - [`scripts`](./scripts) - common functionality for data gathering, processing and visualization (written in Python).
 
 And several examples of analyzers that we used for our purposes:
-- [`kotlin-analysis-clones`](./kotlin-analysis-clones) - functionality related to clones analysis in Kotlin projects;
-- [`kotlin-analysis-dependencies`](./kotlin-analysis-dependencies) - functionality related to dependency analysis in Kotlin projects;
-- [`kotlin-analysis-gradle`](./kotlin-analysis-gradle) - functionality related to code analysis of the Gradle files in Kotlin projects;
-- [`kotlin-analysis-statistic`](./kotlin-analysis-statistic) - functionality related to different code analysis in Kotlin projects, like range analysis;
-- [`python-analysis-call-expressions`](./python-analysis-call-expressions) - functionality related to call expressions (functions, classes) analysis in Python projects;
-- [`python-analysis-call-dependencies`](./python-analysis-dependencies) - functionality related to imports analysis in Python projects.
+1. Kotlin's analysers:
+   - [`clones`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/clones) - functionality related to clones analysis in Kotlin projects;
+   - [`dependencies`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/dependencies) - functionality related to dependency analysis in Kotlin projects;
+   - [`gradle`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/gradle) - functionality related to code analysis of the Gradle files in Kotlin projects;
+   - [`statistic`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/statistic) - functionality related to different code analysis in Kotlin projects, like range analysis;
+2. Python's analysers:
+- [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions) - functionality related to call expressions (functions, classes) analysis in Python projects;
+- [`imports`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/imports) - functionality related to imports analysis in Python projects.
 
-To get more information see these modules.
+To get more information see these modules (each of them has a README file).
 
 ## Installation
 
