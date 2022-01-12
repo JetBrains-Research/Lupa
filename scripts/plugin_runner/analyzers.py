@@ -34,6 +34,7 @@ AVAILABLE_ANALYZERS = [
     Analyzer("kotlin-ranges", "ranges_data.csv", Language.KOTLIN),
     Analyzer("kotlin-project-tags", "project_tags_data.csv", Language.KOTLIN),
     Analyzer("kotlin-gradle-dependencies", "gradle_dependencies_data.csv", Language.KOTLIN),
+    Analyzer("kotlin-gradle-dependencies-by-modules", "gradle_dependencies_by_modules_data.csv", Language.KOTLIN),
     Analyzer("kotlin-gradle-properties", "gradle_properties_data.csv", Language.KOTLIN),
     Analyzer("kotlin-gradle-plugins", "gradle_plugins_data.csv", Language.KOTLIN),
 

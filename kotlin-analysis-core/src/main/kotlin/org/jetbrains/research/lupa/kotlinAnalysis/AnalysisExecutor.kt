@@ -2,6 +2,8 @@ package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.ml.kotlinAnalysis.util.DatabaseUtil
+import org.jetbrains.research.ml.kotlinAnalysis.util.GitRepository
 import java.nio.file.Path
 
 /**

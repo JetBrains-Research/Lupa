@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import org.jetbrains.research.ml.kotlinAnalysis.util.GitRepository
 import org.jetbrains.research.pluginUtilities.openRepository.getKotlinJavaRepositoryOpener
 import java.nio.file.Path
 
@@ -42,7 +43,7 @@ class RepositoryOpenerUtil {
         }
 
         /**
-         * Just opens each project in given repository by [path][repositoryPath] and then
+         * Just opens each project in given repository by [path][path] and then
          * runs [action] on opened project.
          * Also runs [repositoryPostAction] on each repository after processing it
          * This opening method do not provide right project modules structure, but is fast.
@@ -60,6 +61,7 @@ class RepositoryOpenerUtil {
                     )?.let { project ->
                         try {
                             runAction(project, projectIndex, action)
+                            repositoryPostAction?.let { it(GitRepository(projectPath)) }
                         } catch (ex: Exception) {
                             logger.error(ex)
                         } finally {
@@ -67,7 +69,6 @@ class RepositoryOpenerUtil {
                                 val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
                                 logger.info("Project ${project.name} is closed = $closeStatus")
                             }
-                            repositoryPostAction?.let { it(GitRepository(projectPath)) }
                         }
                     }
                 }

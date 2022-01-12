@@ -1,7 +1,40 @@
+import enum
 import os
 from enum import Enum, unique
 from pathlib import Path
-from typing import Callable, List
+
+from typing import List, Callable
+
+
+class Extensions(str, enum.Enum):
+    CSV = "csv"
+    TXT = "txt"
+    JSON = "json"
+    PNG = "png"
+
+
+def create_directory(path: str):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def get_subdirectories(path: str) -> List[str]:
+    dirs = []
+    for name in os.listdir(path):
+        fullname = os.path.join(path, name)
+        if os.path.isdir(fullname):
+            dirs.append(fullname)
+    return dirs
+
+
+def get_file_lines(path: str) -> List[str]:
+    with open(path) as fin:
+        return fin.readlines()
+
+
+def write_to_file(path: str, content: str):
+    with open(path, "w+") as file:
+        file.write(content)
 
 
 @unique
@@ -12,9 +45,9 @@ class FileSystemItem(Enum):
 
 
 def get_all_file_system_items(
-    root: Path,
-    item_condition: Callable[[str], bool] = lambda name: True,
-    item_type: FileSystemItem = FileSystemItem.FILE,
+        root: Path,
+        item_condition: Callable[[str], bool] = lambda name: True,
+        item_type: FileSystemItem = FileSystemItem.FILE,
 ) -> List[Path]:
     """
     Returns the paths to all file system items from the root that satisfy the condition.
