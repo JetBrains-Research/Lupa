@@ -29,29 +29,31 @@ The main pipeline of Lupa 🔍 is demonstrated bellow:
 
 To perform the analysis, the tool needs two obvious components: 
 a _dataset_ and _analyzers_, _i.e._, sets of instructions of what [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) nodes need to be analyzed and how.
-To get more information about data collection see the [data_collection](./scripts/data_collection) module.
+To get more information about data collection see the [data_collection](./scripts/data_collection/README.md) module.
 The repository contains several core-modules:
-- [`kotlin-analysis-core`](./kotlin-analysis-core) - functions common to all modules and analyzers;
-- [`kotlin-analysis-test`](./kotlin-analysis-test) - common tests' architecture for all modules;
-- [`kotlin-analysis-plugin`](./kotlin-analysis-plugin) - the module with runners for all analyzers;
-- [`scripts`](./scripts) - common functionality for data gathering, processing and visualization (written in Python).
+- [`lupa-core`](./lupa-core/README.md) - functions common to all modules and analyzers;
+- [`lupa-test`](./lupa-test/README.md) - common tests' architecture for all modules;
+- [`lupa-runner`](./lupa-runner/README.md) - the module with runners for all analyzers;
+- [`scripts`](./scripts/README.md) - common functionality for data gathering, processing and visualization (written in Python).
 
 And several examples of analyzers that we used for our purposes:
-- [`kotlin-analysis-clones`](./kotlin-analysis-clones) - functionality related to clones analysis in Kotlin projects;
-- [`kotlin-analysis-dependencies`](./kotlin-analysis-dependencies) - functionality related to dependency analysis in Kotlin projects;
-- [`kotlin-analysis-gradle`](./kotlin-analysis-gradle) - functionality related to code analysis of the Gradle files in Kotlin projects;
-- [`kotlin-analysis-statistic`](./kotlin-analysis-statistic) - functionality related to different code analysis in Kotlin projects, like range analysis;
-- [`python-analysis-call-expressions`](./python-analysis-call-expressions) - functionality related to call expressions (functions, classes) analysis in Python projects;
-- [`python-analysis-call-dependencies`](./python-analysis-dependencies) - functionality related to imports analysis in Python projects.
+1. [Kotlin's analysers](./kotlin-analysers/README.md):
+   - [`clones`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/clones/README.md) - functionality related to clones analysis in Kotlin projects;
+   - [`dependencies`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/dependencies/README.md) - functionality related to dependency analysis in Kotlin projects;
+   - [`gradle`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/gradle/README.md) - functionality related to code analysis of the Gradle files in Kotlin projects;
+   - [`statistic`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/statistic/README.md) - functionality related to different code analysis in Kotlin projects, like range analysis;
+2. [Python's analysers](./python-analysers/README.md):
+   - [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions/README.md) - functionality related to call expressions (functions, classes) analysis in Python projects;
+   - [`imports`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/imports/README.md) - functionality related to imports analysis in Python projects.
 
-To get more information see these modules.
+To get more information see these modules (each of them has a README file).
 
 ## Installation
 
 Clone the repo by `git clone https://github.com/JetBrains-Research/Lupa.git`.
    
 For analyzers modules and core architecture you should have Kotlin at least `1.5.21` version.
-For functionality for data gathering, processing and visualization ([`scripts`](./scripts) module) 
+For functionality for data gathering, processing and visualization ([`scripts`](./scripts/README.md) module) 
 you should have Python 3+ and also run:
 - `pip install -r scripts/requirements.txt`
 - `pip install -r scripts/requirements-test.txt` - for tests (optional)
@@ -60,7 +62,7 @@ you should have Python 3+ and also run:
 ## Usage
 
 1. For analyzers:
-    - Go to the [`kotlin-analysis-plugin`](./kotlin-analysis-plugin) module and follow its [README file](./kotlin-analysis-plugin/README.md).
+    - Go to the [`kotlin-analysers`](./kotlin-analysers) module and follow its [README file](./kotlin-analysers/README.md).
 2. For functionality for data gathering, processing and visualization:
     - Go to the [`scripts`](./scripts) module and follow its [README file](./scripts/README.md).
 
