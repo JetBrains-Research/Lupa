@@ -1,4 +1,4 @@
-package org.jetbrains.research.ml.kotlinAnalysis.util
+package org.jetbrains.research.lupa.kotlinAnalysis.util
 
 import com.intellij.openapi.diagnostic.Logger
 import org.postgresql.util.PSQLException
@@ -8,9 +8,9 @@ import java.sql.DriverManager
 import java.time.LocalDate
 import java.util.*
 
-class DatabaseUtil {
+class DatabaseConnection {
     private var conn: Connection? = null
-    private val logger: Logger = Logger.getInstance(DatabaseUtil::class.java)
+    private val logger: Logger = Logger.getInstance(DatabaseConnection::class.java)
 
     init {
         val props = Properties()
@@ -29,6 +29,18 @@ class DatabaseUtil {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun updateRepoDate(repo: GitRepository) {
+        if (conn == null) {
+            return
+        }
+
+        if (repo.username == null || repo.repositoryName == null) {
+            return
+        }
+
+        updateRepoDate(repo.username, repo.repositoryName)
     }
 
     fun updateRepoDate(username: String, repoName: String) {

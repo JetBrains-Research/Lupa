@@ -1,9 +1,9 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.research.lupa.kotlinAnalysis.util.DatabaseConnection
+import org.jetbrains.research.lupa.kotlinAnalysis.util.GitRepository
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
-import org.jetbrains.research.ml.kotlinAnalysis.util.DatabaseUtil
-import org.jetbrains.research.ml.kotlinAnalysis.util.GitRepository
 import java.nio.file.Path
 
 /**
@@ -35,12 +35,12 @@ abstract class AnalysisExecutor {
     fun execute(
         projectsDir: Path,
         repositoryOpener: (Path, (Project) -> Unit, ((GitRepository) -> Unit)?) -> Unit =
-            RepositoryOpenerUtil.Companion::standardRepositoryOpener
+            RepositoryOpenerUtil.Companion::standardRepositoryOpener,
+        db: DatabaseConnection? = null
     ) {
         init()
         try {
-            val db = DatabaseUtil()
-            repositoryOpener(projectsDir, ::analyse) { repo -> db.updateRepoDate(repo.username, repo.repositoryName) }
+            repositoryOpener(projectsDir, ::analyse) { repo -> db?.updateRepoDate(repo) }
         } finally {
             close()
         }

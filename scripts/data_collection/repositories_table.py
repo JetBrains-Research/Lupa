@@ -67,7 +67,7 @@ class RepositoriesTable:
             return None
 
         query = sql.SQL("""
-        select {username_col}, {repo_name_col} from {table_name} 
+        select {username_col}, {repo_name_col} from {table_name}
         where {pull_date_col} > {analysis_date_col}
         or {analysis_date_col} is null""")
 
