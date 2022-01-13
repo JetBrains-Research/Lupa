@@ -10,14 +10,14 @@ class GitRepository(val path: Path, separator: String = "#") {
     private val logger: Logger = Logger.getInstance(GitRepository::class.java)
 
     init {
-        val split = path.fileName.name.split(separator)
-        if (split.size < 2) {
+        val splitPath = path.fileName.name.split(separator)
+        if (splitPath.size != 2) {
             logger.info("Couldn't parse username and repository name")
             username = null
             repositoryName = null
         } else {
-            username = split[0]
-            repositoryName = split[1]
+            username = splitPath[0]
+            repositoryName = splitPath[1]
         }
     }
 }

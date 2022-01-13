@@ -14,7 +14,7 @@ class DatabaseConnection {
 
     init {
         val props = Properties()
-        val propertiesFilePath = System.getenv("KOTLIN_DB_CONFIG")
+        val propertiesFilePath = System.getenv("POSTGRES_KOTLIN_DB_CONFIG")
 
         propertiesFilePath?.let {
             props.load(FileInputStream(propertiesFilePath))
@@ -32,21 +32,13 @@ class DatabaseConnection {
     }
 
     fun updateRepoDate(repo: GitRepository) {
-        if (conn == null) {
-            return
-        }
+        conn ?: return
 
-        if (repo.username == null || repo.repositoryName == null) {
-            return
-        }
-
-        updateRepoDate(repo.username, repo.repositoryName)
+        repo.username?.let { repo.repositoryName?.let { updateRepoDate(repo.username, repo.repositoryName) } }
     }
 
     fun updateRepoDate(username: String, repoName: String) {
-        if (conn == null) {
-            return
-        }
+        conn ?: return
 
         val currentDate = LocalDate.now()
         val query = conn!!.prepareStatement(
