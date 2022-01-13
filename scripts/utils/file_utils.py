@@ -20,6 +20,9 @@ def create_directory(path: str):
 
 
 def clear_directory(dir_path: str):
+    if not os.path.exists(dir_path):
+        return
+
     for files in os.listdir(dir_path):
         path = os.path.join(dir_path, files)
         try:
