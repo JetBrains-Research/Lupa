@@ -1,5 +1,6 @@
 import enum
 import os
+import shutil
 from enum import Enum, unique
 from pathlib import Path
 
@@ -16,6 +17,15 @@ class Extensions(str, enum.Enum):
 def create_directory(path: str):
     if not os.path.exists(path):
         os.makedirs(path)
+
+
+def clear_directory(dir_path: str):
+    for files in os.listdir(dir_path):
+        path = os.path.join(dir_path, files)
+        try:
+            shutil.rmtree(path)
+        except OSError:
+            os.remove(path)
 
 
 def get_subdirectories(path: str) -> List[str]:

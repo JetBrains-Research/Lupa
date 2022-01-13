@@ -19,7 +19,7 @@ from data_collection.repositories_table import RepositoriesTable
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 from plugin_runner.merge_data import merge
-from utils.file_utils import create_directory, get_subdirectories, Extensions
+from utils.file_utils import create_directory, get_subdirectories, Extensions, clear_directory
 from utils.run_process_utils import run_in_subprocess
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
@@ -31,7 +31,7 @@ def main():
     args = parse_args()
     additional_arguments = AdditionalArguments.parse_additional_arguments(args.kwargs)
 
-    batch_paths = split(args.input, args.output, args.batch_size, predicate_to_filter_repositories(args.use_db))
+    batch_paths = split(args.input, args.output, args.batch_size, filter_repositories_predicate(args.use_db))
 
     batch_output_paths = []
     logs_dir = os.path.join(args.output, "logs")
@@ -64,8 +64,11 @@ def split(input: str, output: str, batch_size: int,
     dirs = list(filter(lambda path: item_condition(path), get_subdirectories(input)))
     batches = [dirs[i:i + batch_size] for i in range(0, len(dirs), batch_size)]
     batch_paths = []
+    batches_directory = os.path.join(output, "batches")
+    clear_directory(batches_directory)
+
     for index, batch in enumerate(batches):
-        batch_directory_path = os.path.join(output, f"batches/batch_{index}")
+        batch_directory_path = os.path.join(batches_directory, f"batch_{index}")
         batch_paths.append(batch_directory_path)
         create_directory(batch_directory_path)
         for directory in batch:
@@ -77,7 +80,7 @@ def split(input: str, output: str, batch_size: int,
     return batch_paths
 
 
-def predicate_to_filter_repositories(use_db: bool) -> Callable[[str], bool]:
+def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
     if not use_db:
         return lambda _: True
 
@@ -95,8 +98,10 @@ def parse_args() -> argparse.Namespace:
     analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
     parser.add_argument("data", help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300, type=int)
-    parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
     parser.add_argument("--use-db", help="Use database to analyse only updated repositories", action="store_true")
+    parser.add_argument("--start-from",
+                        help="Index of batch to start processing from (not for using with --use-db flag)",
+                        nargs='?', default=0, type=int)
     parser.add_argument(
         "--task-name",
         help="The plugin task name",
