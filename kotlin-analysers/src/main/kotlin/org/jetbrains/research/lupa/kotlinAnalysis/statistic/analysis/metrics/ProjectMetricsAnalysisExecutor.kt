@@ -3,6 +3,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.metrics
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractModules
@@ -17,9 +18,10 @@ import java.nio.file.Path
  */
 class ProjectMetricsAnalysisExecutor(
     outputDir: Path,
+    configData: Configurable? = null,
     filename: String = "project_metrics_data.csv"
 ) :
-    AnalysisExecutor() {
+    AnalysisExecutor(configData) {
 
     private val projectMetricsDataWriter = PrintWriterResourceManager(
         outputDir, filename,

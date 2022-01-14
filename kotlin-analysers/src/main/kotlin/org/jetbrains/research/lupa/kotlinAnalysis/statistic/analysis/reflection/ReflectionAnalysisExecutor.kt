@@ -3,6 +3,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.reflection
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
@@ -14,8 +15,9 @@ import java.nio.file.Path
  */
 class ReflectionAnalysisExecutor(
     outputDir: Path,
+    configData: Configurable? = null,
     reflectionFilename: String = "reflection_data.csv"
-) : AnalysisExecutor() {
+) : AnalysisExecutor(configData) {
 
     private val reflectionDataWriter = PrintWriterResourceManager(outputDir, reflectionFilename, "project")
     override val controlledResourceManagers: Set<ResourceManager> = setOf(reflectionDataWriter)

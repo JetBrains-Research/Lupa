@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
@@ -14,8 +15,12 @@ import java.nio.file.Path
  * Executor for import directives analysis which collects full qualified names of all import directives in projects
  * and stores them to file in [output directory][outputDir].
  */
-class ImportDirectivesAnalysisExecutor(outputDir: Path, filename: String = "import_directives_data.csv") :
-    AnalysisExecutor() {
+class ImportDirectivesAnalysisExecutor(
+    outputDir: Path,
+    configData: Configurable? = null,
+    filename: String = "import_directives_data.csv"
+) :
+    AnalysisExecutor(configData) {
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,

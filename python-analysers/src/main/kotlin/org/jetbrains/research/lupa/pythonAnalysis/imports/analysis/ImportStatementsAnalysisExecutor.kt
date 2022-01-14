@@ -5,6 +5,7 @@ import com.jetbrains.python.psi.PyFromImportStatement
 import com.jetbrains.python.psi.PyImportStatement
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
@@ -16,8 +17,12 @@ import java.nio.file.Path
  * Executor for import statements analysis which collects full qualified names of all import statements in projects
  * and stores them to file in [output directory][outputDir].
  */
-class ImportStatementsAnalysisExecutor(outputDir: Path, filename: String = "import_statements_data.csv") :
-    AnalysisExecutor() {
+class ImportStatementsAnalysisExecutor(
+    outputDir: Path,
+    configData: Configurable? = null,
+    filename: String = "import_statements_data.csv"
+) :
+    AnalysisExecutor(configData) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val dependenciesDataWriter = PrintWriterResourceManager(

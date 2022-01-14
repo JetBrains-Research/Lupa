@@ -11,6 +11,7 @@ import com.jetbrains.python.psi.types.PyUnionType
 import com.jetbrains.python.psi.types.TypeEvalContext
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
@@ -24,8 +25,11 @@ import java.nio.file.Path
  * and stores them to file in [output directory][outputDir].
  */
 class CallExpressionsAnalysisExecutor(
-    outputDir: Path, filename: String = "call_expressions_data.csv", private val venv: Path?,
-) : AnalysisExecutor() {
+    outputDir: Path,
+    configData: Configurable? = null,
+    filename: String = "call_expressions_data.csv",
+    private val venv: Path?,
+) : AnalysisExecutor(configData) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val expressionsDataWriter = PrintWriterResourceManager(

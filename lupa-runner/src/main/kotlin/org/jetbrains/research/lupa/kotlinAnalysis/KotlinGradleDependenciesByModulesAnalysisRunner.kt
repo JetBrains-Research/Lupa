@@ -12,7 +12,8 @@ object KotlinGradleDependenciesByModulesAnalysisRunner : BaseRunner<IORunnerArgs
     ("kotlin-gradle-dependencies-by-modules-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
         val dbConn = DatabaseConnection()
-        GradleDependenciesByModulesAnalysisExecutor(args.outputDir)
-            .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener, dbConn)
+        val configuration = KotlinTeamConfiguration(dbConn)
+        GradleDependenciesByModulesAnalysisExecutor(args.outputDir, configuration)
+            .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener)
     }
 }

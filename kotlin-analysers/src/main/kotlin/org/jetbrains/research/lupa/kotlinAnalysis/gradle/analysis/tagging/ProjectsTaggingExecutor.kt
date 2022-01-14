@@ -2,6 +2,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.tagging
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import java.nio.file.Path
@@ -10,8 +11,12 @@ import java.nio.file.Path
  * Executor for tagging projects from dataset as android/other/undefined.
  * Can be extended for more types of projects labeling.
  */
-class ProjectsTaggingExecutor(outputDir: Path, filename: String = "project_tags_data.csv") :
-    AnalysisExecutor() {
+class ProjectsTaggingExecutor(
+    outputDir: Path,
+    configData: Configurable? = null,
+    filename: String = "project_tags_data.csv"
+) :
+    AnalysisExecutor(configData) {
 
     private val projectsDataWriter = PrintWriterResourceManager(
         outputDir, filename,

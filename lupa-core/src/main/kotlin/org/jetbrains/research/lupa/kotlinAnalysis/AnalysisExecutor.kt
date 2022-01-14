@@ -10,7 +10,7 @@ import java.nio.file.Path
  * Abstract class for analysis executor which provides interface for execution analysis
  * for each project in given dataset.
  */
-abstract class AnalysisExecutor {
+abstract class AnalysisExecutor(protected open val configData: Configurable? = null) {
 
     /**
      * Set of resources which are under control of executor. Executor[AnalysisExecutor] runs their initialization
@@ -36,11 +36,10 @@ abstract class AnalysisExecutor {
         projectsDir: Path,
         repositoryOpener: (Path, (Project) -> Unit, ((GitRepository) -> Unit)?) -> Unit =
             RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-        db: DatabaseConnection? = null
     ) {
         init()
         try {
-            repositoryOpener(projectsDir, ::analyse) { repo -> db?.updateRepoDate(repo) }
+            repositoryOpener(projectsDir, ::analyse) { repo -> configData?.postExecuteAction(repo) }
         } finally {
             close()
         }
@@ -48,11 +47,24 @@ abstract class AnalysisExecutor {
 }
 
 /** Class for simultaneous execution of multiple analysis for each project in given dataset. */
-class MultipleAnalysisExecutor(private val analysisExecutors: List<AnalysisExecutor>) : AnalysisExecutor() {
+class MultipleAnalysisExecutor(
+    private val analysisExecutors: List<AnalysisExecutor>,
+    configData: Configurable? = null,
+) : AnalysisExecutor(configData) {
 
     override fun analyse(project: Project) {
         analysisExecutors.forEach { it.analyse(project) }
     }
 
     override val controlledResourceManagers = analysisExecutors.flatMap { it.controlledResourceManagers }.toSet()
+}
+
+data class KotlinTeamConfiguration(val connection: DatabaseConnection? = null) : Configurable {
+    override fun postExecuteAction(repo: GitRepository) {
+        connection?.updateRepoDate(repo)
+    }
+}
+
+interface Configurable {
+    fun postExecuteAction(repo: GitRepository) {}
 }
