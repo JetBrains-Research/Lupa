@@ -23,7 +23,7 @@ open class ExtractGradlePluginsTest :
     @Test
     fun testGradlePluginsExtraction() {
         assertOutEqualsToGolden { inFile, outFile ->
-            val analysisExecutor = GradlePluginsAnalysisExecutor(outFile.parentFile.toPath(), outFile.name)
+            val analysisExecutor = GradlePluginsAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
             analysisExecutor.execute(inFile.toPath())
         }
     }

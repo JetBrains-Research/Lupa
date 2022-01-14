@@ -23,7 +23,8 @@ open class ExtractGradleDependenciesTest :
     @Test
     fun testGradleDependenciesExtraction() {
         assertOutEqualsToGolden { inFile, outFile ->
-            val analysisExecutor = GradleDependenciesAnalysisExecutor(outFile.parentFile.toPath(), outFile.name)
+            val analysisExecutor =
+                GradleDependenciesAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
             analysisExecutor.execute(inFile.toPath())
         }
     }

@@ -23,7 +23,8 @@ open class ImportDirectiveAnalysisExecutorTest :
     @Test
     fun testImportDirectiveFqNamesInProject() {
         assertOutEqualsToGolden { inFile, outFile ->
-            val analysisExecutor = ImportDirectivesAnalysisExecutor(outFile.parentFile.toPath(), outFile.name)
+            val analysisExecutor =
+                ImportDirectivesAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
             analysisExecutor.execute(inFile.toPath())
         }
     }
