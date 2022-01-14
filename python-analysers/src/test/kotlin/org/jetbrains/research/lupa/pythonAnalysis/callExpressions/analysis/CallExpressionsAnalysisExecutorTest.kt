@@ -52,7 +52,7 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     fun testCallExpressionsFqNamesInProject() {
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
-                CallExpressionsAnalysisExecutor(outFile.parentFile.toPath(), outFile.name, venv = null)
+                CallExpressionsAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name, venv = null)
 
             analysisExecutor.controlledResourceManagers.map { it.init() }
 
