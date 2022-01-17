@@ -2,7 +2,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
-import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import java.nio.file.Path
@@ -13,10 +13,10 @@ import java.nio.file.Path
  */
 class GradlePropertiesAnalysisExecutor(
     outputDir: Path,
-    configData: Configurable? = null,
+    executorHelper: ExecutorHelper? = null,
     filename: String = "gradle_properties_data.csv"
 ) :
-    AnalysisExecutor(configData) {
+    AnalysisExecutor(executorHelper) {
 
     private val gradlePropertiesDataWriter = PrintWriterResourceManager(
         outputDir, filename,

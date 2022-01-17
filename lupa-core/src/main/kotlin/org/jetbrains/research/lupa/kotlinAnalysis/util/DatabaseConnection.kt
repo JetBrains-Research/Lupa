@@ -5,16 +5,17 @@ import org.postgresql.util.PSQLException
 import java.io.FileInputStream
 import java.sql.Connection
 import java.sql.DriverManager
-import java.time.LocalDate
 import java.util.*
 
-class DatabaseConnection {
-    private var conn: Connection? = null
-    private val logger: Logger = Logger.getInstance(DatabaseConnection::class.java)
+abstract class DatabaseConnectionBase {
+    protected var conn: Connection? = null
+    protected val logger: Logger = Logger.getInstance(DatabaseConnectionBase::class.java)
+}
 
+open class PostgresDatabaseConnection(configEnv: String) : DatabaseConnectionBase() {
     init {
         val props = Properties()
-        val propertiesFilePath = System.getenv("POSTGRES_KOTLIN_DB_CONFIG")
+        val propertiesFilePath = System.getenv(configEnv)
 
         propertiesFilePath?.let {
             props.load(FileInputStream(propertiesFilePath))
@@ -30,35 +31,4 @@ class DatabaseConnection {
             }
         }
     }
-
-    fun updateRepoDate(repo: GitRepository) {
-        conn ?: return
-
-        repo.username?.let { repo.repositoryName?.let { updateRepoDate(repo.username, repo.repositoryName) } }
-    }
-
-    fun updateRepoDate(username: String, repoName: String) {
-        conn ?: return
-
-        val currentDate = LocalDate.now()
-        val query = conn!!.prepareStatement(
-            """
-                update ${RepositoriesTable.TABLE_NAME.value}
-                set ${RepositoriesTable.ANALYSIS_DATE_COL.value} = ?
-                where ${RepositoriesTable.USERNAME_COL.value} = ?
-                and ${RepositoriesTable.REPO_NAME_COL.value} = ?"""
-        )
-        query.setDate(1, java.sql.Date.valueOf(currentDate))
-        query.setString(2, username)
-        query.setString(3, repoName)
-        query.executeUpdate()
-    }
-}
-
-enum class RepositoriesTable(val value: String) {
-    TABLE_NAME("kotlin_repositories_updates"),
-    USERNAME_COL("username"),
-    REPO_NAME_COL("repo_name"),
-    ANALYSIS_DATE_COL("last_analysis_date"),
-    PULL_DATE_COL("last_pull_date"),
 }

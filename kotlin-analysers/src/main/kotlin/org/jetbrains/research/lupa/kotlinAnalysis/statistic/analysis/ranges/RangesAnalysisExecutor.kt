@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
-import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
@@ -22,10 +22,10 @@ import java.util.*
  */
 class RangesAnalysisExecutor(
     outputDir: Path,
-    configData: Configurable? = null,
+    executorHelper: ExecutorHelper? = null,
     rangesFilename: String = "ranges_data.csv",
     otherContextFilename: String = "other_context.csv",
-) : AnalysisExecutor(configData) {
+) : AnalysisExecutor(executorHelper) {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
 

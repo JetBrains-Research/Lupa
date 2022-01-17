@@ -1,7 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.research.lupa.kotlinAnalysis.util.DatabaseConnection
 import org.jetbrains.research.lupa.kotlinAnalysis.util.GitRepository
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
@@ -9,8 +8,9 @@ import java.nio.file.Path
 /**
  * Abstract class for analysis executor which provides interface for execution analysis
  * for each project in given dataset.
+ * @property executorHelper contains post-execution action to perform after project analysis
  */
-abstract class AnalysisExecutor(protected open val configData: Configurable? = null) {
+abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelper? = null) {
 
     /**
      * Set of resources which are under control of executor. Executor[AnalysisExecutor] runs their initialization
@@ -39,7 +39,7 @@ abstract class AnalysisExecutor(protected open val configData: Configurable? = n
     ) {
         init()
         try {
-            repositoryOpener(projectsDir, ::analyse) { repo -> configData?.postExecuteAction(repo) }
+            repositoryOpener(projectsDir, ::analyse) { repo -> executorHelper?.postExecuteAction(repo) }
         } finally {
             close()
         }
@@ -49,8 +49,8 @@ abstract class AnalysisExecutor(protected open val configData: Configurable? = n
 /** Class for simultaneous execution of multiple analysis for each project in given dataset. */
 class MultipleAnalysisExecutor(
     private val analysisExecutors: List<AnalysisExecutor>,
-    configData: Configurable? = null,
-) : AnalysisExecutor(configData) {
+    executorHelper: ExecutorHelper? = null,
+) : AnalysisExecutor(executorHelper) {
 
     override fun analyse(project: Project) {
         analysisExecutors.forEach { it.analyse(project) }
@@ -59,12 +59,6 @@ class MultipleAnalysisExecutor(
     override val controlledResourceManagers = analysisExecutors.flatMap { it.controlledResourceManagers }.toSet()
 }
 
-data class KotlinTeamConfiguration(val connection: DatabaseConnection? = null) : Configurable {
-    override fun postExecuteAction(repo: GitRepository) {
-        connection?.updateRepoDate(repo)
-    }
-}
-
-interface Configurable {
+interface ExecutorHelper {
     fun postExecuteAction(repo: GitRepository) {}
 }

@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
-import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
@@ -17,10 +17,10 @@ import java.nio.file.Path
  */
 class ImportDirectivesAnalysisExecutor(
     outputDir: Path,
-    configData: Configurable? = null,
+    executorHelper: ExecutorHelper? = null,
     filename: String = "import_directives_data.csv"
 ) :
-    AnalysisExecutor(configData) {
+    AnalysisExecutor(executorHelper) {
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,

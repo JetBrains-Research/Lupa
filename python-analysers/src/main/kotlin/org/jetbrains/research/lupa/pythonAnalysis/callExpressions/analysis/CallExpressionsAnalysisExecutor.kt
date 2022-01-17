@@ -11,7 +11,7 @@ import com.jetbrains.python.psi.types.PyUnionType
 import com.jetbrains.python.psi.types.TypeEvalContext
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
-import org.jetbrains.research.lupa.kotlinAnalysis.Configurable
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
@@ -26,10 +26,10 @@ import java.nio.file.Path
  */
 class CallExpressionsAnalysisExecutor(
     outputDir: Path,
-    configData: Configurable? = null,
+    executorHelper: ExecutorHelper? = null,
     filename: String = "call_expressions_data.csv",
     private val venv: Path?,
-) : AnalysisExecutor(configData) {
+) : AnalysisExecutor(executorHelper) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val expressionsDataWriter = PrintWriterResourceManager(

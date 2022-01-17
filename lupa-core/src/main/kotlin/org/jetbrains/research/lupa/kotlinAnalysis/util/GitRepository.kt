@@ -12,7 +12,7 @@ class GitRepository(val path: Path, separator: String = "#") {
     init {
         val splitPath = path.fileName.name.split(separator)
         if (splitPath.size != 2) {
-            logger.info("Couldn't parse username and repository name")
+            logger.warn("Couldn't parse username and repository name")
             username = null
             repositoryName = null
         } else {
