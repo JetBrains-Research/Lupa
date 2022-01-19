@@ -59,6 +59,7 @@ class MultipleAnalysisExecutor(
     override val controlledResourceManagers = analysisExecutors.flatMap { it.controlledResourceManagers }.toSet()
 }
 
+/** Classes that inherit from this interface implement action to perform after repository analysis. */
 interface ExecutorHelper {
     fun postExecuteAction(repo: GitRepository) {}
 }

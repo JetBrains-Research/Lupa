@@ -7,11 +7,20 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.util.*
 
+/**
+ * Classes that extend this abstract class are used for database connection.
+ */
 abstract class DatabaseConnectionBase {
     protected var conn: Connection? = null
     protected val logger: Logger = Logger.getInstance(DatabaseConnectionBase::class.java)
 }
 
+/**
+ * This class is used for Postgres database connection.
+ *
+ * @param configEnv name of environmental variable containing path to the database config file.
+ * This file should contain host and database name, user and password.
+ */
 open class PostgresDatabaseConnection(configEnv: String) : DatabaseConnectionBase() {
     init {
         val props = Properties()

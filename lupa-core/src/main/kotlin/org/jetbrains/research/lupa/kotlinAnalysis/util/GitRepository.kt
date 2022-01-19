@@ -4,6 +4,13 @@ import com.intellij.openapi.diagnostic.Logger
 import java.nio.file.Path
 import kotlin.io.path.name
 
+/**
+ * Class used for storing git repository name properly.
+ *
+ * @property path path to directory containing repository.
+ * @param separator the repository directory is supposed to be named by concatenating the username,
+ * separator, and repository name.
+ */
 class GitRepository(val path: Path, separator: String = "#") {
     val username: String?
     val repositoryName: String?
