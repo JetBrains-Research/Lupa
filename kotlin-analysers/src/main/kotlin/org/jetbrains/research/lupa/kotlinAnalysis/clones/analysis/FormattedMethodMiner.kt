@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.deleteComments
@@ -14,7 +15,7 @@ import java.nio.file.Path
  * Extracts all methods from projects in the dataset and saves methods in Clone Detection Tool
  * ([SourcererCC](https://github.com/JetBrains-Research/SourcererCC/)) format.
  */
-class FormattedMethodMiner(outputDir: Path) : AnalysisExecutor() {
+class FormattedMethodMiner(outputDir: Path, executorHelper: ExecutorHelper? = null) : AnalysisExecutor(executorHelper) {
 
     private val methodDataWriter = PrintWriterResourceManager(outputDir, "method_data.txt")
     private val indexer = IndexBuilder(outputDir)

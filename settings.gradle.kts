@@ -25,7 +25,7 @@ sourceControl {
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
         maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
     }
 }

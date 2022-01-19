@@ -7,11 +7,13 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.getRelativePathToKtElement
 import java.nio.file.Path
+import java.util.*
 
 /**
  * Executor for ranges analysis which collects range and context types of all ranges usages in projects
@@ -20,9 +22,10 @@ import java.nio.file.Path
  */
 class RangesAnalysisExecutor(
     outputDir: Path,
+    executorHelper: ExecutorHelper? = null,
     rangesFilename: String = "ranges_data.csv",
     otherContextFilename: String = "other_context.csv",
-) : AnalysisExecutor() {
+) : AnalysisExecutor(executorHelper) {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
 
@@ -102,7 +105,7 @@ class RangesAnalysisExecutor(
 
     private fun getRangesHeader(): String {
         val rangesHeader = rangeAndContextPairs
-            .joinToString(separator = "\t") { "${it.first},${it.second}".toLowerCase() }
+            .joinToString(separator = "\t") { "${it.first},${it.second}".lowercase(Locale.getDefault()) }
         return "project\t$rangesHeader"
     }
 

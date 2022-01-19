@@ -2,6 +2,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.settingsGradle.modules.GradleDependenciesCollector
@@ -16,9 +17,10 @@ import java.nio.file.Path
  */
 class GradleDependenciesByModulesAnalysisExecutor(
     outputDir: Path,
+    executorHelper: ExecutorHelper? = null,
     filename: String = "gradle_dependencies_by_modules_data.csv"
 ) :
-    AnalysisExecutor() {
+    AnalysisExecutor(executorHelper) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -55,8 +57,12 @@ class GradleDependenciesByModulesAnalysisExecutor(
  * dependencies in all gradle files to csv file with columns:
  * "project_name", "group_id", "artifact_id", "config".
  */
-class GradleDependenciesAnalysisExecutor(outputDir: Path, filename: String = "gradle_dependencies_data.csv") :
-    AnalysisExecutor() {
+class GradleDependenciesAnalysisExecutor(
+    outputDir: Path,
+    executorHelper: ExecutorHelper? = null,
+    filename: String = "gradle_dependencies_data.csv"
+) :
+    AnalysisExecutor(executorHelper) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,

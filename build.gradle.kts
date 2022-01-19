@@ -24,7 +24,7 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
+//        jcenter()
     }
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"

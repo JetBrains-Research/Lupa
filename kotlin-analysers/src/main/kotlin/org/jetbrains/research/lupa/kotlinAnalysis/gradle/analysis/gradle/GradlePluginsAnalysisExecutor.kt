@@ -2,6 +2,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import java.nio.file.Path
@@ -10,8 +11,12 @@ import java.nio.file.Path
  * Executor for gradle plugins analysis which collects plugin id of all plugins in all gradle files to csv file with
  * columns: "project_name", "plugin_id".
  */
-class GradlePluginsAnalysisExecutor(outputDir: Path, filename: String = "gradle_plugins_data.csv") :
-    AnalysisExecutor() {
+class GradlePluginsAnalysisExecutor(
+    outputDir: Path,
+    executorHelper: ExecutorHelper? = null,
+    filename: String = "gradle_plugins_data.csv"
+) :
+    AnalysisExecutor(executorHelper) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,

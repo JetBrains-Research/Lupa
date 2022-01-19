@@ -11,13 +11,16 @@ import argparse
 import logging
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Callable
 import time
 
+from data_collection.db_connect import DatabaseConn
+from data_collection.repositories_table import RepositoriesTable
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 from plugin_runner.merge_data import merge
-from utils import get_subdirectories, create_directory, Extensions, run_in_subprocess
+from utils.file_utils import create_directory, get_subdirectories, Extensions, clear_directory
+from utils.run_process_utils import run_in_subprocess
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
 
@@ -27,7 +30,8 @@ def main():
 
     args = parse_args()
     additional_arguments = AdditionalArguments.parse_additional_arguments(args.kwargs)
-    batch_paths = split(args.input, args.output, args.batch_size)
+
+    batch_paths = split(args.input, args.output, args.batch_size, filter_repositories_predicate(args.use_db))
 
     batch_output_paths = []
     logs_dir = os.path.join(args.output, "logs")
@@ -38,8 +42,8 @@ def main():
         batch_output_path = os.path.join(args.output, f"output/batch_{index}")
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
-        log_file = os.path.join(PROJECT_DIR, os.path.join(logs_dir, f"log_batch_{index}.{Extensions.TXT}"))
-        with open(log_file, "w+"):
+        log_file_path = os.path.join(PROJECT_DIR, os.path.join(logs_dir, f"log_batch_{index}.{Extensions.TXT}"))
+        with open(log_file_path, "w+") as log_file:
             command = [
                 "./gradlew",
                 f":lupa-runner:{args.task_name}",
@@ -48,19 +52,23 @@ def main():
                 f"-Poutput={batch_output_path}",
             ]
             command.extend(additional_arguments)
-            run_in_subprocess(command, PROJECT_DIR)
+            run_in_subprocess(command, PROJECT_DIR, stdout_file=log_file, stderr_file=log_file)
         end_time = time.time()
         logging.info(f"Finished batch {index} processing in {end_time - start_time}s")
 
     merge(batch_output_paths, args.output, args.data)
 
 
-def split(input: str, output: str, batch_size: int) -> List[str]:
-    dirs = get_subdirectories(input)
-    batches = [dirs[i: i + batch_size] for i in range(0, len(dirs), batch_size)]
+def split(input: str, output: str, batch_size: int,
+          item_condition: Callable[[str], bool] = lambda name: True) -> List[str]:
+    dirs = list(filter(lambda path: item_condition(path), get_subdirectories(input)))
+    batches = [dirs[i:i + batch_size] for i in range(0, len(dirs), batch_size)]
     batch_paths = []
+    batches_directory = os.path.join(output, "batches")
+    clear_directory(batches_directory)
+
     for index, batch in enumerate(batches):
-        batch_directory_path = os.path.join(output, f"batches/batch_{index}")
+        batch_directory_path = os.path.join(batches_directory, f"batch_{index}")
         batch_paths.append(batch_directory_path)
         create_directory(batch_directory_path)
         for directory in batch:
@@ -72,6 +80,17 @@ def split(input: str, output: str, batch_size: int) -> List[str]:
     return batch_paths
 
 
+def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
+    if not use_db:
+        return lambda _: True
+
+    db_conn = DatabaseConn()
+    table = RepositoriesTable(db_conn)
+    repositories_to_analyse = table.select_repositories_to_analyse()
+    repositories_to_analyse_names = list(map(lambda repo: f"{repo[0]}#{repo[1]}", repositories_to_analyse))
+    return lambda path: os.path.basename(path) in repositories_to_analyse_names
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("input", help="Path to the dataset containing kotlin projects")
@@ -79,7 +98,10 @@ def parse_args() -> argparse.Namespace:
     analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
     parser.add_argument("data", help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
     parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300, type=int)
-    parser.add_argument("--start-from", help="Index of batch to start processing from", nargs='?', default=0, type=int)
+    parser.add_argument("--use-db", help="Use database to analyse only updated repositories", action="store_true")
+    parser.add_argument("--start-from",
+                        help="Index of batch to start processing from (not for using with --use-db flag)",
+                        nargs='?', default=0, type=int)
     parser.add_argument(
         "--task-name",
         help="The plugin task name",

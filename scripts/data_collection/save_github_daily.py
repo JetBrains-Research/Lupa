@@ -17,7 +17,7 @@ import schedule
 import time
 from datetime import datetime
 
-from utils import create_directory, Extensions
+from utils.file_utils import create_directory, Extensions
 from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
 
 TIME = "17:00"
