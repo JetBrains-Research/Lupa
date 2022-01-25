@@ -6,6 +6,7 @@ import org.jetbrains.research.lupa.kotlinAnalysis.util.*
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDate
+import com.intellij.openapi.diagnostic.Logger
 import kotlin.io.path.name
 
 /**
@@ -14,6 +15,7 @@ import kotlin.io.path.name
  * @property executorHelper contains post-execution action to perform after project analysis
  */
 abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelper? = null) {
+    open val repositoryOpener = RepositoryOpenerUtil.Companion::standardRepositoryOpener
 
     /**
      * Set of resources which are under control of executor. Executor[AnalysisExecutor] runs their initialization
@@ -26,6 +28,8 @@ abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelpe
      */
     open val requiredFileExtensions: Set<FileExtension> = emptySet()
 
+    val logger: Logger = Logger.getInstance(AnalysisExecutor::class.java)
+
     /** Executes the analysis of the given [project][Project]. */
     abstract fun analyse(project: Project)
 
@@ -34,7 +38,6 @@ abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelpe
         analyse(project)
         return true
     }
-
 
     /** Runs before analysis execution process. Contains all controlled resources initialization. */
     fun init(relativePath: String) {
@@ -46,22 +49,34 @@ abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelpe
         controlledResourceManagers.forEach { it.close() }
     }
 
-    /** Executes analysis for all projects in [given directory][projectsDir]. */
-    fun execute(
-        projectsDir: Path,
-        repositoryOpener: (Path, (Project) -> Unit, ((GitRepository) -> Unit)?) -> Unit =
-            RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-    ) {
-        getSubdirectories(projectsDir).forEachIndexed { projectIndex, projectPath ->
-            println("start analysing $projectPath")
-            init(Paths.get(LocalDate.now().toString(), projectPath.name).toString())
-            try {
-                repositoryOpener(projectPath, ::analyseWithResult) { repo -> executorHelper?.postExecuteAction(repo) }
-            } finally {
-                close()
+    /** Executes analysis of given project.
+     *  Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     */
+    fun execute(projectPath: Path): Boolean {
+        val isSuccessful: Boolean
+        init(Paths.get(LocalDate.now().toString(), projectPath.name).toString())
+        try {
+            isSuccessful = repositoryOpener(projectPath, ::analyseWithResult)
+            if (isSuccessful) {
+                executorHelper?.postExecuteAction(GitRepository(projectPath))
             }
-            println("finish analysing $projectPath")
+        } finally {
+            close()
         }
+        return isSuccessful
+    }
+
+    /** Executes analysis for all projects in [given directory][projectsDir]. */
+    fun executeAllProjects(projectsDir: Path): Boolean {
+        return getSubdirectories(projectsDir).mapIndexed { projectIndex, projectPath ->
+            logger.info("Start analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}")
+            val isSuccessful = execute(projectPath)
+            logger.info(
+                "Finish analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}. " +
+                        "Success: $isSuccessful"
+            )
+            isSuccessful
+        }.all { it }
     }
 }
 
@@ -90,14 +105,33 @@ class MultipleAnalysisOrchestrator(
     val executorHelper: ExecutorHelper? = null
 ) {
 
+    val logger: Logger = Logger.getInstance(MultipleAnalysisOrchestrator::class.java)
+
     fun execute(projectsDir: Path, outputDir: Path) {
         val tempFolderPath = Paths.get(outputDir.toString(), "tmp")
+        tempFolderPath.delete(recursively = true)
 
-        analysisExecutors.groupBy { it.requiredFileExtensions }.forEach { (extensions, analyzers) ->
-            symbolicCopyOnlyRequiredExtensions(fromDirectory = projectsDir, toDirectory = tempFolderPath, extensions)
-            MultipleAnalysisExecutor(analyzers, executorHelper).execute(tempFolderPath)
-            tempFolderPath.delete(true)
+        val groupedByAnalyzers = analysisExecutors.groupBy { it.requiredFileExtensions }
+
+        getSubdirectories(projectsDir).forEachIndexed() { projectIndex, projectPath ->
+            val projectTmpFolderPath = tempFolderPath.resolve(projectPath.fileName)
+            val projectSuccessfullyAnalyzed = groupedByAnalyzers.map { (extensions, analyzers) ->
+                symbolicCopyOnlyRequiredExtensions(
+                    fromDirectory = projectPath,
+                    toDirectory = projectTmpFolderPath,
+                    extensions
+                )
+                val isSuccessful = MultipleAnalysisExecutor(analyzers).execute(projectTmpFolderPath)
+                projectTmpFolderPath.delete(true)
+                isSuccessful
+            }.all { it }
+
+            logger.info("Project ${projectPath.fileName} (index=$projectIndex) was analyzed successfully: $projectSuccessfullyAnalyzed")
+            if (projectSuccessfullyAnalyzed) {
+                executorHelper?.postExecuteAction(GitRepository(projectPath))
+            }
         }
+        tempFolderPath.delete()
     }
 }
 
