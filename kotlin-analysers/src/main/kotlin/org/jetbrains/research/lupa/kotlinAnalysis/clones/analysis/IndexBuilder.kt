@@ -36,9 +36,9 @@ class IndexBuilder(outputDir: Path) : ResourceManager {
         return lastMethodId++
     }
 
-    override fun init() {
-        projectIndexWriter.init()
-        methodIndexWriter.init()
+    override fun init(relativePath: String) {
+        projectIndexWriter.init(relativePath)
+        methodIndexWriter.init(relativePath)
     }
 
     override fun close() {

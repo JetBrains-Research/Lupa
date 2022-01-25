@@ -22,23 +22,24 @@ class RepositoryOpenerUtil {
          * [standardRepositoryOpener].
          */
         fun openReloadRepositoryOpener(
-            datasetPath: Path,
+            repositoryRoot: Path,
             action: (Project) -> Unit,
             repositoryPostAction: ((GitRepository) -> Unit)? = null
         ) {
-            var projectIndex = 0
-            getSubdirectories(datasetPath).forEach { repositoryRoot ->
-                if (getKotlinJavaRepositoryOpener().openRepository(
-                        repositoryRoot.toFile()
-                    ) { project ->
-                        runAction(project, projectIndex, action)
-                        projectIndex += 1
-                    }
-                ) {
-                    println("All projects from $repositoryRoot were opened successfully")
-                    repositoryPostAction?.let { it(GitRepository(repositoryRoot)) }
+//            var projectIndex = 0
+//            getSubdirectories(datasetPath).forEach { repositoryRoot ->
+            if (getKotlinJavaRepositoryOpener().openRepository(
+                    repositoryRoot.toFile()
+                ) { project ->
+                    action(project)
+//                        runAction(project, projectIndex, action)
+//                        projectIndex += 1
                 }
+            ) {
+                println("All projects from $repositoryRoot were opened successfully")
+                repositoryPostAction?.let { it(GitRepository(repositoryRoot)) }
             }
+//        }
         }
 
         /**
@@ -48,36 +49,37 @@ class RepositoryOpenerUtil {
          * This opening method do not provide right project modules structure, but is fast.
          */
         fun standardRepositoryOpener(
-            path: Path,
+            projectPath: Path,
             action: (Project) -> Unit,
             repositoryPostAction: ((GitRepository) -> Unit)? = null
         ) {
-            getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
-                ApplicationManager.getApplication().invokeAndWait {
-                    ProjectManagerEx.getInstanceEx().openProject(
-                        projectPath,
-                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
-                    )?.let { project ->
-                        try {
-                            runAction(project, projectIndex, action)
-                            repositoryPostAction?.let { it(GitRepository(projectPath)) }
-                        } catch (ex: Exception) {
-                            logger.error(ex)
-                        } finally {
-                            ApplicationManager.getApplication().invokeAndWait {
-                                val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
-                                logger.info("Project ${project.name} is closed = $closeStatus")
-                            }
+//            getSubdirectories(path).forEachIndexed { projectIndex, projectPath ->
+            ApplicationManager.getApplication().invokeAndWait {
+                ProjectManagerEx.getInstanceEx().openProject(
+                    projectPath,
+                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                )?.let { project ->
+                    try {
+//                            runAction(project, projectIndex, action)
+                        action(project)
+                        repositoryPostAction?.let { it(GitRepository(projectPath)) }
+                    } catch (ex: Exception) {
+                        logger.error(ex)
+                    } finally {
+                        ApplicationManager.getApplication().invokeAndWait {
+                            val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                            logger.info("Project ${project.name} is closed = $closeStatus")
                         }
                     }
                 }
+//                          }
             }
         }
 
-        private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
-            println("Start action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
-            action(project)
-            println("Finish action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
-        }
+//        private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
+//            println("Start action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
+//            action(project)
+//            println("Finish action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
+//        }
     }
 }
