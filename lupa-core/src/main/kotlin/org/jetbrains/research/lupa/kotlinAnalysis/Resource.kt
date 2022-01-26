@@ -7,7 +7,7 @@ import java.nio.file.Paths
 
 /** Interface for any resource, which must been initialized before and closed after use. **/
 interface ResourceManager : AutoCloseable {
-    fun init(relativePath: String? = null)
+    fun init(relativePath: Path? = null)
 }
 
 /**
@@ -21,9 +21,9 @@ class PrintWriterResourceManager(
 ) : ResourceManager {
     lateinit var writer: PrintWriter
 
-    override fun init(relativePath: String?) {
+    override fun init(relativePath: Path?) {
         val directoryPath: Path = if (relativePath != null) {
-            Paths.get(directory.toString(), relativePath)
+            Paths.get(directory.toString(), relativePath.toString())
         } else {
             directory
         }

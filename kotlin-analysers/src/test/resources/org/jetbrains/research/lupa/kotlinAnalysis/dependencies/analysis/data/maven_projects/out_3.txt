@@ -1,5 +1,5 @@
 project_name,import
-sample_project,kotlinx.coroutines.delay
-sample_project,kotlinx.coroutines.delay
-sample_project,kotlinx.coroutines.delay
-sample_project,org.apache.commons.math3.random.JDKRandomGenerator
+in_3_dataset_maven_multi_module,kotlinx.coroutines.delay
+in_3_dataset_maven_multi_module,kotlinx.coroutines.delay
+in_3_dataset_maven_multi_module,kotlinx.coroutines.delay
+in_3_dataset_maven_multi_module,org.apache.commons.math3.random.JDKRandomGenerator

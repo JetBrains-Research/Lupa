@@ -1,2 +1,2 @@
 project_name,tag
-sample_project,android
+in_2_android_project,android

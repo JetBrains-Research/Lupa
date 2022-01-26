@@ -25,7 +25,7 @@ open class ExtractGradleDependenciesTest :
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
                 GradleDependenciesAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
-            analysisExecutor.executeAllProjects(inFile.toPath())
+            analysisExecutor.execute(inFile.toPath()) { null }
         }
     }
 }
