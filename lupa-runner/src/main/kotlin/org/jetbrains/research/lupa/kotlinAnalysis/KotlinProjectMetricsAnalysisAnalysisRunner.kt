@@ -1,7 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.metrics.ProjectMetricsAnalysisExecutor
-import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
@@ -10,7 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinProjectMetricsAnalysisAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-project-metrics-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ProjectMetricsAnalysisExecutor(args.outputDir)
-            .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener)
+        ProjectMetricsAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
     }
 }

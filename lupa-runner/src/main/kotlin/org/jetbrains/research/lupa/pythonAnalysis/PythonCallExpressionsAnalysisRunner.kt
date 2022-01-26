@@ -11,6 +11,6 @@ object PythonCallExpressionsAnalysisRunner :
         IORunnerArgsWithVenvParser
     ) {
     override fun run(args: IORunnerArgsWithVenv) {
-        CallExpressionsAnalysisExecutor(args.outputDir, venv = args.venvDir).execute(args.inputDir)
+        CallExpressionsAnalysisExecutor(args.outputDir, venv = args.venvDir).executeAllProjects(args.inputDir)
     }
 }

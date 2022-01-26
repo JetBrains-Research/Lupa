@@ -65,11 +65,5 @@ class RepositoryOpenerUtil {
             }
             return isSuccessful
         }
-
-//        private fun runAction(project: Project, projectIndex: Int, action: (Project) -> Unit) {
-//            println("Start action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
-//            action(project)
-//            println("Finish action on project ${project.name} index=$projectIndex time=${System.currentTimeMillis()}")
-//        }
     }
 }

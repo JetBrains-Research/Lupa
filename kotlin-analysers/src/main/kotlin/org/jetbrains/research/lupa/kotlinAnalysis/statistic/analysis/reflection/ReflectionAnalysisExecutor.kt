@@ -7,6 +7,9 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
 import java.nio.file.Path
 
 /**
@@ -16,11 +19,14 @@ import java.nio.file.Path
 class ReflectionAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     reflectionFilename: String = "reflection_data.csv"
-) : AnalysisExecutor(executorHelper) {
+) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val reflectionDataWriter = PrintWriterResourceManager(outputDir, reflectionFilename, "project")
     override val controlledResourceManagers: Set<ResourceManager> = setOf(reflectionDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         val binaryExpressionReflections = project.extractKtElementsOfType(KtNameReferenceExpression::class.java)

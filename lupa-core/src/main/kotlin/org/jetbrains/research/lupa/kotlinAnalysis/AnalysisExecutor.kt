@@ -1,21 +1,23 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import com.intellij.util.io.delete
 import org.jetbrains.research.lupa.kotlinAnalysis.util.*
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDate
-import com.intellij.openapi.diagnostic.Logger
 import kotlin.io.path.name
 
 /**
  * Abstract class for analysis executor which provides interface for execution analysis
- * for each project in given dataset.
- * @property executorHelper contains post-execution action to perform after project analysis
+ * for each project in given dataset or analysis of project itself.
+ * @property executorHelper contains post-execution action to perform after project analysis.
+ * @property repositoryOpener opener of projects.
  */
-abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelper? = null) {
-    open val repositoryOpener = RepositoryOpenerUtil.Companion::standardRepositoryOpener
+abstract class AnalysisExecutor(
+    protected open val executorHelper: ExecutorHelper? = null,
+    protected open val repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener
+) {
 
     /**
      * Set of resources which are under control of executor. Executor[AnalysisExecutor] runs their initialization
@@ -27,8 +29,6 @@ abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelpe
      * Set of extensions that are required for analysis execution. Empty set is used for the whole project analysis.
      */
     open val requiredFileExtensions: Set<FileExtension> = emptySet()
-
-    val logger: Logger = Logger.getInstance(AnalysisExecutor::class.java)
 
     /** Executes the analysis of the given [project][Project]. */
     abstract fun analyse(project: Project)
@@ -69,22 +69,22 @@ abstract class AnalysisExecutor(protected open val executorHelper: ExecutorHelpe
     /** Executes analysis for all projects in [given directory][projectsDir]. */
     fun executeAllProjects(projectsDir: Path): Boolean {
         return getSubdirectories(projectsDir).mapIndexed { projectIndex, projectPath ->
-            logger.info("Start analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}")
+            println("Start analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}")
             val isSuccessful = execute(projectPath)
-            logger.info(
-                "Finish analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}. " +
-                        "Success: $isSuccessful"
-            )
+            println("Finish analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}. " +
+                        "Success: $isSuccessful")
             isSuccessful
         }.all { it }
     }
 }
 
-/** Class for simultaneous execution of multiple analysis for each project in given dataset. */
+/** Class for simultaneous execution of multiple analysis for each project in given dataset
+ * or analysis of project itself. */
 class MultipleAnalysisExecutor(
     private val analysisExecutors: List<AnalysisExecutor>,
     executorHelper: ExecutorHelper? = null,
-) : AnalysisExecutor(executorHelper) {
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean = RepositoryOpenerUtil.Companion::standardRepositoryOpener
+) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     override fun analyse(project: Project) {
         analysisExecutors.forEach { it.analyse(project) }
@@ -98,43 +98,6 @@ class MultipleAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> =
         analysisExecutors.flatMap { it.requiredFileExtensions }.toSet()
 }
-
-
-class MultipleAnalysisOrchestrator(
-    private val analysisExecutors: List<AnalysisExecutor>,
-    val executorHelper: ExecutorHelper? = null
-) {
-
-    val logger: Logger = Logger.getInstance(MultipleAnalysisOrchestrator::class.java)
-
-    fun execute(projectsDir: Path, outputDir: Path) {
-        val tempFolderPath = Paths.get(outputDir.toString(), "tmp")
-        tempFolderPath.delete(recursively = true)
-
-        val groupedByAnalyzers = analysisExecutors.groupBy { it.requiredFileExtensions }
-
-        getSubdirectories(projectsDir).forEachIndexed() { projectIndex, projectPath ->
-            val projectTmpFolderPath = tempFolderPath.resolve(projectPath.fileName)
-            val projectSuccessfullyAnalyzed = groupedByAnalyzers.map { (extensions, analyzers) ->
-                symbolicCopyOnlyRequiredExtensions(
-                    fromDirectory = projectPath,
-                    toDirectory = projectTmpFolderPath,
-                    extensions
-                )
-                val isSuccessful = MultipleAnalysisExecutor(analyzers).execute(projectTmpFolderPath)
-                projectTmpFolderPath.delete(true)
-                isSuccessful
-            }.all { it }
-
-            logger.info("Project ${projectPath.fileName} (index=$projectIndex) was analyzed successfully: $projectSuccessfullyAnalyzed")
-            if (projectSuccessfullyAnalyzed) {
-                executorHelper?.postExecuteAction(GitRepository(projectPath))
-            }
-        }
-        tempFolderPath.delete()
-    }
-}
-
 
 /** Classes that inherit from this interface implement action to perform after repository analysis. */
 interface ExecutorHelper {

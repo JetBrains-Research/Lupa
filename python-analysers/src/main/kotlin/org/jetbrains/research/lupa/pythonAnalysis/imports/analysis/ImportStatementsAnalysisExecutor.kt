@@ -9,6 +9,9 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
@@ -20,9 +23,11 @@ import java.nio.file.Path
 class ImportStatementsAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "import_statements_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
@@ -31,6 +36,7 @@ class ImportStatementsAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         val importStatements = project.extractPyElementsOfType(PyImportStatement::class.java)

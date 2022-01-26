@@ -15,6 +15,9 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import org.slf4j.LoggerFactory
@@ -27,9 +30,11 @@ import java.nio.file.Path
 class CallExpressionsAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "call_expressions_data.csv",
     private val venv: Path?,
-) : AnalysisExecutor(executorHelper) {
+) : AnalysisExecutor(executorHelper, repositoryOpener) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val expressionsDataWriter = PrintWriterResourceManager(
@@ -38,6 +43,7 @@ class CallExpressionsAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(

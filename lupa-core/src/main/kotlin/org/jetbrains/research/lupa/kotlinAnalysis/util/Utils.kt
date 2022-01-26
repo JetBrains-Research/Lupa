@@ -3,6 +3,7 @@ package org.jetbrains.research.lupa.kotlinAnalysis.util
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.isDirectory
+import com.intellij.util.io.isFile
 import java.io.File
 import java.io.PrintWriter
 import java.nio.file.FileVisitOption
@@ -22,15 +23,16 @@ enum class FileExtension(val value: String) {
     KT("kt"),
     KTS("kts"),
     GRADLE("gradle"),
-    PY("py"),
-    CSV("csv"),
-    EMPTY("");
+    PROPERTIES("properties"),
+    PY("py");
 
     companion object {
         private val mapExtension = values().associateBy(FileExtension::value)
         fun fromValue(type: String) = mapExtension[type]
     }
 }
+
+val KOTLIN_EXTENSIONS = setOf(FileExtension.KT, FileExtension.KTS)
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == FileExtension.KT.value || this.extension == FileExtension.KTS.value
@@ -51,8 +53,11 @@ fun getSubdirectories(path: Path): List<Path> {
 }
 
 fun getFilesWithExtensions(path: Path, extensions: Set<FileExtension>): List<Path> {
-    return Files.walk(path.toRealPath(), FileVisitOption.FOLLOW_LINKS)
-        .filter { (extensions.isEmpty() || extensions.contains(FileExtension.fromValue(it.extension))) && !it.equals(path) }
+    return Files.walk(path, FileVisitOption.FOLLOW_LINKS)
+        .filter {
+            it.isFile() && (extensions.isEmpty() || extensions.contains(FileExtension.fromValue(it.extension))) &&
+                    !it.equals(path)
+        }
         .toList()
 }
 
@@ -60,9 +65,9 @@ fun symbolicCopyOnlyRequiredExtensions(fromDirectory: Path, toDirectory: Path, e
     getFilesWithExtensions(fromDirectory, extensions).forEach { filePath ->
         val tempFilePath = Paths.get(
             toDirectory.toString(),
-            filePath.relativeTo(fromDirectory.toRealPath()).toString()
+            filePath.relativeTo(fromDirectory).toString()
         )
-        Files.createDirectories(tempFilePath.parent)
+        tempFilePath.parent.createDirectories()
         Files.createSymbolicLink(tempFilePath, filePath)
     }
 }
