@@ -22,7 +22,7 @@ open class AndroidProjectTaggingTest : ParametrizedGoldenFileTest(getResourcesRo
     fun testExtractRootGradleFileFromProject() {
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor = ProjectsTaggingExecutor(outFile.parentFile.toPath(), filename = outFile.name)
-            analysisExecutor.execute(inFile.toPath())
+            analysisExecutor.executeAllProjects(inFile.toPath())
         }
     }
 }

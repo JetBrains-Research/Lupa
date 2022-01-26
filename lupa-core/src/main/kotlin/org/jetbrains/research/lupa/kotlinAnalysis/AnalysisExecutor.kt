@@ -40,7 +40,7 @@ abstract class AnalysisExecutor(
     }
 
     /** Runs before analysis execution process. Contains all controlled resources initialization. */
-    fun init(relativePath: String) {
+    fun init(relativePath: String? = null) {
         controlledResourceManagers.forEach { it.init(relativePath) }
     }
 

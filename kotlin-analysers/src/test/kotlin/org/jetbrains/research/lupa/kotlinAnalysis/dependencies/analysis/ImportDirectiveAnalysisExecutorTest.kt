@@ -25,7 +25,7 @@ open class ImportDirectiveAnalysisExecutorTest :
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
                 ImportDirectivesAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
-            analysisExecutor.execute(inFile.toPath())
+            analysisExecutor.executeAllProjects(inFile.toPath())
         }
     }
 }
