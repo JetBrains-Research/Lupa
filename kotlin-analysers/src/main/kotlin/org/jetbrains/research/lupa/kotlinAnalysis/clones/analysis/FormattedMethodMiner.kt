@@ -10,8 +10,8 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.deleteComments
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
-import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**

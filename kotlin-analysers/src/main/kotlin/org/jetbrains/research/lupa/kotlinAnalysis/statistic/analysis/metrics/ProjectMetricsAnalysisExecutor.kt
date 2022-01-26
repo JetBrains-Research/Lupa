@@ -8,6 +8,8 @@ import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractModules
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.findPsiFilesByExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.util.Extension
 import java.nio.file.Path
 
@@ -19,9 +21,11 @@ import java.nio.file.Path
 class ProjectMetricsAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "project_metrics_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val projectMetricsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -30,6 +34,8 @@ class ProjectMetricsAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectMetricsDataWriter)
+
+    override val requiredFileExtensions: Set<FileExtension> = emptySet()
 
     override fun analyse(project: Project) {
         val documentManager = PsiDocumentManager.getInstance(project)
