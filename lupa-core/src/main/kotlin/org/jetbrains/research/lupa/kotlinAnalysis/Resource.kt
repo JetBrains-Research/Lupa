@@ -3,7 +3,6 @@ package org.jetbrains.research.lupa.kotlinAnalysis
 import org.jetbrains.research.lupa.kotlinAnalysis.util.getPrintWriter
 import java.io.PrintWriter
 import java.nio.file.Path
-import java.nio.file.Paths
 
 /** Interface for any resource, which must been initialized before and closed after use. **/
 interface ResourceManager : AutoCloseable {
@@ -22,12 +21,7 @@ class PrintWriterResourceManager(
     lateinit var writer: PrintWriter
 
     override fun init(relativePath: Path?) {
-        val directoryPath: Path = if (relativePath != null) {
-            Paths.get(directory.toString(), relativePath.toString())
-        } else {
-            directory
-        }
-
+        val directoryPath = relativePath?.let { directory.resolve(relativePath) } ?: directory
         writer = getPrintWriter(directoryPath, fileName)
         header?.let { writer.println(header) }
     }

@@ -12,7 +12,7 @@ object KotlinGradleDependenciesByModulesAnalysisRunner : BaseRunner<IORunnerArgs
     override fun run(args: IORunnerArgs) {
         GradleDependenciesByModulesAnalysisExecutor(
             args.outputDir,
-            repositoryOpener = RepositoryOpenerUtil::openReloadRepositoryOpener
+            repositoryOpener = RepositoryOpenerUtil::openReloadKotlinJavaRepositoryOpener
         ).executeAllProjects(args.inputDir)
     }
 }

@@ -37,12 +37,21 @@ abstract class AnalysisExecutor(
     abstract fun analyse(project: Project)
 
     /** Executes the analysis of the given [project][Project] and returns whether the analysis was successful. */
-    open fun analyseWithResult(project: Project): Boolean {
+    fun analyseWithResult(project: Project): Boolean {
         analyse(project)
+        return isSuccessful(project)
+    }
+
+    /** Returns whether the analysis of given project was successful.
+     * Default implementation always returns true.
+     */
+    open fun isSuccessful(project: Project): Boolean {
         return true
     }
 
-    /** Runs before analysis execution process. Contains all controlled resources initialization. */
+    /** Runs before analysis execution process. Contains all controlled resources initialization.
+     * @param relativePath relative path between output directory and file itself.
+     */
     fun init(relativePath: Path? = null) {
         controlledResourceManagers.forEach { it.init(relativePath) }
     }
@@ -54,6 +63,8 @@ abstract class AnalysisExecutor(
 
     /** Executes analysis of given project.
      *  Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     *
+     *  @return whether the analysis of project was successful.
      */
     fun execute(
         projectPath: Path,
@@ -72,7 +83,10 @@ abstract class AnalysisExecutor(
         return isSuccessful
     }
 
-    /** Executes analysis for all projects in [given directory][projectsDir]. */
+    /** Executes analysis for all projects in [given directory][projectsDir].
+     *
+     *  @return whether the analysis of the whole dataset was successful.
+     */
     fun executeAllProjects(
         projectsDir: Path,
         relativePathBuilder: (projectPath: Path) -> Path? = ::buildRelativePathWithDate
@@ -92,20 +106,21 @@ abstract class AnalysisExecutor(
 }
 
 /** Class for simultaneous execution of multiple analysis for each project in given dataset
- * or analysis of project itself. */
+ * or analysis of project itself.
+ *
+ * @property analysisExecutors list of analysis executors to be run on the dataset.
+ * @property executorHelper contains post-execution action to perform after project analysis.
+ * @property repositoryOpener opener of projects.
+ */
 class MultipleAnalysisExecutor(
     private val analysisExecutors: List<AnalysisExecutor>,
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean = RepositoryOpenerUtil.Companion::standardRepositoryOpener
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
-    override fun analyse(project: Project) {
-        analysisExecutors.forEach { it.analyse(project) }
-    }
+    override fun analyse(project: Project) = analysisExecutors.forEach { it.analyse(project) }
 
-    override fun analyseWithResult(project: Project): Boolean {
-        return analysisExecutors.map { it.analyseWithResult(project) }.all { it }
-    }
+    override fun isSuccessful(project: Project) = analysisExecutors.map { it.isSuccessful(project) }.all { it }
 
     override val controlledResourceManagers = analysisExecutors.flatMap { it.controlledResourceManagers }.toSet()
     override val requiredFileExtensions: Set<FileExtension> =

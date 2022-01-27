@@ -20,7 +20,7 @@ class RepositoryOpenerUtil {
          * This opening method allow to get project structure (all modules), but is more time consuming then
          * [standardRepositoryOpener].
          */
-        fun openReloadRepositoryOpener(
+        fun openReloadKotlinJavaRepositoryOpener(
             repositoryRoot: Path,
             action: (Project) -> Boolean,
         ): Boolean {

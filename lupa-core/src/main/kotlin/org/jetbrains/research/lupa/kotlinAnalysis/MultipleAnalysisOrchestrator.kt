@@ -5,6 +5,7 @@ import com.intellij.util.io.delete
 import org.jetbrains.research.lupa.kotlinAnalysis.util.*
 import java.nio.file.Path
 import java.nio.file.Paths
+
 /**
  * Class for execution multiple analyzers for all projects in given directory.
  */
@@ -13,6 +14,11 @@ class MultipleAnalysisOrchestrator(
     private val executorHelper: ExecutorHelper? = null
 ) {
 
+    /**
+     * Executes analysis of all projects in dataset
+     * using all analyzers from [list of analysis executors][analysisExecutors].
+     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     */
     fun execute(projectsDir: Path, outputDir: Path) {
         val tempFolderPath = Paths.get(outputDir.toString(), "tmp")
         tempFolderPath.delete(recursively = true)
@@ -48,7 +54,7 @@ class MultipleAnalysisOrchestrator(
 
     private fun opener(extensions: Set<FileExtension>): (Path, (Project) -> Boolean) -> Boolean {
         return if (extensions.isEmpty()) {
-            RepositoryOpenerUtil.Companion::openReloadRepositoryOpener
+            RepositoryOpenerUtil.Companion::openReloadKotlinJavaRepositoryOpener
         } else {
             RepositoryOpenerUtil.Companion::standardRepositoryOpener
         }
