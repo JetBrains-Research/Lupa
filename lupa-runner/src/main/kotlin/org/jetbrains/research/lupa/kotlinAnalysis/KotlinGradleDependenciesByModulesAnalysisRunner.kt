@@ -2,8 +2,6 @@ package org.jetbrains.research.lupa.kotlinAnalysis
 
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.GradleDependenciesByModulesAnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
-import org.jetbrains.research.lupa.kotlinAnalysis.util.kotlin.KotlinTeamDatabaseConnection
-import org.jetbrains.research.lupa.kotlinAnalysis.util.kotlin.KotlinTeamExecutorHelper
 import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgs
 import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
@@ -12,9 +10,9 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinGradleDependenciesByModulesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-gradle-dependencies-by-modules-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        val dbConn = KotlinTeamDatabaseConnection()
-        val kotlinExecutorHelper = KotlinTeamExecutorHelper(dbConn)
-        GradleDependenciesByModulesAnalysisExecutor(args.outputDir, kotlinExecutorHelper)
-            .execute(args.inputDir, RepositoryOpenerUtil::openReloadRepositoryOpener)
+        GradleDependenciesByModulesAnalysisExecutor(
+            args.outputDir,
+            repositoryOpener = RepositoryOpenerUtil::openReloadKotlinJavaRepositoryOpener
+        ).executeAllProjects(args.inputDir)
     }
 }

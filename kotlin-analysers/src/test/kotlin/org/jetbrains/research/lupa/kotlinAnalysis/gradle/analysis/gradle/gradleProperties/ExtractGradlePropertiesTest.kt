@@ -25,7 +25,7 @@ open class ExtractGradlePropertiesTest :
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
                 GradlePropertiesAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
-            analysisExecutor.execute(inFile.toPath())
+            analysisExecutor.execute(inFile.toPath()) { null }
         }
     }
 }

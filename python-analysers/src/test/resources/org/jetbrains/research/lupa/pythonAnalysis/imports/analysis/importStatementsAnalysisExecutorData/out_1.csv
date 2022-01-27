@@ -1,6 +1,6 @@
 project_name,import
-sample_project,itertools
-sample_project,math.cos
-sample_project,math.pow
-sample_project,math.sin
-sample_project,plotly.express
+in_1_project_with_imports,itertools
+in_1_project_with_imports,math.cos
+in_1_project_with_imports,math.pow
+in_1_project_with_imports,math.sin
+in_1_project_with_imports,plotly.express

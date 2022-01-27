@@ -30,7 +30,7 @@ open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
         assertOutEqualsToGolden { inFile, outFile ->
             val analysisExecutor =
                 ImportStatementsAnalysisExecutor(outFile.parentFile.toPath(), filename = outFile.name)
-            analysisExecutor.execute(inFile.toPath())
+            analysisExecutor.execute(inFile.toPath()) { null }
         }
     }
 }

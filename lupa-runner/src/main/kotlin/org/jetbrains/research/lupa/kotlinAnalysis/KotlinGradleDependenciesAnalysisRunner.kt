@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinGradleDependenciesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-gradle-dependencies-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        GradleDependenciesAnalysisExecutor(args.outputDir).execute(args.inputDir)
+        GradleDependenciesAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
     }
 }

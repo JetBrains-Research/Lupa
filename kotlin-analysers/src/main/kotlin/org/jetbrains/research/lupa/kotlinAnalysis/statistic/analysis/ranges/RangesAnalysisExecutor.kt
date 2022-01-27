@@ -12,6 +12,9 @@ import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.getRelativePathToKtElement
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 import java.util.*
 
@@ -23,9 +26,11 @@ import java.util.*
 class RangesAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     rangesFilename: String = "ranges_data.csv",
     otherContextFilename: String = "other_context.csv",
-) : AnalysisExecutor(executorHelper) {
+) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
 
@@ -33,6 +38,7 @@ class RangesAnalysisExecutor(
     private val otherContextDataWriter =
         PrintWriterResourceManager(outputDir, otherContextFilename, getOtherContextHeader())
     override val controlledResourceManagers: Set<ResourceManager> = setOf(rangesDataWriter, otherContextDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         val binaryExpressionRanges = project.extractKtElementsOfType(KtBinaryExpression::class.java)
