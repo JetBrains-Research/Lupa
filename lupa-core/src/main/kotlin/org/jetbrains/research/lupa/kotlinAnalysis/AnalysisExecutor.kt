@@ -1,7 +1,10 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.research.lupa.kotlinAnalysis.util.*
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.GitRepository
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
+import org.jetbrains.research.lupa.kotlinAnalysis.util.getSubdirectories
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDate
@@ -40,7 +43,7 @@ abstract class AnalysisExecutor(
     }
 
     /** Runs before analysis execution process. Contains all controlled resources initialization. */
-    fun init(relativePath: String? = null) {
+    fun init(relativePath: Path? = null) {
         controlledResourceManagers.forEach { it.init(relativePath) }
     }
 
@@ -52,9 +55,12 @@ abstract class AnalysisExecutor(
     /** Executes analysis of given project.
      *  Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
      */
-    fun execute(projectPath: Path): Boolean {
+    fun execute(
+        projectPath: Path,
+        relativePathBuilder: (projectPath: Path) -> Path? = ::buildRelativePathWithDate
+    ): Boolean {
         val isSuccessful: Boolean
-        init(Paths.get(LocalDate.now().toString(), projectPath.name).toString())
+        init(relativePathBuilder(projectPath))
         try {
             isSuccessful = repositoryOpener(projectPath, ::analyseWithResult)
             if (isSuccessful) {
@@ -67,15 +73,22 @@ abstract class AnalysisExecutor(
     }
 
     /** Executes analysis for all projects in [given directory][projectsDir]. */
-    fun executeAllProjects(projectsDir: Path): Boolean {
+    fun executeAllProjects(
+        projectsDir: Path,
+        relativePathBuilder: (projectPath: Path) -> Path? = ::buildRelativePathWithDate
+    ): Boolean {
         return getSubdirectories(projectsDir).mapIndexed { projectIndex, projectPath ->
             println("Start analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}")
-            val isSuccessful = execute(projectPath)
-            println("Finish analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}. " +
-                        "Success: $isSuccessful")
+            val isSuccessful = execute(projectPath, relativePathBuilder)
+            println(
+                "Finish analysing $projectPath index=$projectIndex time=${System.currentTimeMillis()}. " +
+                        "Success: $isSuccessful"
+            )
             isSuccessful
         }.all { it }
     }
+
+    private fun buildRelativePathWithDate(projectPath: Path) = Paths.get(LocalDate.now().toString(), projectPath.name)
 }
 
 /** Class for simultaneous execution of multiple analysis for each project in given dataset

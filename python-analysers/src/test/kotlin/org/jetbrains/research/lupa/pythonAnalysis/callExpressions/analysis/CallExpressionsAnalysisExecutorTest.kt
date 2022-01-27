@@ -56,10 +56,10 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
 
             analysisExecutor.controlledResourceManagers.map { it.init() }
 
-            RepositoryOpenerUtil.standardRepositoryOpener(inFile.toPath(), { project ->
+            RepositoryOpenerUtil.standardRepositoryOpener(inFile.toPath()) { project ->
                 setupSdk(project)
-                analysisExecutor.analyse(project)
-            })
+                analysisExecutor.analyseWithResult(project)
+            }
 
             analysisExecutor.controlledResourceManagers.map { it.close() }
         }
