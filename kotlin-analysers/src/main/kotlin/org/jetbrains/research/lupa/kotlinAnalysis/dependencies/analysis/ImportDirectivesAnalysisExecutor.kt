@@ -9,6 +9,9 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**
@@ -18,9 +21,11 @@ import java.nio.file.Path
 class ImportDirectivesAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "import_directives_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -28,6 +33,7 @@ class ImportDirectivesAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         val packageDirectives = project.extractKtElementsOfType(KtPackageDirective::class.java)

@@ -8,6 +8,8 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.settingsGradle.modules.GradleDependenciesCollector
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.settingsGradle.modules.ModulesGraph
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractModules
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**
@@ -18,9 +20,11 @@ import java.nio.file.Path
 class GradleDependenciesByModulesAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "gradle_dependencies_by_modules_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -29,6 +33,7 @@ class GradleDependenciesByModulesAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = emptySet()
 
     override fun analyse(project: Project) {
         val graph = ModulesGraph(project.extractModules())
@@ -60,15 +65,19 @@ class GradleDependenciesByModulesAnalysisExecutor(
 class GradleDependenciesAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "gradle_dependencies_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         listOf("project_name", "group_id", "artifact_id", "config")
             .joinToString(separator = ",")
     )
+
+    override val requiredFileExtensions: Set<FileExtension> = setOf(FileExtension.GRADLE, FileExtension.KTS)
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
 

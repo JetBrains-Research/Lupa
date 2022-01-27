@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object ProjectsTaggingRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-project-tags-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ProjectsTaggingExecutor(args.outputDir).execute(args.inputDir)
+        ProjectsTaggingExecutor(args.outputDir).executeAllProjects(args.inputDir)
     }
 }

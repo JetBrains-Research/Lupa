@@ -8,6 +8,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object PythonImportsAnalysisRunner :
     BaseRunner<IORunnerArgs, IORunnerArgsParser>("python-imports-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ImportStatementsAnalysisExecutor(args.outputDir).execute(args.inputDir)
+        ImportStatementsAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
     }
 }

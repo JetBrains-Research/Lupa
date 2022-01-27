@@ -9,17 +9,25 @@ import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.deleteComments
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractKtElementsOfType
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**
  * Extracts all methods from projects in the dataset and saves methods in Clone Detection Tool
  * ([SourcererCC](https://github.com/JetBrains-Research/SourcererCC/)) format.
  */
-class FormattedMethodMiner(outputDir: Path, executorHelper: ExecutorHelper? = null) : AnalysisExecutor(executorHelper) {
+class FormattedMethodMiner(
+    outputDir: Path,
+    executorHelper: ExecutorHelper? = null, repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener
+) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val methodDataWriter = PrintWriterResourceManager(outputDir, "method_data.txt")
     private val indexer = IndexBuilder(outputDir)
     override val controlledResourceManagers: Set<ResourceManager> = setOf(methodDataWriter, indexer)
+    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
         val projectIndex = indexer.indexProject(project)

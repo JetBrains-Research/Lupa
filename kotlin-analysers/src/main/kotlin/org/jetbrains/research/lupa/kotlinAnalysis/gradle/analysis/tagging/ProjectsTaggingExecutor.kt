@@ -5,6 +5,8 @@ import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
+import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
+import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import java.nio.file.Path
 
 /**
@@ -14,9 +16,11 @@ import java.nio.file.Path
 class ProjectsTaggingExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
+    repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "project_tags_data.csv"
 ) :
-    AnalysisExecutor(executorHelper) {
+    AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val projectsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
@@ -24,6 +28,7 @@ class ProjectsTaggingExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectsDataWriter)
+    override val requiredFileExtensions: Set<FileExtension> = setOf(FileExtension.GRADLE, FileExtension.KTS)
 
     private val taggers: List<ProjectTagger> = listOf(AndroidProjectTagger)
 

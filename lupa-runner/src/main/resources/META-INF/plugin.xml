@@ -16,6 +16,7 @@
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinDependenciesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinRangesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.ProjectsTaggingRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinMultipleAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradleDependenciesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradleDependenciesByModulesAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinGradlePropertiesAnalysisRunner"/>

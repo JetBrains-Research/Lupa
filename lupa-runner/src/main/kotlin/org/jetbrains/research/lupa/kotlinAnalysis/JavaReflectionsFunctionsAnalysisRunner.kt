@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object JavaReflectionsFunctionsAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("java-reflections-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        ReflectionAnalysisExecutor(args.outputDir).execute(args.inputDir)
+        ReflectionAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
     }
 }
