@@ -24,7 +24,7 @@ enum class BuildGradleDependencyConfiguration(
     }
 }
 
-/** Dependency wrapper for gradle files, which holds [groupId], [artifactId], [configuration] values
+/** Dependency wrapper for gradle files, which holds [groupId], [artifactId], [configuration], [version] values
  * and [allprojects] flag.
  *
  * For example:
@@ -43,5 +43,6 @@ data class BuildGradleDependency(
     val groupId: String,
     val artifactId: String,
     val configuration: BuildGradleDependencyConfiguration?,
-    val allProjects: Boolean = false
+    val version: String?,
+    var allProjects: Boolean = false,
 )

@@ -7,11 +7,10 @@ import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzerWithContextImpl
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.context.GradleBlock
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.context.GradleBlockContext
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.BuildGradleDependency
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.BuildGradleDependencyConfiguration
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.BuildGradleDependencyFileUtil
 
 /**
- * Analyser for gradle dependency which parse [BuildGradleDependency] form []psiElement][P] inside
+ * Analyser for gradle dependency which parse [BuildGradleDependency] form [psiElement][P] inside
  * [GradleBlock.DEPENDENCIES] block.
  */
 open class BuildGradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
@@ -21,13 +20,9 @@ open class BuildGradleDependencyAnalyzer<P : PsiElement>(pClass: Class<P>) :
         assert(context != null) { "Context should be provided" }
         return if (context!!.containsBlock(GradleBlock.DEPENDENCIES)) {
             BuildGradleDependencyFileUtil.parseGradleDependencyParams(psiElement.text)
-                ?.let { (configKey, groupId, artifactId) ->
-                    BuildGradleDependency(
-                        groupId,
-                        artifactId,
-                        BuildGradleDependencyConfiguration.fromKey(configKey),
-                        context.containsBlock(GradleBlock.ALL_PROJECTS)
-                    )
+                ?.let { buildGradleDependency ->
+                    buildGradleDependency.allProjects = context.containsBlock(GradleBlock.ALL_PROJECTS)
+                    buildGradleDependency
                 }
         } else {
             null

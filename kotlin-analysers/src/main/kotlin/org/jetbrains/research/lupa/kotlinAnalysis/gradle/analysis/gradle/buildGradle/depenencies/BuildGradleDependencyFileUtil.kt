@@ -27,7 +27,7 @@ class BuildGradleDependencyFileUtil {
          **/
         private val GRADLE_DEPENDENCIES_SHORT_REGEX = "(${
             BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?$QUOTES($NAME)$SEPARATORS($NAME)($SEPARATORS$NAME)?$QUOTES[)]?"
+        })[(]?$QUOTES($NAME)$SEPARATORS($NAME)(?:$SEPARATORS($NAME))?$QUOTES[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         /**
@@ -44,7 +44,7 @@ class BuildGradleDependencyFileUtil {
          **/
         private val GRADLE_DEPENDENCIES_FULL_REGEX = "(${
             BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?group=$QUOTES($NAME)$QUOTES,name=$QUOTES($NAME)$QUOTES(,version=$QUOTES$NAME$QUOTES)?[)]?"
+        })[(]?group=$QUOTES($NAME)$QUOTES,name=$QUOTES($NAME)$QUOTES(?:,version=$QUOTES($NAME)$QUOTES)?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
         /**
@@ -53,13 +53,14 @@ class BuildGradleDependencyFileUtil {
          *
          * build.gradle.kts:
          * classpath(kotlin("gradle-plugin", "1.5.20")) ~ classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"))
+         * or classpath(kotlin("gradle-plugin", version = "1.5.20"))
          **/
         private val GRADLE_DEPENDENCIES_KOTLIN_REGEX = "(${
             BuildGradleDependencyConfiguration.availableKeys().joinToString(separator = "|")
-        })[(]?kotlin[(]?$QUOTES($NAME)$QUOTES.*[)]?[)]?"
+        })[(]?kotlin[(]?$QUOTES($NAME)$QUOTES(?:,(?:version=)?$QUOTES($NAME)$QUOTES)?.*[)]?[)]?"
             .toRegex(RegexOption.IGNORE_CASE)
 
-        fun parseGradleDependencyParams(gradleDependencyLine: String): Triple<String, String, String>? {
+        fun parseGradleDependencyParams(gradleDependencyLine: String): BuildGradleDependency? {
             return gradleDependencyLine.replace("\\s".toRegex(), "")
                 .let { dependencyLine ->
                     (GRADLE_DEPENDENCIES_SHORT_REGEX.matchEntire(dependencyLine)
@@ -72,7 +73,14 @@ class BuildGradleDependencyFileUtil {
                             val configKey = it[1]?.value ?: return null
                             val groupId = it[2]?.value ?: return null
                             val artifactId = it[3]?.value ?: return null
-                            Triple(configKey, groupId, artifactId)
+                            val version = if (it.size > 4) it[4]?.value else null
+
+                            BuildGradleDependency(
+                                groupId,
+                                artifactId,
+                                BuildGradleDependencyConfiguration.fromKey(configKey),
+                                version
+                            )
                         } ?: (GRADLE_DEPENDENCIES_KOTLIN_REGEX.matchEntire(dependencyLine))
                         ?.groups
                         ?.let {
@@ -84,7 +92,13 @@ class BuildGradleDependencyFileUtil {
                             val artifactId = it[2]?.value
                                 ?.let { kotlinArtifactId -> "${KotlinConstants.KOTLIN.value}-$kotlinArtifactId" }
                                 ?: return null
-                            Triple(configKey, groupId, artifactId)
+                            val version = if (it.size > 3) it[3]?.value else null
+                            BuildGradleDependency(
+                                groupId,
+                                artifactId,
+                                BuildGradleDependencyConfiguration.fromKey(configKey),
+                                version
+                            )
                         }
                 }
         }
