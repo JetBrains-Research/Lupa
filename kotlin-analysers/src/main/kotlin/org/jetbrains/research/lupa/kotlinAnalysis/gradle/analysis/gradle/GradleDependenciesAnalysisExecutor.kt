@@ -58,9 +58,9 @@ class GradleDependenciesByModulesAnalysisExecutor(
 }
 
 /**
- * Executor for gradle dependencies analysis which collects group name, name and configuration of all
+ * Executor for gradle dependencies analysis which collects group name, name, configuration and version of all
  * dependencies in all gradle files to csv file with columns:
- * "project_name", "group_id", "artifact_id", "config".
+ * "project_name", "group_id", "artifact_id", "config", "version".
  */
 class GradleDependenciesAnalysisExecutor(
     outputDir: Path,
@@ -73,7 +73,7 @@ class GradleDependenciesAnalysisExecutor(
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("project_name", "group_id", "artifact_id", "config")
+        listOf("project_name", "group_id", "artifact_id", "config", "version")
             .joinToString(separator = ",")
     )
 
@@ -91,7 +91,8 @@ class GradleDependenciesAnalysisExecutor(
                         project.name,
                         it.groupId,
                         it.artifactId,
-                        it.configuration?.key ?: "-"
+                        it.configuration?.key ?: "-",
+                        it.version ?: "-"
                     ).joinToString(separator = ",")
                 )
             }
