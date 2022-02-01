@@ -6,7 +6,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.BuildGradlePlugin
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.GradleConstants
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.GradlePluginFromAllProjectsSection
+
+/**
+ * Internal class to store plugins ids from the allprojects{ ... } section
+ */
+internal data class GradlePluginFromAllProjectsSection(
+    val pluginId: String,
+    val isNew: Boolean = false
+)
 
 /**
  * Analyzer for gradle plugins which extracts all applied or declared plugins in build.gradle.kts file

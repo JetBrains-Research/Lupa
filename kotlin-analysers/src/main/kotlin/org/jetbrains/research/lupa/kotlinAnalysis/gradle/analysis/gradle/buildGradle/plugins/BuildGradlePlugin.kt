@@ -38,11 +38,6 @@ data class BuildGradlePlugin(
     ) : this(pluginId, version, applied, pluginArgs, allProjectsPluginsIds.contains(pluginId))
 }
 
-data class GradlePluginFromAllProjectsSection(
-    val pluginId: String,
-    val isNew: Boolean = false
-)
-
 // TODO: move into common gradle utils
 enum class GradleConstants(val key: String) {
     ID("id"),
