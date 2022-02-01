@@ -43,10 +43,7 @@ class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
         return KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 
-    override fun extractBuildGradlePlugins(): Set<BuildGradlePlugin> {
-//        return KtsBuildGradlePluginsAnalyzer.analyze(this, GradleBlockContext())
-        return KtsBuildGradlePluginsAnalyzer.analyze(this).toSet()
-    }
+    override fun extractBuildGradlePlugins() = KtsBuildGradlePluginsAnalyzer.analyze(this).toSet()
 }
 
 /**
@@ -59,8 +56,5 @@ class BuildGradleGroovyPsiFile(psiFile: GroovyFileImpl) : BuildGradlePsiFile(psi
         return GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 
-    override fun extractBuildGradlePlugins(): Set<BuildGradlePlugin> {
-//        return GroovyBuildGradlePluginsAnalyzer.analyze(this, GradleBlockContext())
-        return GroovyBuildGradlePluginsAnalyzer.analyze(this).toSet()
-    }
+    override fun extractBuildGradlePlugins() = GroovyBuildGradlePluginsAnalyzer.analyze(this).toSet()
 }
