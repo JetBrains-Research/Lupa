@@ -57,7 +57,7 @@ For functionality for data gathering, processing and visualization ([`scripts`](
 you should have Python 3+ and also run:
 - `pip install -r scripts/requirements.txt`
 - `pip install -r scripts/requirements-test.txt` - for tests (optional)
-- `pip install -r scripts/requirements-test.txt` - for code style checkers (optional)
+- `pip install -r scripts/requirements-code-style.txt` - for code style checkers (optional)
 
 ## Usage
 
