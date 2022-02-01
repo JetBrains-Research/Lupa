@@ -24,7 +24,8 @@ class GradlePluginsAnalysisExecutor(
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        listOf("project_name", "plugin_id").joinToString(separator = ",")
+        listOf("project_name", "plugin_id", "plugin_version", "plugin_args", "applied", "allProjects")
+            .joinToString(separator = ",")
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
@@ -32,13 +33,18 @@ class GradlePluginsAnalysisExecutor(
 
     override fun analyse(project: Project) {
         val gradleFiles = GradleFileManager.extractBuildGradleFilesFromProject(project)
+        // TODO: should we delete the same plugins from the different Gradle files modules?
         gradleFiles.forEach { gradleFile ->
             val gradlePlugins = gradleFile.extractBuildGradlePlugins()
             gradlePlugins.forEach {
                 gradleDependenciesDataWriter.writer.println(
                     listOf(
                         project.name,
-                        it.pluginId
+                        it.pluginId,
+                        it.version ?: "",
+                        it.pluginArgs.joinToString(separator = ","),
+                        it.applied,
+                        it.allProjects
                     ).joinToString(separator = ",")
                 )
             }
