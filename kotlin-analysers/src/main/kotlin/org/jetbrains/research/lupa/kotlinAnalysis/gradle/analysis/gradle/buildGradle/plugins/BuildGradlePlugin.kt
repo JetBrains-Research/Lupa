@@ -18,7 +18,9 @@ package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildG
  *
  * Will be parsed into:
  *   BuildGradlePlugin(pluginId=java, version=null, applied=true, pluginArgs=[], allProjects=true)
- *   BuildGradlePlugin(pluginId=apply(plugin = "maven-publish"), version=null, applied=true, pluginArgs=[], allProjects=false)
+ *   BuildGradlePlugin(pluginId=apply(plugin = "maven-publish"),
+ *                        version=null, applied=true, pluginArgs=[], allProjects=false
+ *                     )
  *   BuildGradlePlugin(pluginId=kotlin, version="1.5.21", applied=true, pluginArgs=[jvm], allProjects=true)
  *   BuildGradlePlugin(pluginId=org.jetbrains.intellij, version="1.1.3", applied=true, pluginArgs=[], allProjects=false)
  */

@@ -1,7 +1,6 @@
-package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.analyzers
+package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.GradleConstants
 import java.util.*
 
 /**
@@ -55,7 +54,9 @@ internal inline fun <reified S : PsiElement, reified B : PsiElement> PsiElement.
  *
  * @param sectionName
  */
-private inline fun <reified S : PsiElement, reified B : PsiElement> PsiElement.findSectionBody(sectionName: String): PsiElement? {
+private inline fun <reified S : PsiElement, reified B : PsiElement> PsiElement.findSectionBody(
+    sectionName: String
+): PsiElement? {
     val allProjectsSection = this.findFirstChild<S> { sectionName in it.text } ?: return null
     return allProjectsSection.findFirstChild<B>()
 }

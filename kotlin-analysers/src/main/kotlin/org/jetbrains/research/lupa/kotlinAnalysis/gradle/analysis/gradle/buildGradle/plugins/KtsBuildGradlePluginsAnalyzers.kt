@@ -1,11 +1,9 @@
-package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.analyzers
+package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.BuildGradlePlugin
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.GradleConstants
 
 /**
  * Internal class to store plugins ids from the allprojects{ ... } section
