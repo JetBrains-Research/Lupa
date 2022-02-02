@@ -52,13 +52,10 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 
 #### 5. Extract call expressions full-qualified names from dataset
 
-``` 
-gradle :kotlin-analysis-plugin:python-cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir -Pvenv=/path/to/venv
-```
 This analyzer collects number of modules, files, dependencies in all modules' gradle files.
 Run the analyzer directly:
 ``` 
-./gradlew :lupa-runner:python-cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir
+./gradlew :lupa-runner:python-cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir -Pvenv=/path/to/venv
 ```
 Or you can handle the dataset via batches using batch processing:
 ``` 
