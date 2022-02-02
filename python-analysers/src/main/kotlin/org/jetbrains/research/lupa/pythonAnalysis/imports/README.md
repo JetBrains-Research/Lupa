@@ -7,7 +7,7 @@ This analyzer extracting all imports from the Python projects.
 
 #### 1. Download list of repositories
 
-You can use [seart-ghs.si.usi.ch]( https://seart-ghs.si.usi.ch/) (main language: Kotlin) for this purpose. The file has
+You can use [seart-ghs.si.usi.ch]( https://seart-ghs.si.usi.ch/) (main language: Python) for this purpose. The file has
 to be in csv format with ```name``` column, containing repositories' names in the following
 format: ```username/project_name```
 
@@ -30,7 +30,7 @@ file from the [`data_collection`](../../../../../../../../../../scripts/data_col
 Run the following command to download the dataset:
 
 ``` 
-python3 -m scripts/data_collection/load_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
+python3 -m scripts/data_collection/load_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions py
 ```
 
 To get more information, please see the [README](../../../../../../../../../../scripts/data_collection/README.md)
@@ -55,5 +55,4 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 
 #### 5. Run statistics visualisation
 
-To read more about import directives statistics visualization
-go to [dependencies](../../../../../../../../../../scripts/analysis/dependencies/README.md) module.
+To read more about import directives statistics visualization, please see the [README](../../../../../../../../../../scripts/analysis/dependencies/README.md) file from the [`dependencies`](../../../../../../../../../../scripts/analysis/dependencies) module.
