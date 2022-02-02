@@ -62,7 +62,8 @@ you should have Python 3+ and also run:
 ## Usage
 
 1. For analyzers:
-    - Go to the [`kotlin-analysers`](./kotlin-analysers) module and follow its [README file](./kotlin-analysers/README.md).
+    - For Kotlin analyzers go to the [`kotlin-analysers`](./kotlin-analysers) module and follow its [README file](./kotlin-analysers/README.md).
+    - For Python analyzers go to the [`python-analysers`](./python-analysers) module and follow its [README file](./python-analysers/README.md).
 2. For functionality for data gathering, processing and visualization:
     - Go to the [`scripts`](./scripts) module and follow its [README file](./scripts/README.md).
 
