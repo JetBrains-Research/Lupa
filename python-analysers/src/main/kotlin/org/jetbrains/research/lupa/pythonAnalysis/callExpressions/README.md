@@ -30,7 +30,7 @@ file from the [`data_collection`](../../../../../../../../../../scripts/data_col
 Run the following command to download the dataset:
 
 ``` 
-python3 -m scripts/data_collection/load_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions kt
+python3 -m scripts/data_collection/load_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir --allowed-extensions py
 ```
 
 To get more information, please see the [README](../../../../../../../../../../scripts/data_collection/README.md)
@@ -39,7 +39,7 @@ file from the [`data_collection`](../../../../../../../../../../scripts/data_col
 #### 4. Set up a virtual environment (Optional)
 
 The virtual environment is necessary to resolve external dependencies in project. 
-If you don't set up it, you can not extract libraries' names for functions and classes calls.
+If you don't set up it, you can not extract libraries' names for functions, classes and decorators calls.
 
 Run the following command to set up a virtual environment:
 
