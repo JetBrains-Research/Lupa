@@ -66,7 +66,7 @@ Also, there is ```--start-from n``` option to start from batch with given number
 To get more information, please see the [README](../../../../../../../../../../scripts/plugin_runner/README.md)
 file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_runner) module.
 
-**Note**: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`
+**Note**: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`.
 
 #### 6. Run statistics visualisation
 
