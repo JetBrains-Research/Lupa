@@ -1,13 +1,13 @@
 # Python's analysers: call expressions
 
 Functionality related to call expressions analysis in Python projects.
-This analyzer allows extracting functions/classes calls.
+This analyzer allows extracting functions/classes/decorators calls.
 
 ## The pipeline of the running this module
 
 #### 1. Download list of repositories
 
-You can use [seart-ghs.si.usi.ch]( https://seart-ghs.si.usi.ch/) (main language: Kotlin) for this purpose. The file has
+You can use [seart-ghs.si.usi.ch]( https://seart-ghs.si.usi.ch/) (main language: Python) for this purpose. The file has
 to be in csv format with ```name``` column, containing repositories' names in the following
 format: ```username/project_name```
 
@@ -39,7 +39,7 @@ file from the [`data_collection`](../../../../../../../../../../scripts/data_col
 #### 4. Set up a virtual environment (Optional)
 
 The virtual environment is necessary to resolve external dependencies in project. 
-If you don't set up it, you can not extract libtaties' names for functions and classes calls.
+If you don't set up it, you can not extract libraries' names for functions and classes calls.
 
 Run the following command to set up a virtual environment:
 
@@ -52,7 +52,6 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 
 #### 5. Extract call expressions full-qualified names from dataset
 
-This analyzer collects number of modules, files, dependencies in all modules' gradle files.
 Run the analyzer directly:
 ``` 
 ./gradlew :lupa-runner:python-cli -Prunner=python-call-expressions-analysis -Pinput=/path/to/dataset/dir -Poutput=path/to/results/dir -Pvenv=/path/to/venv
@@ -71,4 +70,4 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 #### 6. Run statistics visualisation
 
 To read more about call expressions statistics visualization
-go to [call_expressions](../../../../../../../../../../scripts/analysis/call_expressions/python/README.md) module.
+go to [`call_expressions`](../../../../../../../../../../scripts/analysis/call_expressions/python/README.md) module.
