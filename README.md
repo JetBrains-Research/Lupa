@@ -43,7 +43,7 @@ And several examples of analyzers that we used for our purposes:
    - [`gradle`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/gradle/README.md) - functionality related to code analysis of the Gradle files in Kotlin projects;
    - [`statistic`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/statistic/README.md) - functionality related to different code analysis in Kotlin projects, like range analysis;
 2. [Python's analysers](./python-analysers/README.md):
-   - [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions/README.md) - functionality related to call expressions (functions, classes) analysis in Python projects;
+   - [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions/README.md) - functionality related to call expressions (functions, classes, decorators) analysis in Python projects;
    - [`imports`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/imports/README.md) - functionality related to imports analysis in Python projects.
 
 To get more information see these modules (each of them has a README file).
