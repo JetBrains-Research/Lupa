@@ -55,5 +55,4 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 
 #### 5. Run statistics visualisation
 
-To read more about import directives statistics visualization
-go to [`dependencies`](../../../../../../../../../../scripts/analysis/dependencies/README.md) module.
+To read more about import directives statistics visualization, please see the [README](../../../../../../../../../../scripts/analysis/dependencies/README.md) file from the [`dependencies`](../../../../../../../../../../scripts/analysis/dependencies) module.
