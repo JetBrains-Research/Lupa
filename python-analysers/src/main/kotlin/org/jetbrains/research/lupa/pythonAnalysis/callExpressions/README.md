@@ -69,5 +69,4 @@ file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_run
 
 #### 6. Run statistics visualisation
 
-To read more about call expressions statistics visualization
-go to [`call_expressions`](../../../../../../../../../../scripts/analysis/call_expressions/python/README.md) module.
+To read more about call expressions statistics visualization, please see the [README](../../../../../../../../../../scripts/analysis/call_expressions/python/README.md) file from the [`call_expressions`](../../../../../../../../../../scripts/analysis/call_expressions/python) module.
