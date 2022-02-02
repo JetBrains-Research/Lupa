@@ -36,10 +36,9 @@ where `analysis-key` is a key from the list of the analysers.
 2. [Python's analysers](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis):
     * [```python-call-expressions-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonCallExpressionsAnalysisRunner.kt):
         ``` 
-        gradle :lupa-runner:cli -Prunner="python-call-expressions-analysis" -Pinput="path/to/dir/with/projects" -Poutput="path/to/dir/with/results"
+        gradle :lupa-runner:python-cli -Prunner="python-call-expressions-analysis" -Pinput="path/to/dir/with/projects" -Poutput="path/to/dir/with/results" -Pvenv="path/to/venv"
         ```
-      **Note**: the additional parameter `-Pvenv` may be passed.
-      Details on running `python-call-expressions-analysis` can be found in its README in the  `python-analysers` module.
+      **Note**: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`.
 
     * [```python-imports-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonImportsAnalysisRunner.kt):
         ``` 
