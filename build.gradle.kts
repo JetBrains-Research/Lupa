@@ -24,7 +24,7 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
+//        jcenter()
     }
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
@@ -32,8 +32,18 @@ allprojects {
         implementation(kotlin("stdlib-jdk8"))
         implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
 
+        // Logging
+        implementation("org.apache.logging.log4j:log4j-api:2.17.0")
+        implementation("org.apache.logging.log4j:log4j-core:2.17.0")
+        implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.0")
+
         // Plugin utilities modules
         implementation("$utilitiesProjectName:plugin-utilities-core") {
+            version {
+                branch = "main"
+            }
+        }
+        implementation("$utilitiesProjectName:plugin-utilities-python") {
             version {
                 branch = "main"
             }

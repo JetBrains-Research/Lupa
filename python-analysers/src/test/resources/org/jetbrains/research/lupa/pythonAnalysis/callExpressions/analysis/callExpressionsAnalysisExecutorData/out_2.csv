@@ -1,0 +1,12 @@
+project_name,fq_name,category
+in_2_project_with_builtins_and_stdlib,abs,function
+in_2_project_with_builtins_and_stdlib,enum.Enum.__new__,class
+in_2_project_with_builtins_and_stdlib,enum.unique,decorator
+in_2_project_with_builtins_and_stdlib,input,function
+in_2_project_with_builtins_and_stdlib,int.__new__,class
+in_2_project_with_builtins_and_stdlib,logging.Logger.error,function
+in_2_project_with_builtins_and_stdlib,logging.getLogger,function
+in_2_project_with_builtins_and_stdlib,math.cos,function
+in_2_project_with_builtins_and_stdlib,math.sin,function
+in_2_project_with_builtins_and_stdlib,print,function
+in_2_project_with_builtins_and_stdlib,sys.exit,function

@@ -1,0 +1,5 @@
+project_name,plugin_id
+in_2_kotlin_multi_module_project,java
+in_2_kotlin_multi_module_project,kotlin
+in_2_kotlin_multi_module_project,org.jetbrains.groovy
+in_2_kotlin_multi_module_project,org.jetbrains.kotlin.jvm

@@ -1,0 +1,6 @@
+package org.jetbrains.research.lupa.kotlinAnalysis.gradle.gradleProperties.data.in_1_groovy_multi_module_project.sample_project
+
+rootProject.name = 'in_0_groovy_multi_module_project'
+include 'first_module'
+include 'second_module'
+

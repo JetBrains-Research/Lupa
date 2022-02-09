@@ -1,13 +1,18 @@
 """
 This class contains methods for merging analysis results from different batches into a single file.
 """
+import logging
 import os
+from pathlib import Path
+
 import pandas as pd
 from typing import List
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
 
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def merge(batch_output_paths: List[str], output_dir: str, analyzer_name: str):
@@ -22,8 +27,17 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
     result_df = pd.DataFrame()
 
     for batch_output_path in batch_output_paths:
-        batch_df = pd.read_csv(os.path.join(batch_output_path, csv_filename), sep='\t')
-        result_df = pd.concat([result_df, batch_df])
+        logging.info(f"Merging {batch_output_path} file...")
+        try:
+            file_path = Path(os.path.join(batch_output_path, csv_filename))
+            if not file_path.is_file():
+                logging.warning(f"File {batch_output_path} does not exist!")
+                continue
+            batch_df = pd.read_csv(file_path, sep='\t')
+            result_df = pd.concat([result_df, batch_df])
+        except pd.errors.EmptyDataError:
+            logging.warning(f"File {batch_output_path} is empty!")
+            continue
 
     with open(os.path.join(result_dir, csv_filename), "a") as fout:
         result_df.to_csv(fout, index=False, sep='\t')

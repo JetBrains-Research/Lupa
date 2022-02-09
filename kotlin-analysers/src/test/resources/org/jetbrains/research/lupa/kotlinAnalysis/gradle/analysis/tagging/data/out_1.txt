@@ -1,0 +1,2 @@
+project_name,tag
+in_1_not_android_project,other

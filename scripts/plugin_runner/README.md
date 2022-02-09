@@ -3,7 +3,7 @@
 #### Extract methods from dataset
 
 ``` 
-python3 -m plugin_runner.batch_processing data_to_analyze /path/to/dataset/dir /path/to/statistcis/dir 
+python3 -m plugin_runner.batch_processing /path/to/dataset/dir /path/to/statistcis/dir data_to_analyze
 ```
 
 where ```data_to_analyze``` can be any analyzer name fto the [AVAILABLE_ANALYZERS](./analyzers.py)

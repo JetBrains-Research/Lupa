@@ -32,7 +32,7 @@ from pkg_resources import parse_requirements as parse_line, parse_version
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from plugin_runner.utils.file_system import get_all_file_system_items
+from utils.file_utils import get_all_file_system_items
 
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
 REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirements[\S]*\.txt$'

@@ -1,0 +1,3 @@
+project_name,import
+in_2_project_with_non_root_packages,math.cos
+in_2_project_with_non_root_packages,math.sin

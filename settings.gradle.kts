@@ -1,16 +1,14 @@
 import java.net.URI
 
-rootProject.name = "kotlin-analysis"
+rootProject.name = "lupa"
 
 include(
-    "kotlin-analysis-core",
-    "kotlin-analysis-plugin",
-    "kotlin-analysis-clones",
-    "kotlin-analysis-dependencies",
-    "kotlin-analysis-statistic",
-    "kotlin-analysis-gradle",
-    "kotlin-analysis-test",
-    "python-analysis-dependencies"
+    "lupa-core",
+    "lupa-test",
+    "lupa-runner",
+
+    "kotlin-analysers",
+    "python-analysers"
 )
 
 val utilitiesRepo = "https://github.com/JetBrains-Research/plugin-utilities.git"
@@ -19,6 +17,7 @@ val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
 sourceControl {
     gitRepository(URI.create(utilitiesRepo)) {
         producesModule("$utilitiesProjectName:plugin-utilities-core")
+        producesModule("$utilitiesProjectName:plugin-utilities-python")
         producesModule("$utilitiesProjectName:plugin-utilities-test")
     }
 }
@@ -26,7 +25,7 @@ sourceControl {
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
         maven(url = "https://nexus.gluonhq.com/nexus/content/repositories/releases")
     }
 }

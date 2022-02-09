@@ -1,0 +1,4 @@
+project_name,property_key,property_value
+in_1_groovy_multi_module_project,kotlin.code.style,official
+in_1_groovy_multi_module_project,org.gradle.jvmargs,-Xmx1536m
+in_1_groovy_multi_module_project,org.gradle.parallel,true

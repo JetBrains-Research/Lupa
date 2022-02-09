@@ -1,0 +1,6 @@
+project_name,import
+in_0_dataset_gradle_groovy_one_module,kotlinx.coroutines
+in_0_dataset_gradle_groovy_one_module,kotlinx.coroutines.delay
+in_0_dataset_gradle_groovy_one_module,kotlinx.coroutines.delay
+in_0_dataset_gradle_groovy_one_module,kotlinx.coroutines.delay
+in_0_dataset_gradle_groovy_one_module,org.apache.commons.math3.random.JDKRandomGenerator
