@@ -20,7 +20,7 @@ import os
 from data_collection.db_connect import DatabaseConn
 from data_collection.repositories_table import RepositoriesTable
 from data_collection.git_repo import GitRepository
-from utils import create_directory
+from utils.file_utils import create_directory
 
 logging.basicConfig(level=logging.INFO)
 
@@ -58,7 +58,7 @@ def update_dataset(config):
             was_updated = git_repo.pull_changes()
             if exists_in_db and was_updated:
                 logging.info(f"Repository {project} has been updated")
-                repositories_table.update_date(username, project_name, cur_date)
+                repositories_table.update_pull_date(username, project_name, cur_date)
             elif exists_in_db:
                 logging.info(f"Repository {project} hasn't been updated")
             else:

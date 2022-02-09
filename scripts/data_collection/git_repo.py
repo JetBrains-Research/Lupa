@@ -1,6 +1,6 @@
 import os
 
-from utils import run_in_subprocess
+from utils.run_process_utils import run_in_subprocess
 
 
 class GitRepository:
@@ -15,7 +15,7 @@ class GitRepository:
         if not self.store_history:
             command += ["--depth", "1"]
 
-        return_code, _ = run_in_subprocess(command)
+        return_code, _ = run_in_subprocess(command, cwd=os.path.dirname(self.project_dir))
         return return_code == 0
 
     def pull_changes(self) -> bool:

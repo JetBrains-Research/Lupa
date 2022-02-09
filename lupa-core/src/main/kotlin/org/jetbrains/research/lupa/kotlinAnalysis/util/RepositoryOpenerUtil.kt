@@ -46,22 +46,26 @@ class RepositoryOpenerUtil {
             action: (Project) -> Boolean,
         ): Boolean {
             var isSuccessful = true
-            ApplicationManager.getApplication().invokeAndWait {
-                ProjectManagerEx.getInstanceEx().openProject(
-                    projectPath,
-                    OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
-                )?.let { project ->
-                    try {
-                        isSuccessful = action(project)
-                    } catch (ex: Exception) {
-                        logger.error(ex)
-                    } finally {
-                        ApplicationManager.getApplication().invokeAndWait {
-                            val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
-                            logger.info("Project ${project.name} is closed = $closeStatus")
+            try {
+                ApplicationManager.getApplication().invokeAndWait {
+                    ProjectManagerEx.getInstanceEx().openProject(
+                        projectPath,
+                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                    )?.let { project ->
+                        try {
+                            isSuccessful = action(project)
+                        } catch (ex: Exception) {
+                            logger.error(ex)
+                        } finally {
+                            ApplicationManager.getApplication().invokeAndWait {
+                                val closeStatus = ProjectManagerEx.getInstanceEx().forceCloseProject(project)
+                                logger.info("Project ${project.name} is closed = $closeStatus")
+                            }
                         }
                     }
                 }
+            } catch (ex: Exception) {
+                logger.error(ex)
             }
             return isSuccessful
         }

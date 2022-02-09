@@ -17,7 +17,7 @@ import logging
 from typing import Set, TextIO, Tuple
 
 from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
-from utils import create_directory, Extensions
+from utils.file_utils import create_directory, Extensions
 
 
 def main():
@@ -35,7 +35,7 @@ def main():
             results_fout.truncate(0)
             results_fout.write("full_name\n")
         unique_names = set()
-        for index, project in enumerate(dataset.name[args.start_from:]):
+        for index, project in enumerate(dataset.Name[args.start_from:]):
             username, project_name = project.split('/')
             query_url = f"https://api.github.com/repos/{username}/{project_name}"
             r = session.get(query_url, headers=headers)

@@ -3,7 +3,7 @@ import os
 from shutil import copy
 from typing import List
 
-from utils import create_directory
+from utils.file_utils import create_directory
 
 
 def main():

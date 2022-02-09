@@ -17,7 +17,7 @@ import os
 from typing import List
 
 from data_collection.filter_dataset import filter_files
-from utils import create_directory
+from utils.file_utils import create_directory
 
 
 def load_dataset(input_path: str, output_path: str, allowed_extensions: List[str], start_from: int):

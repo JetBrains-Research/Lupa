@@ -16,7 +16,7 @@ import time
 from github import Github
 from datetime import datetime
 
-from utils import create_directory
+from utils.file_utils import create_directory
 from data_collection.data_collection_utils import get_github_token
 
 TIME = "01:00"
