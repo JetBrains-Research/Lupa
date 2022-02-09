@@ -443,7 +443,7 @@ def main(
     filter_dunder_names: bool,
     filter_builtin_names: bool,
 ) -> None:
-    fq_names = pd.read_csv(path_to_fq_names)
+    fq_names = pd.read_csv(path_to_fq_names, keep_default_na=False)
 
     print(f'Received {len(fq_names)} FQ names.')
 
