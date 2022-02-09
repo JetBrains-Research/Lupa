@@ -55,7 +55,7 @@ def main():
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     stats.to_csv(output_path, index=False)
-    logging.info(f'Saving call expressions stats.')
+    logging.info('Saving call expressions stats.')
 
 
 if __name__ == '__main__':
