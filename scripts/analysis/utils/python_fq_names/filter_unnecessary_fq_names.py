@@ -217,8 +217,8 @@ STDLIB_MODULES = [
     'zoneinfo',
 ]
 
-# A list of all builtins is obtained from: https://docs.python.org/3.10/library/functions.html
-BUILTINS = [
+# A list of all builtin functions is obtained from: https://docs.python.org/3.10/library/functions.html
+BUILTIN_FUNCTIONS = [
     # A
     'abs',
     'aiter',
@@ -312,6 +312,78 @@ BUILTINS = [
     '__import__',
 ]
 
+# A list of all builtin exceptions is obtained from: https://docs.python.org/3.10/library/exceptions.html
+BUILTIN_EXCEPTIONS = [
+    'BaseException',
+    'SystemExit',
+    'KeyboardInterrupt',
+    'GeneratorExit',
+    'Exception',
+    'StopIteration',
+    'StopAsyncIteration',
+    'ArithmeticError',
+    'FloatingPointError',
+    'OverflowError',
+    'ZeroDivisionError',
+    'AssertionError',
+    'AttributeError',
+    'BufferError',
+    'EOFError',
+    'ImportError',
+    'ModuleNotFoundError',
+    'LookupError',
+    'IndexError',
+    'KeyError',
+    'MemoryError',
+    'NameError',
+    'UnboundLocalError',
+    'OSError',
+    'BlockingIOError',
+    'ChildProcessError',
+    'ConnectionError',
+    'BrokenPipeError',
+    'ConnectionAbortedError',
+    'ConnectionRefusedError',
+    'ConnectionResetError',
+    'FileExistsError',
+    'FileNotFoundError',
+    'InterruptedError',
+    'IsADirectoryError',
+    'NotADirectoryError',
+    'PermissionError',
+    'ProcessLookupError',
+    'TimeoutError',
+    'ReferenceError',
+    'RuntimeError',
+    'NotImplementedError',
+    'RecursionError',
+    'SyntaxError',
+    'IndentationError',
+    'TabError',
+    'SystemError',
+    'TypeError',
+    'ValueError',
+    'UnicodeError',
+    'UnicodeDecodeError',
+    'UnicodeEncodeError',
+    'UnicodeTranslateError',
+    'Warning',
+    'DeprecationWarning',
+    'PendingDeprecationWarning',
+    'RuntimeWarning',
+    'SyntaxWarning',
+    'UserWarning',
+    'FutureWarning',
+    'ImportWarning',
+    'UnicodeWarning',
+    'BytesWarning',
+    'EncodingWarning',
+    'ResourceWarning',
+]
+
+
+BUILTINS = BUILTIN_FUNCTIONS + BUILTIN_EXCEPTIONS
+
 
 def _is_stdlib_name(fq_name: str) -> bool:
     """
@@ -371,7 +443,7 @@ def main(
     filter_dunder_names: bool,
     filter_builtin_names: bool,
 ) -> None:
-    fq_names = pd.read_csv(path_to_fq_names)
+    fq_names = pd.read_csv(path_to_fq_names, keep_default_na=False)
 
     print(f'Received {len(fq_names)} FQ names.')
 
