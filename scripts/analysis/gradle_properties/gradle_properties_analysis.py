@@ -1,13 +1,15 @@
 import argparse
 import os
-from collections import defaultdict
-
-import pandas as pd
 import re
 import sys
-from analysis.gradle_properties.column_names_utils import GradlePropertiesKeyStatsColumn, GradlePropertiesColumn
-from typing import Dict, Any
-from utils import Extensions, create_directory, get_file_lines
+from collections import defaultdict
+from typing import Any, Dict
+
+from analysis.gradle_properties.column_names_utils import GradlePropertiesColumn, GradlePropertiesKeyStatsColumn
+
+import pandas as pd
+
+from utils.file_utils import Extensions, create_directory, get_file_lines
 
 GradlePropertiesStats = Dict[str, Any]
 
