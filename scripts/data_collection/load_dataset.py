@@ -1,5 +1,6 @@
 """
 This script allows the user to clone repositories listed in dataset from GitHub.
+
 It accepts
     * path to CSV file --  dataset downloaded from https://seart-ghs.si.usi.ch/
     * path to the output directory, where repositories are cloned

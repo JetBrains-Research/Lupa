@@ -1,5 +1,6 @@
 """
 This script allows to run IntelliJ IDEA plugin using batch processing.
+
 It accepts
     * path to input directory containing kotlin projects
     * path to the output directory, where all methods extracted from input projects will be saved

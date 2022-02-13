@@ -1,6 +1,5 @@
 """
-This script allows you to create a virtual environment
-and install the requirements gathered from a given dataset with python projects.
+This script creates a virtual environment and installs the requirements gathered from a given python dataset.
 
 It accepts
     * path to the folder with python projects.
@@ -91,12 +90,11 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
 
 def _normalize_requirement_name(name: str) -> str:
     """
-    Normalizes the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
+    Normalize the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
 
     :param name: name of package
     :return: normalized name of package
     """
-
     normalized_name = name.lower()
     normalized_name = normalized_name.replace('.', '-')
     normalized_name = normalized_name.replace('_', '-')
@@ -105,13 +103,12 @@ def _normalize_requirement_name(name: str) -> str:
 
 def gather_requirements(dataset_path: Path) -> Requirements:
     """
-    Collects requirements from all projects.
+    Collect requirements from all projects.
 
     :param dataset_path: the path to the folder with the projects that contain the requirements files.
     :return: dictionary, where for each package the collected specs are listed.
              The spec is a pair of operator and version.
     """
-
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
@@ -154,13 +151,12 @@ def _create_session() -> requests.Session:
 
 def filter_unavailable_packages(requirements: Requirements) -> Requirements:
     """
-    Removes all package names that are not on PyPI.
+    Remove all package names that are not on PyPI.
 
     :param requirements: dictionary, where for each package the specs are listed.
                          The spec is a pair of operator and version.
     :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
     """
-
     logger.info('Filtering unavailable packages.')
 
     session = _create_session()
@@ -193,12 +189,11 @@ def filter_unavailable_packages(requirements: Requirements) -> Requirements:
 
 def _get_available_versions(package_name: str) -> Set[Version]:
     """
-    By a given package, collects a list of all the versions available on PyPI.
+    By a given package, collect a list of all the versions available on PyPI.
 
     :param package_name: PyPI package name.
     :return: set of available versions. If the version could not be obtained, None will be returned.
     """
-
     session = _create_session()
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
     try:
@@ -221,14 +216,13 @@ def _get_available_versions(package_name: str) -> Set[Version]:
 
 def filter_unavailable_versions(specs: Requirements) -> Requirements:
     """
-    Removes all versions of packages that are not on PyPI.
+    Remove all versions of packages that are not on PyPI.
 
     :param specs: dictionary, where for each package the specs are listed.
                   The spec is a pair of operator and version.
     :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
              The specs contain only those versions which are available on the PyPI.
     """
-
     logger.info('Filtering unavailable versions.')
 
     filtered_requirements = {}
@@ -252,13 +246,12 @@ def filter_unavailable_versions(specs: Requirements) -> Requirements:
 
 def merge_requirements(requirements: Requirements) -> Dict[str, Optional[Version]]:
     """
-    For each package leaves only the highest version of requirements.
+    For each package leave only the highest version of requirements.
 
     :param requirements: dictionary, where for each package the specs are listed.
                          The spec is a pair of operator and version.
     :return: dictionary, where a version is specified for each package.
     """
-
     logger.info('Merging requirements.')
 
     version_by_package_name = {}
@@ -272,13 +265,12 @@ def merge_requirements(requirements: Requirements) -> Dict[str, Optional[Version
 
 def create_requirements_file(version_by_package_name: Dict[str, Optional[Version]], requirements_dir: Path) -> Path:
     """
-    Creates a requirements file from the passed dictionary.
+    Create a requirements file from the passed dictionary.
 
     :param version_by_package_name: dictionary, where for each package, specifies the version to be installed.
     :param requirements_dir: the path where the requirements file will be created.
     :return: the path to the created requirements file.
     """
-
     logger.info('Creating requirements file.')
 
     requirements_dir.mkdir(exist_ok=True, parents=True)
@@ -296,7 +288,7 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
 
 def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool) -> int:
     """
-    In the passed path creates a virtual environment and installs the passed requirements.
+    In the passed path create a virtual environment and installs the passed requirements.
 
     :param venv_path: the path where the virtual environment will be created.
     :param requirements_path: the path to the requirements file.
@@ -304,7 +296,6 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
     :param for_each: is it necessary to call `pip install` for each requirement individually or for the whole file.
     :return: pip return code or number of pip errors if for_each flag is specified.
     """
-
     logger.info('Creating virtual environment.')
 
     venv_path.mkdir(exist_ok=True, parents=True)

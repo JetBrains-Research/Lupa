@@ -381,14 +381,11 @@ BUILTIN_EXCEPTIONS = [
     'ResourceWarning',
 ]
 
-
 BUILTINS = BUILTIN_FUNCTIONS + BUILTIN_EXCEPTIONS
 
 
 def _is_stdlib_name(fq_name: str) -> bool:
-    """
-    Checks if the FQ name starts with the name of the standard module.
-    """
+    """Check if the FQ name starts with the name of the standard module."""
     # Add a dot at the end of the FQ name and at the end of the module names.
     # This is necessary to correctly identify FQ names that start with the name of the standard library.
     stdlib_modules_with_dot = list(map(lambda module_name: f'{module_name}.', STDLIB_MODULES))
@@ -398,15 +395,13 @@ def _is_stdlib_name(fq_name: str) -> bool:
 
 
 def __is_dunder_name(name: str) -> bool:
-    """
-    Checks if the name starts and ends with double underscores.
-    """
+    """Check if the name starts and ends with double underscores."""
     return re.match(r'__.*__', name) is not None
 
 
 def _is_private_name(fq_name: str) -> bool:
     """
-    Checks if the FQ name is private.
+    Check if the FQ name is private.
 
     A FQ name is considered private if at least one part of it starts with underscore.
     Private modules of the standard library and dunder names are ignored.
@@ -423,9 +418,7 @@ def _is_private_name(fq_name: str) -> bool:
 
 
 def _is_builtin_name(fq_name: str) -> bool:
-    """
-    Checks if the FQ name starts with the Python builtin name.
-    """
+    """Check if the FQ name starts with the Python builtin name."""
     # Add a dot at the end of the FQ name and at the end of the builtin names.
     # This is necessary to correctly identify FQ names that start with the name of builtin.
     builtins_with_dot = list(map(lambda builtin_name: f'{builtin_name}.', BUILTINS))

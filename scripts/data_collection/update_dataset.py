@@ -1,14 +1,15 @@
 """
-This script allows the user to clone repositories listed in dataset from GitHub
-or pull changes from repository, if it is already stored.
+This script allows the user to clone repositories listed in dataset from GitHub or pull changes from repository.
+
 Each repository is cloned without history (or with, if necessary and argument `store-history` is passed).
-When the argument `save-to-db` is passed,
-the date of the last pull of each repository is saved to the database configured by `database.ini` file
+When the argument `save-to-db` is passed, the date of the last pull of each repository
+is saved to the database configured by `database.ini` file
+
 Script accepts
     * path to CSV file --  dataset downloaded from https://seart-ghs.si.usi.ch/
     * path to the output directory, where repositories are cloned
     * index to start from
-    * whether to use database or not
+    * whether to use database or n
 """
 import argparse
 import datetime

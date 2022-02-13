@@ -52,7 +52,9 @@ def save_to_txt(node: FqNameNode, path_to_result_dir: str):
 
 
 def delete_extra_child_nodes(parent: FqNameNode, max_children: int):
-    """ Recursively leave not much then `max_children` children in the ascending sorted by count order.
+    """
+    Recursively leave not much then `max_children` children in the ascending sorted by count order.
+
     :param parent: node to remove extra children
     :param max_children: max number of children that is allowed to leave
     """
@@ -62,7 +64,9 @@ def delete_extra_child_nodes(parent: FqNameNode, max_children: int):
 
 
 def delete_rare_nodes(parent: FqNameNode, min_count: int):
-    """ Recursively leave only children with count greater then `min_count`.
+    """
+    Recursively leave only children with count greater then `min_count`.
+
     :param parent: node to remove extra rare children
     :param min_count: min value of children count that is allowed to leave
     """
@@ -72,7 +76,9 @@ def delete_rare_nodes(parent: FqNameNode, min_count: int):
 
 
 def merge_single_child_nodes(parent: FqNameNode):
-    """ Recursively merge and concatenate names of parent and child nodes if this child is the only one for `parent`.
+    """
+    Recursively merge and concatenate names of parent and child nodes if this child is the only one for `parent`.
+
     :param parent: node to merge
     """
     if len(parent.children) == 1:
@@ -92,7 +98,7 @@ def is_leaf(node: FqNameNode):
 
 
 def is_huge(node: FqNameNode, max_leaf_subpackages: float, max_occurrence: int, max_u_occurrence: int) -> bool:
-    """ Check is node huge to be considerate as package and show separately. """
+    """Check is node huge to be considerate as package and show separately."""
     if node.unique_count < max_u_occurrence or (not node.is_root and node.count < max_occurrence):
         return True
     children_count = len(node.children)
@@ -106,7 +112,9 @@ def split_to_subtrees(
     max_occurrence: int,
     max_u_occurrence: int,
 ) -> List[FqNameNode]:
-    """ Recursively split tree into subtrees to make each subtree smaller and representative.
+    """
+    Recursively split tree into subtrees to make each subtree smaller and representative.
+
     :param parent: node to remove extra rare children
     :param max_leaf_subpackages: if for `parent` node percent of leaf children is more then `max_leaf_subpackages`
     we consider `parent` as root of new subtree spit it from given tree
@@ -114,7 +122,7 @@ def split_to_subtrees(
     of new subtree
     :param max_u_occurrence: if parent subtree size is more then `max_u_occurrence` we do not consider `parent` as root
     of new subtree
-    :return roots of subtrees
+    :return: roots of subtrees
     """
     if parent.unique_count is None:
         parent.unique_count = calc_unique_count(parent)

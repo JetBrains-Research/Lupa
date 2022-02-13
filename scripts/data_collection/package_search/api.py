@@ -18,7 +18,7 @@ def split_to_chunks(lst: List[str], n) -> List[str]:
 
 
 def get_packages(full_names: List[str]) -> List[Package]:
-    """ Get packages for given package full names: group_id:artifact_id. """
+    """Get packages for given package full names: group_id:artifact_id."""
     packages = []
     current_loaded, total_loaded = 0, len(full_names)
     for full_names_chunks in split_to_chunks(full_names, 20):

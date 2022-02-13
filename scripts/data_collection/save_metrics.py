@@ -1,6 +1,8 @@
 """
 This script runs github metrics saver every day.
+
 It stores current number of stars, forks and issues for given repositories.
+
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory

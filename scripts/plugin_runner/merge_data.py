@@ -1,6 +1,4 @@
-"""
-This class contains methods for merging analysis results from different batches into a single file.
-"""
+"""This class contains methods for merging analysis results from different batches into a single file."""
 import logging
 import os
 from pathlib import Path

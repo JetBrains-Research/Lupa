@@ -1,8 +1,9 @@
 """
-This script allows the user to find out actual full names of GitHub repositories
-to avoid duplicated projects in a dataset.
-The script makes requests to GitHub API, saves unique full names of repositories
-and optionally saves all JSON responses containing repositories metadata.
+This script allows the user to find out actual full names of GitHub repositories.
+
+This will help to avoid duplicated projects in a dataset. The script makes requests to GitHub API,
+saves unique full names of repositories and optionally saves all JSON responses containing repositories metadata.
+
 It accepts
     * path to csv file --  dataset, f.e. downloaded from https://seart-ghs.si.usi.ch/
     * path to output directory

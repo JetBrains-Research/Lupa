@@ -142,7 +142,7 @@ def fq_names_by_prefix_to_csv(fq_names: List[str],
 def fq_names_by_packages_to_csv(fq_names: List[str], packages: List[str],
                                 max_package_len: int,
                                 path_to_result_dir: str):
-    """ Group fq names by package name and save occurrence statistics in csv format. """
+    """Group fq names by package name and save occurrence statistics in csv format."""
     fq_names_by_package = group_fq_names_by(fq_names,
                                             lambda fq_name: get_prefix_by_package(fq_name, packages, max_package_len))
     fq_names_by_package_stats = fq_names_groups_to_stats(fq_names_by_package)
@@ -153,7 +153,7 @@ def fq_names_by_packages_to_csv(fq_names: List[str], packages: List[str],
 
 def fq_names_to_json(fq_names_dict: FqNamesDict,
                      path_to_result_dir: str):
-    """ Present fq names in json format. """
+    """Present fq names in json format."""
     with open(os.path.join(path_to_result_dir, f"fq_names_tree.{Extensions.JSON}"), 'w') as result_file:
         json.dump(fq_names_dict, result_file)
 
@@ -161,7 +161,7 @@ def fq_names_to_json(fq_names_dict: FqNamesDict,
 def fq_names_to_trees(root: FqNameNode, sub_roots: List[FqNameNode],
                       path_to_result_dir: str,
                       show: Callable[[FqNameNode, str], None]):
-    """ Present fq names trees decomposition in given format. """
+    """Present fq names trees decomposition in given format."""
     show(root, path_to_result_dir)
     for sub_root in sub_roots:
         show(sub_root, path_to_result_dir)

@@ -1,5 +1,6 @@
 """
 This script runs GitHub API every day and saves all collected data about given repositories.
+
 It accepts
     * path to csv file --  dataset with full names of repositories
     * path to output directory
