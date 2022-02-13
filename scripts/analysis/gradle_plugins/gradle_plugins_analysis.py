@@ -33,13 +33,13 @@ def get_plugins_stats(df: pd.DataFrame, unique=False) -> GradlePluginsStats:
 
 def analyze_unique_plugins_stats(path_to_result_dir: str, df: pd.DataFrame):
     plugins_stats = get_plugins_stats(df, unique=True)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_plugins_by_project_stats.{Extensions.CSV}",
+    save_stats_with_to_csv(path_to_result_dir, f'gradle_plugins_by_project_stats.{Extensions.CSV}',
                            plugins_stats)
 
 
 def analyze_plugins_stats(path_to_result_dir: str, df: pd.DataFrame):
     plugins_stats = get_plugins_stats(df)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_plugins_by_module_stats.{Extensions.CSV}", plugins_stats)
+    save_stats_with_to_csv(path_to_result_dir, f'gradle_plugins_by_module_stats.{Extensions.CSV}', plugins_stats)
 
 
 def get_gradle_plugins(path_to_plugins: str) -> pd.DataFrame:
@@ -50,7 +50,7 @@ def analyze(path_to_plugins: str, path_to_result_dir: str):
     create_directory(path_to_result_dir)
 
     df = get_gradle_plugins(path_to_plugins)
-    print(f"Got {df.size} gradle plugins")
+    print(f'Got {df.size} gradle plugins')
     analyze_plugins_stats(path_to_result_dir, df)
     analyze_unique_plugins_stats(path_to_result_dir, df)
 

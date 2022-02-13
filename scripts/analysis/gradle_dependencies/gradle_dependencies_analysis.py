@@ -26,7 +26,7 @@ def get_full_name_stats(df: pd.DataFrame, unique=False) -> pd.DataFrame:
     full_names_stats = defaultdict(dict)
     projects_by_full_names = defaultdict(set)
     for project_name, _, group_id, artifact_id, config in df.values:
-        full_name = f"{group_id}:{artifact_id}"
+        full_name = f'{group_id}:{artifact_id}'
         if full_name not in full_names_stats:
             full_names_stats[full_name][GradleDependenciesStatsColumn.FULL_NAME] = full_name
             full_names_stats[full_name][GradleDependenciesStatsColumn.COUNT] = 0
@@ -52,22 +52,22 @@ def merge_stats_with_meta(stats: pd.DataFrame, meta: pd.DataFrame) -> pd.DataFra
 
 def analyze_unique_full_names_stats(path_to_result_dir: str, meta: pd.DataFrame, df: pd.DataFrame):
     stats = get_full_name_stats(df, unique=True)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_dependencies_by_project_stats.{Extensions.CSV}", stats)
+    save_stats_with_to_csv(path_to_result_dir, f'gradle_dependencies_by_project_stats.{Extensions.CSV}', stats)
     meta_stats = merge_stats_with_meta(stats, meta)
     save_stats_with_to_csv(
         path_to_result_dir,
-        f"gradle_dependencies_by_project_with_meta_stats.{Extensions.CSV}",
+        f'gradle_dependencies_by_project_with_meta_stats.{Extensions.CSV}',
         meta_stats,
     )
 
 
 def analyze_full_names_stats(path_to_result_dir: str, meta: pd.DataFrame, df: pd.DataFrame):
     stats = get_full_name_stats(df)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_dependencies_by_module_stats.{Extensions.CSV}", stats)
+    save_stats_with_to_csv(path_to_result_dir, f'gradle_dependencies_by_module_stats.{Extensions.CSV}', stats)
     meta_stats = merge_stats_with_meta(stats, meta)
     save_stats_with_to_csv(
         path_to_result_dir,
-        f"gradle_dependencies_by_module_with_meta_stats.{Extensions.CSV}",
+        f'gradle_dependencies_by_module_with_meta_stats.{Extensions.CSV}',
         meta_stats,
     )
 
@@ -99,7 +99,7 @@ def analyze(
 
     df = get_gradle_dependencies(path_to_dependencies, path_to_tagged_projects, tags)
     meta = get_gradle_dependencies_meta(path_to_dependencies_meta)
-    print(f"Got {df.size} gradle dependencies")
+    print(f'Got {df.size} gradle dependencies')
     analyze_full_names_stats(path_to_result_dir, meta, df)
     analyze_unique_full_names_stats(path_to_result_dir, meta, df)
 

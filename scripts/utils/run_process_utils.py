@@ -16,8 +16,8 @@ def run_in_subprocess(command: List[str], cwd: str,
     stderr = process.stderr.decode() if process.stderr else None
 
     if stdout:
-        logging.debug('%s\'s stdout:\n%s' % (command[0], stdout))
+        logging.debug("%s's stdout:\n%s" % (command[0], stdout))
     if stderr:
-        logging.debug('%s\'s stderr:\n%s' % (command[0], stderr))
+        logging.debug("%s's stderr:\n%s" % (command[0], stderr))
 
     return process.returncode, stdout

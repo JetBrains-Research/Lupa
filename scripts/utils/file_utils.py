@@ -7,10 +7,10 @@ from typing import Callable, List
 
 
 class Extensions(str, enum.Enum):
-    CSV = "csv"
-    TXT = "txt"
-    JSON = "json"
-    PNG = "png"
+    CSV = 'csv'
+    TXT = 'txt'
+    JSON = 'json'
+    PNG = 'png'
 
 
 def create_directory(path: str):
@@ -45,7 +45,7 @@ def get_file_lines(path: str) -> List[str]:
 
 
 def write_to_file(path: str, content: str):
-    with open(path, "w+") as file:
+    with open(path, 'w+') as file:
         file.write(content)
 
 

@@ -15,7 +15,7 @@ import pandas as pd
 
 def url_to_repo_name(url: str) -> Optional[str]:
     result = re.search('https://github.com/([^/]*)/([^/]*)(/.*)?', url)
-    return None if result is None or len(result.groups()) < 2 else "/".join([result.group(1), result.group(2)])
+    return None if result is None or len(result.groups()) < 2 else '/'.join([result.group(1), result.group(2)])
 
 
 def check_is_community(full_name) -> bool:
@@ -34,7 +34,7 @@ def get_gradle_dependencies_meta_csv(path_to_stats: str, path_to_result: str, pa
     data = pd.read_csv(path_to_stats)[:10]
     plugins = pd.read_csv(path_to_plugins)
 
-    full_names = list({f"{group_id}:{artifact_id}" for group_id, artifact_id
+    full_names = list({f'{group_id}:{artifact_id}' for group_id, artifact_id
                        in data[[GradleDependenciesColumn.GROUP_ID,
                                 GradleDependenciesColumn.ARTIFACT_ID]].values})
 
@@ -42,7 +42,7 @@ def get_gradle_dependencies_meta_csv(path_to_stats: str, path_to_result: str, pa
     meta = defaultdict(list)
 
     for package in packages:
-        full_name = f"{package.group_id}:{package.artifact_id}"
+        full_name = f'{package.group_id}:{package.artifact_id}'
         url = package.scm.url if package.scm is not None and package.scm.url is not None else package.url
         language = None
         repo_name = None

@@ -3,8 +3,8 @@ from collections import defaultdict
 
 import pandas as pd
 
-TOTAL = "TOTAL"
-OTHER = "other"
+TOTAL = 'TOTAL'
+OTHER = 'other'
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
 
     ranges_dict = defaultdict(dict)
     for column_name in ranges_df.columns[1:]:
-        range, context = column_name.split(",")
+        range, context = column_name.split(',')
         ranges_dict[range][context] = ranges_df[column_name].sum()
     df_final = pd.DataFrame.from_dict(ranges_dict, orient='index')
 
@@ -35,9 +35,9 @@ def main():
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="Path to results of the ranges analysis plugin")
+    parser.add_argument('input', help='Path to results of the ranges analysis plugin')
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

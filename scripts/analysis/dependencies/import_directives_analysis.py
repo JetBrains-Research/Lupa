@@ -61,17 +61,17 @@ def save_stats_to_bar_plot(fq_names_stats: FqNamesStats, title: str):
 
 
 def get_package_by_len(fq_name: str, prefix_len: int) -> str:
-    fq_name_path_list = fq_name.split(".")
+    fq_name_path_list = fq_name.split('.')
     fq_name_path_len = max(1, min(len(fq_name_path_list) - 1, prefix_len))
-    return ".".join(fq_name_path_list[:fq_name_path_len])
+    return '.'.join(fq_name_path_list[:fq_name_path_len])
 
 
 def get_prefix_by_package(fq_name: str, packages: List[str], prefix_len: int) -> str:
-    max_package = ""
+    max_package = ''
     for package in packages:
         if fq_name.startswith(package) and len(max_package) < len(package):
             max_package = package
-    return get_package_by_len(fq_name, prefix_len) if max_package == "" else max_package
+    return get_package_by_len(fq_name, prefix_len) if max_package == '' else max_package
 
 
 def get_longest_common_prefix(fq_names: List[str]) -> str:
@@ -80,7 +80,7 @@ def get_longest_common_prefix(fq_names: List[str]) -> str:
     while (all(len(fq_name) > max_prefix_len for fq_name in fq_names)
            and all(fq_name[max_prefix_len] == fq_names[0][max_prefix_len] for fq_name in fq_names)):
         max_prefix_len += 1
-    return ".".join(fq_names[0][:max_prefix_len])
+    return '.'.join(fq_names[0][:max_prefix_len])
 
 
 def group_fq_names_by(fq_names: List[str], group_by_function: Callable[[str], str]) -> FqNamesGroups:
@@ -99,7 +99,7 @@ def fq_names_groups_to_stats(fq_names_groups: FqNamesGroups) -> FqNamesStats:
 
 
 def fq_names_groups_to_dict(fq_names_groups: FqNamesGroups) -> FqNamesDict:
-    return {group_name: fq_names_to_dict(list(map(lambda fq_name: ".".join(fq_name.split(".")[1:]), group_members)))
+    return {group_name: fq_names_to_dict(list(map(lambda fq_name: '.'.join(fq_name.split('.')[1:]), group_members)))
             for group_name, group_members in fq_names_groups.items()}
 
 
@@ -108,8 +108,8 @@ def fq_names_to_dict(fq_names: List[str]) -> FqNamesDict:
     if cnt == 1 or cnt == len(set(fq_names)):
         return {ImportDirectivesColumn.COUNT: cnt}
 
-    fq_names = list(filter(lambda fq_name: fq_name != "", fq_names))
-    grouped_fq_names = group_fq_names_by(fq_names, lambda fq_name: fq_name.split(".")[0])
+    fq_names = list(filter(lambda fq_name: fq_name != '', fq_names))
+    grouped_fq_names = group_fq_names_by(fq_names, lambda fq_name: fq_name.split('.')[0])
 
     grouped_fq_names_dict = fq_names_groups_to_dict(grouped_fq_names)
     grouped_fq_names_dict[ImportDirectivesColumn.COUNT] = cnt
@@ -120,12 +120,12 @@ def fq_names_to_dict(fq_names: List[str]) -> FqNamesDict:
 def fq_names_to_csv(fq_names: List[str],
                     path_to_result_dir: str):
     fq_names_count = Counter(fq_names)
-    save_stats_to_csv(path_to_result_dir, f"total.{Extensions.CSV}", fq_names_count)
+    save_stats_to_csv(path_to_result_dir, f'total.{Extensions.CSV}', fq_names_count)
 
 
 def fq_names_to_bar_plot(fq_names: List[str]):
     fq_names_count = Counter(fq_names)
-    save_stats_to_bar_plot(fq_names_count, "Fq names occurrence statistics")
+    save_stats_to_bar_plot(fq_names_count, 'Fq names occurrence statistics')
 
 
 def fq_names_by_prefix_to_csv(fq_names: List[str],
@@ -135,8 +135,8 @@ def fq_names_by_prefix_to_csv(fq_names: List[str],
                                            lambda fq_name: get_package_by_len(fq_name, prefix_len))
     fq_names_by_prefix_stats = fq_names_groups_to_stats(fq_names_by_prefix)
 
-    save_stats_to_csv(path_to_result_dir, f"total_by_prefix.{Extensions.CSV}", fq_names_by_prefix_stats)
-    save_stats_to_bar_plot(fq_names_by_prefix_stats, "Fq names grouped by prefix occurrence statistics")
+    save_stats_to_csv(path_to_result_dir, f'total_by_prefix.{Extensions.CSV}', fq_names_by_prefix_stats)
+    save_stats_to_bar_plot(fq_names_by_prefix_stats, 'Fq names grouped by prefix occurrence statistics')
 
 
 def fq_names_by_packages_to_csv(fq_names: List[str], packages: List[str],
@@ -147,14 +147,14 @@ def fq_names_by_packages_to_csv(fq_names: List[str], packages: List[str],
                                             lambda fq_name: get_prefix_by_package(fq_name, packages, max_package_len))
     fq_names_by_package_stats = fq_names_groups_to_stats(fq_names_by_package)
 
-    save_stats_to_csv(path_to_result_dir, f"total_by_package.{Extensions.CSV}", fq_names_by_package_stats)
-    save_stats_to_bar_plot(fq_names_by_package_stats, "Fq names grouped by package occurrence statistics")
+    save_stats_to_csv(path_to_result_dir, f'total_by_package.{Extensions.CSV}', fq_names_by_package_stats)
+    save_stats_to_bar_plot(fq_names_by_package_stats, 'Fq names grouped by package occurrence statistics')
 
 
 def fq_names_to_json(fq_names_dict: FqNamesDict,
                      path_to_result_dir: str):
     """Present fq names in json format."""
-    with open(os.path.join(path_to_result_dir, f"fq_names_tree.{Extensions.JSON}"), 'w') as result_file:
+    with open(os.path.join(path_to_result_dir, f'fq_names_tree.{Extensions.JSON}'), 'w') as result_file:
         json.dump(fq_names_dict, result_file)
 
 
@@ -173,7 +173,7 @@ def filter_fq_names(fq_names_with_project: List[List[str]],
                     allow_noise_imports: bool) -> List[List[str]]:
     filtered_fq_names = fq_names_with_project
     if not allow_noise_imports:
-        filtered_fq_names = list(filter(lambda x: "." in x[1], filtered_fq_names))  # filter noise import fq names
+        filtered_fq_names = list(filter(lambda x: '.' in x[1], filtered_fq_names))  # filter noise import fq names
 
     return list(filter(lambda x:
                        not any(x[1].startswith(package) for package in ignored_packages)  # filter ignored packages
@@ -231,7 +231,7 @@ def analyze(path_to_fq_names: str, path_to_result_dir: str, path_to_ignored_pack
 
     fq_names = get_fq_names(path_to_fq_names, path_to_ignored_packages,
                             path_to_tagged_projects, tags, allow_noise_imports)
-    print(f"Got {len(fq_names)} imports")
+    print(f'Got {len(fq_names)} imports')
 
     fq_names_dict = fq_names_to_dict(fq_names)
     root, sub_roots = build_fq_name_tree_decomposition(fq_names_dict, max_subpackages, max_leaf_subpackages,

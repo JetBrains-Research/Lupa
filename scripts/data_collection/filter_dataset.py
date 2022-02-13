@@ -13,7 +13,7 @@ def main():
 
 
 def filter_files(input_dir: str, output_dir: str, extension_list: List[str]):
-    dot_extensions = list(map(lambda s: "." + s, extension_list))
+    dot_extensions = list(map(lambda s: '.' + s, extension_list))
     for root, _dirs, files in os.walk(input_dir):
         for file in files:
             file_abs_path = os.path.join(root, file)
@@ -33,11 +33,11 @@ def allowed_extension(filename: str, extensions_list: List[str]) -> bool:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="Input directory")
-    parser.add_argument("output", help="Output directory")
-    parser.add_argument("--extension-list", help="Allowed file extensions", nargs="+", default=["kt"])
+    parser.add_argument('input', help='Input directory')
+    parser.add_argument('output', help='Output directory')
+    parser.add_argument('--extension-list', help='Allowed file extensions', nargs='+', default=['kt'])
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
