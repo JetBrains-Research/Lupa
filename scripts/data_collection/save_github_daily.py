@@ -5,20 +5,22 @@ It accepts
     * path to output directory
     * time to save GitHub at (optional argument)
 """
-import os
-import typing
-
-import pandas as pd
 import argparse
 import logging
-
-import requests
-import schedule
+import os
 import time
+import typing
 from datetime import datetime
 
-from utils.file_utils import create_directory, Extensions
-from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
+from data_collection.data_collection_utils import create_github_session, get_github_token, save_repo_json
+
+import pandas as pd
+
+import requests
+
+import schedule
+
+from utils.file_utils import Extensions, create_directory
 
 TIME = "17:00"
 
