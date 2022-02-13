@@ -1,5 +1,6 @@
-from collections import defaultdict
 import argparse
+from collections import defaultdict
+
 import pandas as pd
 
 TOTAL = "TOTAL"

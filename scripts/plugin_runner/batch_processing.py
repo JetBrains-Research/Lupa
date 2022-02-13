@@ -10,16 +10,18 @@ It accepts
 import argparse
 import logging
 import os
-from pathlib import Path
-from typing import List, Callable
 import time
+from pathlib import Path
+from typing import Callable, List
 
 from data_collection.db_connect import DatabaseConn
 from data_collection.repositories_table import RepositoriesTable
+
 from plugin_runner.additional_arguments import AdditionalArguments
-from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
+from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 from plugin_runner.merge_data import merge
-from utils.file_utils import create_directory, get_subdirectories, Extensions, clear_directory
+
+from utils.file_utils import Extensions, clear_directory, create_directory, get_subdirectories
 from utils.run_process_utils import run_in_subprocess
 
 PROJECT_DIR = Path(__file__).parent.parent.parent

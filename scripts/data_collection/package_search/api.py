@@ -1,10 +1,11 @@
 import json
 from typing import List
 
-import requests
 from dacite import from_dict
 
 from data_collection.package_search.model import Package, PackageSearchResponse
+
+import requests
 
 PACKAGE_SEARCH_API_BASE_URL = "https://package-search.services.jetbrains.com/api"
 PACKAGE_RANGE_REQUEST_DOMEN = "package?range="

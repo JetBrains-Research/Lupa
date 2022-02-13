@@ -1,9 +1,9 @@
-from typing import Tuple, Dict
-import pandas as pd
-
+from typing import Dict, Tuple
 
 # one pass over adjacency list to count all statistics
 from column_names_utils import MethodsColumn
+
+import pandas as pd
 
 
 def count_clones_statistics(file_path: str, min_projects: int = 10) -> Tuple[Dict, Dict]:

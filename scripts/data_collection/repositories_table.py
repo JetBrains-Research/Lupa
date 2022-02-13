@@ -1,10 +1,11 @@
 import enum
 from datetime import datetime
-from psycopg2 import sql
-from psycopg2.sql import Identifier, Literal
-from typing import Tuple, List, Optional
+from typing import List, Optional, Tuple
 
 from data_collection.db_connect import DatabaseConn
+
+from psycopg2 import sql
+from psycopg2.sql import Identifier, Literal
 
 
 class RepositoriesTableNames(str, enum.Enum):
