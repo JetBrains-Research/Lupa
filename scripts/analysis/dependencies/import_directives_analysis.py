@@ -5,12 +5,16 @@ import sys
 from collections import Counter, defaultdict
 from typing import Callable, Dict, List, Set
 
+from column_names_utils import ImportDirectivesColumn
+
+from fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
+
+from fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
+
 import pandas as pd
 
-from column_names_utils import ImportDirectivesColumn
-from fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
-from fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
-from utils import Extensions, create_directory, get_file_lines
+from utils.file_utils import Extensions, create_directory, get_file_lines
+
 from visualization.diagram import show_bar_plot
 
 """
