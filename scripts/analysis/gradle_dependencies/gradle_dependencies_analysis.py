@@ -2,16 +2,17 @@ import argparse
 import os
 import sys
 from collections import defaultdict
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
+from analysis.gradle_dependencies.column_names_utils import (
+    GradleDependenciesColumn,
+    GradleDependenciesConfigs,
+    GradleDependenciesStatsColumn,
+)
 
 import pandas as pd
 
-from analysis.gradle_dependencies.column_names_utils import (
-    GradleDependenciesStatsColumn,
-    GradleDependenciesColumn,
-    GradleDependenciesConfigs,
-)
-from utils import Extensions, create_directory
+from utils.file_utils import Extensions, create_directory
 
 GradleDependenciesStats = Dict[str, Any]
 
