@@ -3,7 +3,7 @@ max-line-length=120
 
 ignore=WPS, # TODO: Do not ignore WPS inspections
        D, # TODO: Do not ignore inspections related to documentation
-       I00, # TODO: Do not ignore inspections related to the order of imports
+       I00, # We use flake8-import-order (I1, I2) to sort the imports
        Q, # TODO: Do not ignore inspections related to quote checking
        W503, # Line break occurred before a binary operator. According to PEP8 the line break must come before the binary operator.
        RST301, # Unexpected indentation (in docstring).
