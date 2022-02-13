@@ -1,9 +1,14 @@
 [flake8]
 max-line-length=120
 
+strictness=long
+docstring_style=sphinx
+
 ignore=WPS, # TODO: Do not ignore WPS inspections
-       D, # TODO: Do not ignore inspections related to documentation
        I00, # We use flake8-import-order (I1, I2) to sort the imports
+       D1, # Missing Docstrings
+       DAR003, # Incorrect indentation. Disabled due to false positive results.
+       RST206, # Field list ends without a blank line; unexpected unindent. Disabled due to false positive results.
        Q, # TODO: Do not ignore inspections related to quote checking
        W503, # Line break occurred before a binary operator. According to PEP8 the line break must come before the binary operator.
        RST301, # Unexpected indentation (in docstring).
