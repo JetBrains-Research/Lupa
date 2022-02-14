@@ -1,8 +1,10 @@
-from typing import List, Set, Tuple, Dict
-import networkx as nx
-import pandas as pd
+from typing import Dict, List, Set, Tuple
 
 from column_names_utils import ClonesColumn, MethodsColumn
+
+import networkx as nx
+
+import pandas as pd
 
 
 def add_edge(clones_graph: nx.Graph, row: pd.Series) -> Tuple[int, int, Dict]:

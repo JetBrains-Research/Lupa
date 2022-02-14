@@ -3,8 +3,7 @@ import os
 import shutil
 from enum import Enum, unique
 from pathlib import Path
-
-from typing import List, Callable
+from typing import Callable, List
 
 
 class Extensions(str, enum.Enum):

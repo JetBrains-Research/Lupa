@@ -1,11 +1,12 @@
 import tempfile
 from distutils.version import Version
 from pathlib import Path
+from test.plugin_runner import CREATE_VENV_TEST_DATA_FOLDER
 from typing import Dict, List, Optional, Set
 
 import httpretty
+
 import pkg_resources
-import pytest as pytest
 
 from plugin_runner.create_venv import (
     PYPI_PACKAGE_METADATA_URL,
@@ -18,7 +19,8 @@ from plugin_runner.create_venv import (
     gather_requirements,
     merge_requirements,
 )
-from test.plugin_runner import CREATE_VENV_TEST_DATA_FOLDER
+
+import pytest as pytest
 
 
 @pytest.fixture

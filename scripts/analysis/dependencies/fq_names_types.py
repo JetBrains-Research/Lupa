@@ -1,4 +1,4 @@
-from typing import List, Union, Dict
+from typing import Dict, List, Union
 
 FqNamesDict = Dict[str, Union['FqNamesDict', int]]
 FqNamesStats = Dict[str, int]

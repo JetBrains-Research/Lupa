@@ -4,12 +4,13 @@ import sys
 from collections import defaultdict
 from typing import Optional
 
-import pandas as pd
-
-from analysis.gradle_dependencies.column_names_utils import GradleDependenciesMetaColumn, GradleDependenciesColumn
+from analysis.gradle_dependencies.column_names_utils import GradleDependenciesColumn, GradleDependenciesMetaColumn
 from analysis.gradle_plugins.column_names_utils import GradlePluginsColumn
+
 from data_collection.github_data.api import get_repo
 from data_collection.package_search.api import get_packages
+
+import pandas as pd
 
 
 def url_to_repo_name(url: str) -> Optional[str]:

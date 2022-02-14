@@ -1,11 +1,14 @@
 import os
-import pandas as pd
-from pygments import highlight
-from pygments.lexers import KotlinLexer
-from pygments.formatters import HtmlFormatter
 
 from column_names_utils import MethodsColumn
-from utils import get_file_lines
+
+import pandas as pd
+
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import KotlinLexer
+
+from utils.file_utils import get_file_lines
 
 
 def add_code_features(df: pd.DataFrame, dataset_path: str):

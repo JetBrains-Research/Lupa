@@ -27,9 +27,11 @@ from distutils.version import Version
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple
 
-import requests
 from pkg_resources import parse_requirements as parse_line, parse_version
+
+import requests
 from requests.adapters import HTTPAdapter
+
 from urllib3 import Retry
 
 from utils.file_utils import get_all_file_system_items

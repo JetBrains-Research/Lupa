@@ -1,8 +1,10 @@
-import networkx as nx
-import pandas as pd
 from typing import Callable, Dict, List
 
 from column_names_utils import ClonesColumn, MethodsColumn
+
+import networkx as nx
+
+import pandas as pd
 
 
 class EdgeFilter:

@@ -10,17 +10,19 @@ Script accepts
     * index to start from
     * whether to use database or not
 """
+import argparse
 import datetime
 import logging
-from dataclasses import dataclass
-import pandas as pd
-import argparse
 import os
+from dataclasses import dataclass
 
 from data_collection.db_connect import DatabaseConn
-from data_collection.repositories_table import RepositoriesTable
 from data_collection.git_repo import GitRepository
-from utils import create_directory
+from data_collection.repositories_table import RepositoriesTable
+
+import pandas as pd
+
+from utils.file_utils import create_directory
 
 logging.basicConfig(level=logging.INFO)
 

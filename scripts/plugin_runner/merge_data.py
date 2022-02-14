@@ -4,10 +4,11 @@ This class contains methods for merging analysis results from different batches 
 import logging
 import os
 from pathlib import Path
+from typing import List
 
 import pandas as pd
-from typing import List
-from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
+
+from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"

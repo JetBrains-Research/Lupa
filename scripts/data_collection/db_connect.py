@@ -1,7 +1,8 @@
 import logging
 from configparser import ConfigParser
 from pathlib import Path
-from typing import List, Tuple, Optional, Any, Dict
+from typing import Any, Dict, List, Optional, Tuple
+
 import psycopg2
 
 

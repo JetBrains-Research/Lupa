@@ -2,9 +2,9 @@ import argparse
 import logging
 from pathlib import Path
 
-import pandas as pd
-
 from call_expressions_column import CallExpressionsColumn
+
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 

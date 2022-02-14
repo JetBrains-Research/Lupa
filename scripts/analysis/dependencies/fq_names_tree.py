@@ -6,8 +6,10 @@ from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
 
 from column_names_utils import ImportDirectivesColumn
+
 from fq_names_types import FqNamesDict
-from utils import Extensions, write_to_file, create_directory
+
+from utils.file_utils import Extensions, create_directory, write_to_file
 
 """
 Script fow working with import dependencies fq name tree.

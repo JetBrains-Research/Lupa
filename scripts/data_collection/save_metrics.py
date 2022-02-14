@@ -6,18 +6,23 @@ It accepts
     * path to output directory
     * time to save GitHub at (optional argument)
 """
-import os
-import pandas as pd
 import argparse
 import logging
-from requests.packages.urllib3.util.retry import Retry
-import schedule
+import os
 import time
-from github import Github
 from datetime import datetime
 
-from utils import create_directory
 from data_collection.data_collection_utils import get_github_token
+
+from github import Github
+
+import pandas as pd
+
+from requests.packages.urllib3.util.retry import Retry
+
+import schedule
+
+from utils.file_utils import create_directory
 
 TIME = "01:00"
 

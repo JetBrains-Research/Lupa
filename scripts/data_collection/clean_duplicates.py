@@ -10,14 +10,16 @@ It accepts
     * index to start from (default 0)
 """
 
-import os
-import pandas as pd
 import argparse
 import logging
+import os
 from typing import Set, TextIO, Tuple
 
-from data_collection.data_collection_utils import save_repo_json, get_github_token, create_github_session
-from utils import create_directory, Extensions
+from data_collection.data_collection_utils import create_github_session, get_github_token, save_repo_json
+
+import pandas as pd
+
+from utils.file_utils import Extensions, create_directory
 
 
 def main():

@@ -1,9 +1,12 @@
-import pandas as pd
 import os
-import networkx as nx
 
 from column_names_utils import ClonesColumn, MethodsColumn
-from utils import Extensions
+
+import networkx as nx
+
+import pandas as pd
+
+from utils.file_utils import Extensions
 
 
 def get_methods_df(folder: str) -> pd.DataFrame:
