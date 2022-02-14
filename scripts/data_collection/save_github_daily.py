@@ -23,7 +23,7 @@ import schedule
 
 from utils.file_utils import Extensions, create_directory
 
-TIME = "17:00"
+TIME = '17:00'
 
 
 def main():
@@ -45,13 +45,13 @@ def main():
 
 def save_jsons(input_path: str, output_path: str, session: requests.Session, headers: typing.Dict):
     dataset = pd.read_csv(input_path)
-    day = datetime.today().strftime("%d-%m-%Y")
+    day = datetime.today().strftime('%d-%m-%Y')
     day_output = os.path.join(output_path, day)
     create_directory(day_output)
 
     for index, project in enumerate(dataset.full_name):
         username, project_name = project.split('/')
-        query_url = f"https://api.github.com/repos/{username}/{project_name}"
+        query_url = f'https://api.github.com/repos/{username}/{project_name}'
         r = session.get(query_url, headers=headers)
         response_json = r.json()
 
@@ -59,18 +59,18 @@ def save_jsons(input_path: str, output_path: str, session: requests.Session, hea
             logging.info(f"Request failed with status code: {r.status_code}. Message: {response_json['message']}")
             continue
 
-        save_repo_json(response_json, day_output, f"{username}#{project_name}.{Extensions.JSON}")
-        logging.info(f"Last processed project index: {index}")
+        save_repo_json(response_json, day_output, f'{username}#{project_name}.{Extensions.JSON}')
+        logging.info(f'Last processed project index: {index}')
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("csv_path", metavar="csv-path", help="Path to csv file with github repositories data")
-    parser.add_argument("output", help="Output directory")
-    parser.add_argument("--time", help="The time data will be saved at. The time has to be in isoformat (hh:mm)",
+    parser.add_argument('csv_path', metavar='csv-path', help='Path to csv file with github repositories data')
+    parser.add_argument('output', help='Output directory')
+    parser.add_argument('--time', help='The time data will be saved at. The time has to be in isoformat (hh:mm)',
                         nargs='?', type=str)
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

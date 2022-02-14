@@ -8,15 +8,15 @@ import pandas as pd
 
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 
-PROJECT_INDEX = "project_index.csv"
-METHOD_INDEX = "method_index.csv"
+PROJECT_INDEX = 'project_index.csv'
+METHOD_INDEX = 'method_index.csv'
 
 logging.basicConfig(level=logging.DEBUG)
 
 
 def merge(batch_output_paths: List[str], output_dir: str, analyzer_name: str):
     analyzer = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, analyzer_name)
-    if analyzer.name == "kotlin-clones":
+    if analyzer.name == 'kotlin-clones':
         merge_clones(batch_output_paths, output_dir, analyzer.output_file)
     else:
         merge_csv(batch_output_paths, analyzer.output_file, output_dir)
@@ -26,19 +26,19 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
     result_df = pd.DataFrame()
 
     for batch_output_path in batch_output_paths:
-        logging.info(f"Merging {batch_output_path} file...")
+        logging.info(f'Merging {batch_output_path} file...')
         try:
             file_path = Path(os.path.join(batch_output_path, csv_filename))
             if not file_path.is_file():
-                logging.warning(f"File {batch_output_path} does not exist!")
+                logging.warning(f'File {batch_output_path} does not exist!')
                 continue
             batch_df = pd.read_csv(file_path, sep='\t')
             result_df = pd.concat([result_df, batch_df])
         except pd.errors.EmptyDataError:
-            logging.warning(f"File {batch_output_path} is empty!")
+            logging.warning(f'File {batch_output_path} is empty!')
             continue
 
-    with open(os.path.join(result_dir, csv_filename), "a") as fout:
+    with open(os.path.join(result_dir, csv_filename), 'a') as fout:
         result_df.to_csv(fout, index=False, sep='\t')
 
 
@@ -62,7 +62,7 @@ def move_indexes_dataframe(batch_output_path: str, output_path: str, filename: s
     dataframe[0] = dataframe[0].apply(lambda x: x + project_offset)
     if method_offset:
         dataframe[1] = dataframe[1].apply(lambda x: x + method_offset)
-    with open(os.path.join(output_path, filename), "a") as fout:
+    with open(os.path.join(output_path, filename), 'a') as fout:
         dataframe.to_csv(fout, index=False, header=False, sep=sep)
     return dataframe
 
@@ -79,5 +79,5 @@ def move_indexes_file(batch_output_path: str, output_path: str, filename: str, p
     with open(os.path.join(batch_output_path, filename)) as batch_output:
         lines = list(map(lambda line: move_indexes_line(line, project_offset, method_offset, sep),
                          batch_output.readlines()))
-    with open(os.path.join(output_path, filename), "a") as final_output:
+    with open(os.path.join(output_path, filename), 'a') as final_output:
         final_output.writelines(lines)

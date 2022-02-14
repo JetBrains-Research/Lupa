@@ -37,7 +37,7 @@ def clean_indents(text: str) -> str:
     for i in range(1, len(lines)):
         lines[i] = lines[i][to_clean:]
 
-    return "\n".join(lines)
+    return '\n'.join(lines)
 
 
 def get_method_text(row: pd.Series, dataset_path: str) -> str:
@@ -46,8 +46,8 @@ def get_method_text(row: pd.Series, dataset_path: str) -> str:
 
 
 def is_method_empty(text: str) -> bool:
-    first_opened = text.find("{")
-    first_closed = text.find("}")
+    first_opened = text.find('{')
+    first_closed = text.find('}')
     if first_opened == -1 or first_closed == -1:
         return False
-    return text[first_opened + 1:first_closed].strip() == ""
+    return text[first_opened + 1:first_closed].strip() == ''

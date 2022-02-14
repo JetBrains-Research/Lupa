@@ -32,7 +32,7 @@ class DatabaseConn:
             self._conn = psycopg2.connect(**params)
             self._conn.autocommit = True
         except psycopg2.OperationalError as e:
-            logging.error(f"Failed to connect to database: {e}")
+            logging.error(f'Failed to connect to database: {e}')
 
     def __del__(self):
         self._conn.close()
@@ -54,7 +54,7 @@ class DatabaseConn:
             if has_res:
                 return cur.fetchall()
         except psycopg2.OperationalError as e:
-            logging.error(f"Unable to execute query: {e}")
+            logging.error(f'Unable to execute query: {e}')
 
     def return_cursor(self):
         """:return: A psycopg2 cursor."""

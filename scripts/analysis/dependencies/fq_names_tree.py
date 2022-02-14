@@ -26,28 +26,28 @@ class FqNameNode(NodeMixin):
         self.parent = parent
         self.count = count
         self.unique_count = unique_count
-        self.full_name = name if parent is None or parent.is_root else f"{parent.full_name}.{name}"
+        self.full_name = name if parent is None or parent.is_root else f'{parent.full_name}.{name}'
 
     def __repr__(self):
-        return str(f"{self.name} [{self.count}]")
+        return str(f'{self.name} [{self.count}]')
 
 
 def save_to_png(node: FqNameNode, path_to_result_dir: str):
     if len(node.children) == 0:
         return
-    tree_dot_dir = os.path.join(path_to_result_dir, "tree_dot")
+    tree_dot_dir = os.path.join(path_to_result_dir, 'tree_dot')
     create_directory(tree_dot_dir)
-    filename = os.path.join(tree_dot_dir, f"{node.full_name}.{Extensions.PNG}")
+    filename = os.path.join(tree_dot_dir, f'{node.full_name}.{Extensions.PNG}')
     UniqueDotExporter(
         node,
-        edgeattrfunc=lambda parent, child: "style=bold,label=%d" % (child.count or 0),
+        edgeattrfunc=lambda parent, child: 'style=bold,label=%d' % (child.count or 0),
     ).to_picture(filename)
 
 
 def save_to_txt(node: FqNameNode, path_to_result_dir: str):
-    tree_txt_dir = os.path.join(path_to_result_dir, "tree_txt")
+    tree_txt_dir = os.path.join(path_to_result_dir, 'tree_txt')
     create_directory(tree_txt_dir)
-    filename = os.path.join(tree_txt_dir, f"{node.full_name}.{Extensions.TXT}")
+    filename = os.path.join(tree_txt_dir, f'{node.full_name}.{Extensions.TXT}')
     write_to_file(filename, str(RenderTree(node)))
 
 
@@ -82,7 +82,7 @@ def merge_single_child_nodes(parent: FqNameNode):
     :param parent: node to merge
     """
     if len(parent.children) == 1:
-        parent.name = ".".join([parent.name, parent.children[0].name])
+        parent.name = '.'.join([parent.name, parent.children[0].name])
         parent.children = parent.children[0].children
     for node in parent.children:
         merge_single_child_nodes(node)
@@ -140,7 +140,7 @@ def split_to_subtrees(
 
 
 def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:
-    root = FqNameNode("root")
+    root = FqNameNode('root')
     recursive_build_fq_name_tree(root, fq_names_dict)
     return root
 

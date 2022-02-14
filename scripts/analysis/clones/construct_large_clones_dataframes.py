@@ -15,9 +15,9 @@ def count_clones_statistics(file_path: str, min_projects: int = 10) -> Tuple[Dic
 
     with open(file_path, 'r') as fin:
         for line in fin:
-            method_from, methods_to = line.strip().split(":")
-            method_id, project_id = map(int, method_from.split(","))
-            clones_list = methods_to.split(";")
+            method_from, methods_to = line.strip().split(':')
+            method_id, project_id = map(int, method_from.split(','))
+            clones_list = methods_to.split(';')
 
             n_inter_100_clones, n_inter_clones, n_100_clones = 0, 0, 0
             projects, projects_100 = set(), set()
@@ -26,7 +26,7 @@ def count_clones_statistics(file_path: str, min_projects: int = 10) -> Tuple[Dic
             clones_ids = []
 
             for clone in clones_list:
-                method_clone_id, project_clone_id, closeness = map(int, clone.split(","))
+                method_clone_id, project_clone_id, closeness = map(int, clone.split(','))
                 projects.add(project_clone_id)
                 clones_ids.append((method_clone_id, project_clone_id, closeness))
 
@@ -72,4 +72,4 @@ def get_unique_clones_df_large(methods_df: pd.DataFrame, clones_adjacency_top: D
 
 def add_features_from_stats(methods_df: pd.DataFrame, methods_stats: Dict) -> pd.DataFrame:
     methods_stats_df = pd.DataFrame.from_dict(methods_stats)
-    return pd.merge(methods_df, methods_stats_df, on=MethodsColumn.METHOD_ID.value, how="inner")
+    return pd.merge(methods_df, methods_stats_df, on=MethodsColumn.METHOD_ID.value, how='inner')
