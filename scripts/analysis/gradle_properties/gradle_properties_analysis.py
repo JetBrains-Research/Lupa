@@ -60,14 +60,14 @@ def get_properties_key_value_stats(df: pd.DataFrame) -> GradlePropertiesStats:
 
 def analyze_properties_key_stats(df: pd.DataFrame, path_to_result_dir: str):
     properties_key_stats = get_properties_key_stats(df)
-    save_stats_with_to_csv(path_to_result_dir, f"gradle_properties_key_stats.{Extensions.CSV}", properties_key_stats)
+    save_stats_with_to_csv(path_to_result_dir, f'gradle_properties_key_stats.{Extensions.CSV}', properties_key_stats)
 
 
 def analyze_properties_key_value_stats(df: pd.DataFrame, path_to_result_dir: str):
     properties_key_value_stats = get_properties_key_value_stats(df)
     save_stats_with_to_csv(
         path_to_result_dir,
-        f"gradle_properties_key_value_stats.{Extensions.CSV}",
+        f'gradle_properties_key_value_stats.{Extensions.CSV}',
         properties_key_value_stats,
     )
 
@@ -84,19 +84,19 @@ def analyze(path_to_properties: str, path_to_result_dir: str, path_to_select_pro
     create_directory(path_to_result_dir)
 
     df = get_gradle_properties(path_to_properties, path_to_select_properties)
-    print(f"Got {df.size} gradle properties")
-    print(f"{len(set(df[GradlePropertiesColumn.PROJECT_NAME].values))} projects has gradle.properties file")
+    print(f'Got {df.size} gradle properties')
+    print(f'{len(set(df[GradlePropertiesColumn.PROJECT_NAME].values))} projects has gradle.properties file')
     analyze_properties_key_stats(df, path_to_result_dir)
     analyze_properties_key_value_stats(df, path_to_result_dir)
 
 
 def preprocess_gradle_properties_data(path_to_properties: str) -> str:
     lines = get_file_lines(path_to_properties)
-    path_to_prep_properties = "data/prep_gradle_properties_data.csv"
+    path_to_prep_properties = 'data/prep_gradle_properties_data.csv'
     with open(path_to_prep_properties, 'w+') as f:
         for line in lines:
             # if there is no property_value put null
-            if re.match("^[^,]+,[^,]+,$", line):
+            if re.match('^[^,]+,[^,]+,$', line):
                 line = line[:-1] + 'None\n'
             sub_lines = line.split(',')
             # if property_value contains "," replace with " "

@@ -1,5 +1,6 @@
 """
 This script allows to run IntelliJ IDEA plugin using batch processing.
+
 It accepts
     * path to input directory containing kotlin projects
     * path to the output directory, where all methods extracted from input projects will be saved
@@ -36,27 +37,27 @@ def main():
     batch_paths = split(args.input, args.output, args.batch_size, filter_repositories_predicate(args.use_db))
 
     batch_output_paths = []
-    logs_dir = os.path.join(args.output, "logs")
+    logs_dir = os.path.join(args.output, 'logs')
     create_directory(logs_dir)
     for batch_path in batch_paths[args.start_from:]:
         start_time = time.time()
-        index = batch_path.split("_")[-1]
-        batch_output_path = os.path.join(args.output, f"output/batch_{index}")
+        index = batch_path.split('_')[-1]
+        batch_output_path = os.path.join(args.output, f'output/batch_{index}')
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
-        log_file_path = os.path.join(PROJECT_DIR, os.path.join(logs_dir, f"log_batch_{index}.{Extensions.TXT}"))
-        with open(log_file_path, "w+") as log_file:
+        log_file_path = os.path.join(PROJECT_DIR, os.path.join(logs_dir, f'log_batch_{index}.{Extensions.TXT}'))
+        with open(log_file_path, 'w+') as log_file:
             command = [
-                "./gradlew",
-                f":lupa-runner:{args.task_name}",
-                f"-Prunner={args.data}-analysis",
-                f"-Pinput={batch_path}",
-                f"-Poutput={batch_output_path}",
+                './gradlew',
+                f':lupa-runner:{args.task_name}',
+                f'-Prunner={args.data}-analysis',
+                f'-Pinput={batch_path}',
+                f'-Poutput={batch_output_path}',
             ]
             command.extend(additional_arguments)
             run_in_subprocess(command, PROJECT_DIR, stdout_file=log_file, stderr_file=log_file)
         end_time = time.time()
-        logging.info(f"Finished batch {index} processing in {end_time - start_time}s")
+        logging.info(f'Finished batch {index} processing in {end_time - start_time}s')
 
     merge(batch_output_paths, args.output, args.data)
 
@@ -66,11 +67,11 @@ def split(input: str, output: str, batch_size: int,
     dirs = list(filter(lambda path: item_condition(path), get_subdirectories(input)))
     batches = [dirs[i:i + batch_size] for i in range(0, len(dirs), batch_size)]
     batch_paths = []
-    batches_directory = os.path.join(output, "batches")
+    batches_directory = os.path.join(output, 'batches')
     clear_directory(batches_directory)
 
     for index, batch in enumerate(batches):
-        batch_directory_path = os.path.join(batches_directory, f"batch_{index}")
+        batch_directory_path = os.path.join(batches_directory, f'batch_{index}')
         batch_paths.append(batch_directory_path)
         create_directory(batch_directory_path)
         for directory in batch:
@@ -78,7 +79,7 @@ def split(input: str, output: str, batch_size: int,
             directory_sym_link = os.path.join(batch_directory_path, directory_name)
             if not os.path.exists(directory_sym_link):
                 os.symlink(directory, directory_sym_link)
-        logging.info(f"Create {index} batch")
+        logging.info(f'Create {index} batch')
     return batch_paths
 
 
@@ -89,24 +90,24 @@ def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
     db_conn = DatabaseConn()
     table = RepositoriesTable(db_conn)
     repositories_to_analyse = table.select_repositories_to_analyse()
-    repositories_to_analyse_names = list(map(lambda repo: f"{repo[0]}#{repo[1]}", repositories_to_analyse))
+    repositories_to_analyse_names = list(map(lambda repo: f'{repo[0]}#{repo[1]}', repositories_to_analyse))
     return lambda path: os.path.basename(path) in repositories_to_analyse_names
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", help="Path to the dataset containing kotlin projects")
-    parser.add_argument("output", help="Path to the output directory")
+    parser.add_argument('input', help='Path to the dataset containing kotlin projects')
+    parser.add_argument('output', help='Path to the output directory')
     analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
-    parser.add_argument("data", help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
-    parser.add_argument("--batch-size", help="Batch size for the plugin", nargs='?', default=300, type=int)
-    parser.add_argument("--use-db", help="Use database to analyse only updated repositories", action="store_true")
-    parser.add_argument("--start-from",
-                        help="Index of batch to start processing from (not for using with --use-db flag)",
+    parser.add_argument('data', help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
+    parser.add_argument('--batch-size', help='Batch size for the plugin', nargs='?', default=300, type=int)
+    parser.add_argument('--use-db', help='Use database to analyse only updated repositories', action='store_true')
+    parser.add_argument('--start-from',
+                        help='Index of batch to start processing from (not for using with --use-db flag)',
                         nargs='?', default=0, type=int)
     parser.add_argument(
-        "--task-name",
-        help="The plugin task name",
+        '--task-name',
+        help='The plugin task name',
         nargs='?',
         default='cli',
         type=str,
@@ -121,5 +122,5 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

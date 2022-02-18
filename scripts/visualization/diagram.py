@@ -10,11 +10,13 @@ Script for various diagrams visualisation.
 
 
 def show_bar_plot(stats: Dict[str, Union[int, float]], x_label: str, y_label: str, title: str) -> None:
-    """ Method for statistics visualization as a bar chart
-        :param stats: dict which for string value name stores it's statistics int or float value
-        :param x_label: label for axis with value names
-        :param y_label: label for axis with values
-        :param title: plot title
+    """
+    Show a bar chart based on the passed data.
+
+    :param stats: dict which for string value name stores it's statistics int or float value
+    :param x_label: label for axis with value names
+    :param y_label: label for axis with values
+    :param title: plot title
     """
     df = pd.DataFrame.from_dict({x_label: stats.keys(), y_label: stats.values()})
     df = df.sort_values(by=[y_label], ascending=False)

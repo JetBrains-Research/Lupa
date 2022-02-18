@@ -32,7 +32,7 @@ class DatabaseConn:
             self._conn = psycopg2.connect(**params)
             self._conn.autocommit = True
         except psycopg2.OperationalError as e:
-            logging.error(f"Failed to connect to database: {e}")
+            logging.error(f'Failed to connect to database: {e}')
 
     def __del__(self):
         self._conn.close()
@@ -42,8 +42,8 @@ class DatabaseConn:
             query_or_stmt: str,
             has_res: bool = False) -> Optional[List[Tuple[Any]]]:
         """
-        Creates a new cursor object, and executes the query/statement.  If
-        `has_res` is `True`, then it returns the list of tuple results.
+        Create a new cursor object, and execute the query/statement.
+
         :param query_or_stmt: The query or statement to run.
         :param has_res: Whether or not results should be returned. By default is `False`
         :return: If `has_res` is `True`, then a list of tuples.
@@ -54,10 +54,8 @@ class DatabaseConn:
             if has_res:
                 return cur.fetchall()
         except psycopg2.OperationalError as e:
-            logging.error(f"Unable to execute query: {e}")
+            logging.error(f'Unable to execute query: {e}')
 
     def return_cursor(self):
-        """
-        :return: A psycopg2 cursor.
-        """
+        """:return: A psycopg2 cursor."""
         return self._conn.cursor()

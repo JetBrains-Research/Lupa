@@ -9,12 +9,12 @@ from psycopg2.sql import Identifier, Literal
 
 
 class RepositoriesTableNames(str, enum.Enum):
-    TABLE = "kotlin_repositories_updates"
-    REPO_ID = "repository_id"
-    USERNAME = "username"
-    REPO_NAME = "repo_name"
-    LAST_PULL_DATE = "last_pull_date"
-    LAST_ANALYSIS_DATE = "last_analysis_date"
+    TABLE = 'kotlin_repositories_updates'
+    REPO_ID = 'repository_id'
+    USERNAME = 'username'
+    REPO_NAME = 'repo_name'
+    LAST_PULL_DATE = 'last_pull_date'
+    LAST_ANALYSIS_DATE = 'last_analysis_date'
 
 
 class RepositoriesTable:
