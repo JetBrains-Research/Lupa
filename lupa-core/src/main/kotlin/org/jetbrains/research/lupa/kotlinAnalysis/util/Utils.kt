@@ -33,6 +33,7 @@ enum class FileExtension(val value: String) {
 }
 
 val KOTLIN_EXTENSIONS = setOf(FileExtension.KT, FileExtension.KTS)
+val PYTHON_EXTENSIONS = setOf(FileExtension.PY)
 
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == FileExtension.KT.value || this.extension == FileExtension.KTS.value
