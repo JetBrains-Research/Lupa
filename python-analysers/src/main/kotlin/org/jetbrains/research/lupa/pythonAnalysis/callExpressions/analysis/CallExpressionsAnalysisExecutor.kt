@@ -16,7 +16,7 @@ import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
-import org.jetbrains.research.lupa.kotlinAnalysis.util.KOTLIN_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_EXTENSIONS
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
@@ -43,7 +43,7 @@ class CallExpressionsAnalysisExecutor(
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
-    override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
+    override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
         venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(
