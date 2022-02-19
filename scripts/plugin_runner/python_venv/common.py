@@ -82,7 +82,7 @@ def gather_requirements(root: Path) -> Requirements:
                 except Exception:
                     # For some reason you can't catch RequirementParseError
                     # (or InvalidRequirement), so we catch Exception.
-                    logger.warning(f'Unable to parse line "{line}" in the file {str(file_path)}. Skipping.')
+                    logger.warning(f'Unable to parse line "{line.strip()}" in the file {str(file_path)}. Skipping.')
                     continue
 
         for requirement in file_requirements:
