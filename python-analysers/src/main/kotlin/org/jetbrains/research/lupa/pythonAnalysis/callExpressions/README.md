@@ -47,8 +47,8 @@ Run the following command to set up a virtual environment:
 python3 -m scripts/plugin_runner/create_venv /path/to/dataset/dir /path/to/venv
 ```
 
-To get more information, please see the [README](../../../../../../../../../../scripts/plugin_runner/README.md)
-file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_runner) module.
+To get more information, please see the [README](../../../../../../../../../../scripts/plugin_runner/python_venv/README.md)
+file from the [`python_venv`](../../../../../../../../../../scripts/plugin_runner/python_venv) module.
 
 #### 5. Extract call expressions full-qualified names from dataset
 
