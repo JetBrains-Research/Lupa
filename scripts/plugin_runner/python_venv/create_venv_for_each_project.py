@@ -61,13 +61,18 @@ def main() -> bool:
     for project in projects:
         logger.info(f'Creating a virtual environment for the "{project.name}".')
 
-        requirements_file_paths = gather_requirements_file_paths(args.dataset_path)
+        requirements_file_paths = gather_requirements_file_paths(project)
 
         venv_path = project / '.venv'
         create_venv(venv_path)
 
         for requirements_file in requirements_file_paths:
-            exit_code = install_requirements(venv_path, requirements_file, args.no_package_dependencies, args.for_each)
+            exit_code = install_requirements(
+                venv_path,
+                requirements_file,
+                args.no_package_dependencies,
+                args.pip_for_each,
+            )
 
             if exit_code != 0:
                 is_error = True
