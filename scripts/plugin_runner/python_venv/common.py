@@ -268,7 +268,7 @@ def install_requirements(venv_path: Path, requirements_path: Path, no_package_de
     :param for_each: Is it necessary to call `pip install` for each requirement individually or for the whole file.
     :return: Pip return code or number of pip errors if for_each flag is specified.
     """
-    logger.info('Installing requirements.')
+    logger.info(f'Installing requirements from {requirements_path}.')
 
     pip_command = [
         venv_path / 'bin' / 'pip',
