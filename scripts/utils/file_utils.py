@@ -57,9 +57,10 @@ class FileSystemItem(Enum):
 
 
 def get_all_file_system_items(
-        root: Path,
-        item_condition: Callable[[str], bool] = lambda name: True,
-        item_type: FileSystemItem = FileSystemItem.FILE,
+    root: Path,
+    item_condition: Callable[[str], bool] = lambda name: True,
+    item_type: FileSystemItem = FileSystemItem.FILE,
+    with_subdirs: bool = True,
 ) -> List[Path]:
     """
     Return the paths to all file system items from the root that satisfy the condition.
@@ -67,6 +68,7 @@ def get_all_file_system_items(
     :param root: Path to the folder where to find the file system items.
     :param item_condition: Predicate that the file system items must satisfy.
     :param item_type: Type of file system items to be processed.
+    :param with_subdirs: Whether it is necessary to process items in subdirectories.
 
     :raises ValueError: If root is not a directory.
 
@@ -80,4 +82,8 @@ def get_all_file_system_items(
         for item in fs_tuple[item_type.value]:
             if item_condition(item):
                 items.append(Path(os.path.join(fs_tuple[FileSystemItem.PATH.value], item)))
+
+        if not with_subdirs:
+            break
+
     return items
