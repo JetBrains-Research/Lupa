@@ -1,30 +1,13 @@
-"""
-This script creates a virtual environment and installs the requirements gathered from a given python dataset.
-
-It accepts
-    * path to the folder with python projects.
-    * path to the folder where you want to create the environment.
-    * flag that allows you not to do version validation using PyPI.
-    * flag that allows you not to do package name validation using PyPI.
-    * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
-    * flag that allows you to install requirements individually.
-
-In the current version of the script, if we find different versions of the same library
-in different requirement files, we will choose the newest (largest) version.
-"""
-
-import argparse
 import json
 import logging
 import os
 import re
 import subprocess
-import sys
 from collections import defaultdict
 from copy import copy
 from distutils.version import Version
 from pathlib import Path
-from typing import Dict, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from pkg_resources import parse_requirements as parse_line, parse_version
 
@@ -44,56 +27,12 @@ Requirements = Dict[str, Specs]
 logger = logging.getLogger(__name__)
 
 
-def configure_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument(
-        'dataset_path',
-        help='Path to dataset with projects from which you want to get requirements and create a virtual environment.',
-        type=lambda value: Path(value).absolute(),
-    )
-
-    parser.add_argument(
-        'venv_path',
-        help='Path to the folder where you want to create the virtual environment.',
-        type=lambda value: Path(value).absolute(),
-    )
-
-    parser.add_argument(
-        '--no-package-name-validation',
-        help='If specified, no package name validation will be performed using PyPI.',
-        action='store_true',
-    )
-
-    parser.add_argument(
-        '--no-version-validation',
-        help='If specified, no version validation will be performed using PyPI.',
-        action='store_true',
-    )
-
-    parser.add_argument(
-        '--no-package-dependencies',
-        help=(
-            'If specified, no dependencies will be installed for each package '
-            '(the --no-deps flag will be passed to pip).'
-        ),
-        action='store_true',
-    )
-
-    parser.add_argument(
-        '--pip-for-each',
-        help=(
-            'Call `pip install` for each requirement individually. '
-            'By default, `pip install` will be applied to the entire file with the collected requirements.'
-        ),
-        action='store_true',
-    )
-
-
 def _normalize_requirement_name(name: str) -> str:
     """
     Normalize the string: the name is converted to lowercase and all dots and underscores are replaced by hyphens.
 
-    :param name: name of package
-    :return: normalized name of package
+    :param name: Name of package
+    :return: Normalized name of package
     """
     normalized_name = name.lower()
     normalized_name = normalized_name.replace('.', '-')
@@ -101,27 +40,40 @@ def _normalize_requirement_name(name: str) -> str:
     return normalized_name
 
 
-def gather_requirements(dataset_path: Path) -> Requirements:
+def gather_requirements_file_paths(root: Path) -> List[Path]:
     """
-    Collect requirements from all projects.
+    Gather paths to all files with requirements on the passed path.
 
-    :param dataset_path: the path to the folder with the projects that contain the requirements files.
-    :return: dictionary, where for each package the collected specs are listed.
+    :param root: The path to the folder where you want to find the requirements files.
+    :return: List of file paths.
+    """
+    requirements_file_paths = get_all_file_system_items(
+        root=root,
+        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+    )
+
+    # TODO: handle symlinks
+    requirements_file_paths = list(filter(lambda path: os.path.isfile(path), requirements_file_paths))
+
+    logger.info(f'{len(requirements_file_paths)} requirement files have been collected.')
+
+    return requirements_file_paths
+
+
+def gather_requirements(root: Path) -> Requirements:
+    """
+    Gather the requirements from the requirements files contained in the passed path.
+
+    :param root: The path to the folder that contain the requirements files.
+    :return: Dictionary, where for each package the collected specs are listed.
              The spec is a pair of operator and version.
     """
     logger.info('Collecting requirements.')
 
     requirements = defaultdict(set)
-    requirements_file_paths = get_all_file_system_items(
-        root=dataset_path,
-        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
-    )
+    requirements_file_paths = gather_requirements_file_paths(root)
 
     for file_path in requirements_file_paths:
-        # We do this check to ignore symlinks.  TODO: handle symlinks
-        if not os.path.isfile(file_path):
-            continue
-
         file_requirements = []
         with open(file_path, encoding='utf8', errors='ignore') as file:
             for line in file.readlines():
@@ -153,9 +105,9 @@ def filter_unavailable_packages(requirements: Requirements) -> Requirements:
     """
     Remove all package names that are not on PyPI.
 
-    :param requirements: dictionary, where for each package the specs are listed.
+    :param requirements: Dictionary, where for each package the specs are listed.
                          The spec is a pair of operator and version.
-    :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
+    :return: Dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
     """
     logger.info('Filtering unavailable packages.')
 
@@ -192,7 +144,7 @@ def _get_available_versions(package_name: str) -> Set[Version]:
     By a given package, collect a list of all the versions available on PyPI.
 
     :param package_name: PyPI package name.
-    :return: set of available versions. If the version could not be obtained, None will be returned.
+    :return: Set of available versions. If the version could not be obtained, None will be returned.
     """
     session = _create_session()
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
@@ -218,9 +170,9 @@ def filter_unavailable_versions(specs: Requirements) -> Requirements:
     """
     Remove all versions of packages that are not on PyPI.
 
-    :param specs: dictionary, where for each package the specs are listed.
+    :param specs: Dictionary, where for each package the specs are listed.
                   The spec is a pair of operator and version.
-    :return: dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
+    :return: Dictionary, where for each package the specs are listed. The spec is a pair of operator and version.
              The specs contain only those versions which are available on the PyPI.
     """
     logger.info('Filtering unavailable versions.')
@@ -248,9 +200,9 @@ def merge_requirements(requirements: Requirements) -> Dict[str, Optional[Version
     """
     For each package leave only the highest version of requirements.
 
-    :param requirements: dictionary, where for each package the specs are listed.
+    :param requirements: Dictionary, where for each package the specs are listed.
                          The spec is a pair of operator and version.
-    :return: dictionary, where a version is specified for each package.
+    :return: Dictionary, where a version is specified for each package.
     """
     logger.info('Merging requirements.')
 
@@ -267,39 +219,34 @@ def create_requirements_file(version_by_package_name: Dict[str, Optional[Version
     """
     Create a requirements file from the passed dictionary.
 
-    :param version_by_package_name: dictionary, where for each package, specifies the version to be installed.
-    :param requirements_dir: the path where the requirements file will be created.
-    :return: the path to the created requirements file.
+    :param version_by_package_name: Dictionary, where for each package, specifies the version to be installed.
+    :param requirements_dir: The path where the requirements file will be created.
+    :return: The path to the created requirements file.
     """
     logger.info('Creating requirements file.')
 
     requirements_dir.mkdir(exist_ok=True, parents=True)
-    path_to_requirements = requirements_dir / 'requirements.txt'
+    path_to_requirements_file = requirements_dir / 'requirements.txt'
 
-    with open(path_to_requirements, mode='w+') as file:
+    with open(path_to_requirements_file, mode='w+') as file:
         for package_name, version in version_by_package_name.items():
             if version is None:
                 file.write(f'{package_name}\n')
             else:
                 file.write(f'{package_name}=={version}\n')
 
-    return path_to_requirements
+    return path_to_requirements_file
 
 
-def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool) -> int:
+def create_venv(venv_path: Path) -> None:
     """
-    In the passed path create a virtual environment and installs the passed requirements.
+    Create a virtual environment in the passed path.
 
-    :param venv_path: the path where the virtual environment will be created.
-    :param requirements_path: the path to the requirements file.
-    :param no_package_dependencies: whether it is necessary to not install dependencies for each package.
-    :param for_each: is it necessary to call `pip install` for each requirement individually or for the whole file.
-    :return: pip return code or number of pip errors if for_each flag is specified.
+    :param venv_path: The path where the virtual environment will be created.
     """
     logger.info('Creating virtual environment.')
 
     venv_path.mkdir(exist_ok=True, parents=True)
-    pip_path = venv_path / 'bin' / 'pip'
 
     subprocess.run(
         [
@@ -310,8 +257,21 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
         ],
     )
 
+
+def install_requirements(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool):
+    """
+    Install all requirements from the requirements file in the virtual environment.
+
+    :param venv_path: The path where the virtual environment is located.
+    :param requirements_path: The path to the requirements file.
+    :param no_package_dependencies: Whether it is necessary to not install dependencies for each package.
+    :param for_each: Is it necessary to call `pip install` for each requirement individually or for the whole file.
+    :return: Pip return code or number of pip errors if for_each flag is specified.
+    """
+    logger.info('Installing requirements.')
+
     pip_command = [
-        str(pip_path),
+        venv_path / 'bin' / 'pip',
         'install',
         '--disable-pip-version-check',
     ]
@@ -327,30 +287,3 @@ def create_venv(venv_path: Path, requirements_path: Path, no_package_dependencie
         return errors
 
     return subprocess.run(pip_command + ['-r', str(requirements_path)]).returncode
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    configure_arguments(parser)
-
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
-
-    args = parser.parse_args()
-
-    requirements = gather_requirements(args.dataset_path)
-
-    if not args.no_package_name_validation:
-        requirements = filter_unavailable_packages(requirements)
-
-    if not args.no_version_validation:
-        requirements = filter_unavailable_versions(requirements)
-
-    version_by_package_name = merge_requirements(requirements)
-    requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
-    exit_code = create_venv(args.venv_path, requirements_path, args.no_package_dependencies, args.pip_for_each)
-
-    return exit_code
-
-
-if __name__ == '__main__':
-    sys.exit(main())
