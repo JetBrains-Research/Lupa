@@ -1,6 +1,7 @@
 package org.jetbrains.research.lupa.pythonAnalysis.callExpressions.analysis
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.io.exists
 import com.jetbrains.python.actions.PyQualifiedNameProvider
 import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyDecorator
@@ -22,6 +23,7 @@ import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Executor for call expressions analysis which collects full qualified names of all call expressions in projects
@@ -46,9 +48,7 @@ class CallExpressionsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
-        venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(
-            "The path to the virtual environment has not been passed. The analysis will run without the SDK."
-        )
+        tryToSetVenv(project, venv)
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
@@ -77,6 +77,35 @@ class CallExpressionsAnalysisExecutor(
 
         filterLocalFqNames(fqNamesByCategory, packageNames)
         writeFqNames(fqNamesByCategory, project)
+    }
+
+    /**
+     * Trying to set up a virtual environment.
+     *
+     * If the [path to the virtual environment][globalVenv] is passed,
+     * then try to install it, otherwise try to find a local virtual environment
+     * in the root of the [project] in the ".venv" folder and install it.
+     */
+    private fun tryToSetVenv(project: Project, globalVenv: Path?) {
+        val localVenv = project.basePath?.let { Paths.get(it, ".venv") }
+
+        globalVenv?.let {
+            if (it.exists()) {
+                setSdkToProject(project, it.toString())
+                return
+            } else {
+                logger.warn("The passed path to the venv ($it) does not exist. Trying to use a local venv.")
+            }
+        } ?: logger.info("The path to the venv is not passed. Trying to use a local venv.")
+
+        localVenv?.let {
+            if (it.exists()) {
+                setSdkToProject(project, it.toString())
+                return
+            } else {
+                logger.warn("The path to the local venv ($it) does not exist. The analysis will run without the SDK.")
+            }
+        } ?: logger.warn("The path to the local venv was not found. The analysis will run without the SDK.")
     }
 
     /**
