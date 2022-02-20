@@ -39,6 +39,8 @@ where `analysis-key` is a key from the list of the analysers.
         gradle :lupa-runner:python-cli -Prunner="python-call-expressions-analysis" -Pinput="path/to/dir/with/projects" -Poutput="path/to/dir/with/results" -Pvenv="path/to/venv"
         ```
       **Note**: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`.
+      
+      **Note**: if an empty string is passed to the `--Pvenv` argument and the project root contains the `.venv` folder, the virtual environment will be set up from it.
 
     * [```python-imports-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonImportsAnalysisRunner.kt):
         ``` 
