@@ -1,6 +1,8 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
+import org.jetbrains.research.lupa.kotlinAnalysis.dependencies.analysis.ImportDirectivesAnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.GradleDependenciesAnalysisExecutor
+import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.GradlePluginsAnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.statistic.analysis.metrics.ProjectMetricsAnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.util.kotlin.KotlinTeamDatabaseConnection
 import org.jetbrains.research.lupa.kotlinAnalysis.util.kotlin.KotlinTeamExecutorHelper
@@ -14,8 +16,13 @@ object KotlinMultipleAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParse
     override fun run(args: IORunnerArgs) {
         val dbConn = KotlinTeamDatabaseConnection()
         val kotlinExecutorHelper = KotlinTeamExecutorHelper(dbConn)
-        val executors = listOf(GradleDependenciesAnalysisExecutor(args.outputDir),
-            ProjectMetricsAnalysisExecutor(args.outputDir))
+
+        val executors = listOf(
+            GradleDependenciesAnalysisExecutor(args.outputDir),
+            GradlePluginsAnalysisExecutor(args.outputDir),
+            ImportDirectivesAnalysisExecutor(args.outputDir),
+            ProjectMetricsAnalysisExecutor(args.outputDir)
+        )
         MultipleAnalysisOrchestrator(executors, kotlinExecutorHelper).execute(args.inputDir, args.outputDir)
     }
 }

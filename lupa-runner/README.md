@@ -13,7 +13,7 @@ The plugin to run various project analysis from the CLI:
     * [```kotlin-gradle-dependencies-by-modules-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradleDependenciesByModulesAnalysisRunner.kt) - command process Gradle dependencies and imports analysis by each module in the projects
     * [```kotlin-gradle-plugins-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePluginsAnalysisRunner.kt) - command process Gradle plugins 
     * [```kotlin-gradle-properties-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePropertiesAnalysisRunner.kt) - command process Gradle properties 
-    * [```kotlin-project-metrics-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinProjectMetricsAnalysisAnalysisRunner.kt) - command process projects metrics
+    * [```kotlin-project-metrics-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinProjectMetricsAnalysisRunner.kt) - command process projects metrics
     * [```kotlin-ranges-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinRangesAnalysisRunner.kt) - command process various ranges implementations usage analysis
     * [```kotlin-project-tags-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/ProjectsTaggingRunner.kt) - command process projects from dataset tagging according to theme or content
 2. [Python's analysers](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis):

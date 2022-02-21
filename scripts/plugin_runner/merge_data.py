@@ -3,11 +3,14 @@ This class contains methods for merging analysis results from different batches 
 """
 import logging
 import os
+import shutil
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 from typing import List
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
+from utils.file_utils import get_subdirectories
 
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
@@ -21,6 +24,18 @@ def merge(batch_output_paths: List[str], output_dir: str, analyzer_name: str):
         merge_clones(batch_output_paths, output_dir, analyzer.output_file)
     else:
         merge_csv(batch_output_paths, analyzer.output_file, output_dir)
+
+
+def merge_files(batch_output_paths: List[str], output_dir: str):
+    for batch_output_path in batch_output_paths:
+        logging.info(f"Merging {batch_output_path} files...")
+        cur_date = str(datetime.today().date())
+        if cur_date not in os.listdir(batch_output_path):
+            logging.error("There is no subdirectory with the current date in the batch output directory")
+        else:
+            src_dir = os.path.join(batch_output_path, cur_date)
+            dst_dir = os.path.join(output_dir, cur_date)
+            shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
 
 
 def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str):

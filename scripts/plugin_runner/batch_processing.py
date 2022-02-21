@@ -18,7 +18,7 @@ from data_collection.db_connect import DatabaseConn
 from data_collection.repositories_table import RepositoriesTable
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
-from plugin_runner.merge_data import merge
+from plugin_runner.merge_data import merge_files
 from utils.file_utils import create_directory, get_subdirectories, Extensions, clear_directory
 from utils.run_process_utils import run_in_subprocess
 
@@ -56,7 +56,7 @@ def main():
         end_time = time.time()
         logging.info(f"Finished batch {index} processing in {end_time - start_time}s")
 
-    merge(batch_output_paths, args.output, args.data)
+    merge_files(batch_output_paths, args.output)
 
 
 def split(input: str, output: str, batch_size: int,
