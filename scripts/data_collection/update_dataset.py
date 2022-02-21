@@ -74,7 +74,7 @@ def update_dataset(config):
                 logging.info(f"Error while cloning {project}, skipping..")
             elif exists_in_db:
                 logging.info(f"Somehow repository {project} is stored in the database, but not on the disk")
-                repositories_table.update_date(username, project_name, cur_date)
+                repositories_table.update_pull_date(username, project_name, cur_date)
             else:
                 repositories_table.insert(username, project_name, cur_date)
 

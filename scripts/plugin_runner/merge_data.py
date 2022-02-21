@@ -10,7 +10,6 @@ from pathlib import Path
 import pandas as pd
 from typing import List
 from plugin_runner.analyzers import Analyzer, AVAILABLE_ANALYZERS
-from utils.file_utils import get_subdirectories
 
 PROJECT_INDEX = "project_index.csv"
 METHOD_INDEX = "method_index.csv"
