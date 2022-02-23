@@ -48,7 +48,7 @@ class CallExpressionsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
-        tryToSetVenv(project, venv)
+        setupVenv(project, venv)
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
@@ -80,32 +80,45 @@ class CallExpressionsAnalysisExecutor(
     }
 
     /**
-     * Trying to set up a virtual environment.
+     * Setting up a virtual environment.
      *
      * If the [path to the virtual environment][globalVenv] is passed,
-     * then try to install it, otherwise try to find a local virtual environment
-     * in the root of the [project] in the ".venv" folder and install it.
+     * then try to set up it, otherwise try to find a local virtual environment
+     * in the root of the [project] in the ".venv" folder and set up it.
      */
-    private fun tryToSetVenv(project: Project, globalVenv: Path?) {
+    private fun setupVenv(project: Project, globalVenv: Path?) {
         val localVenv = project.basePath?.let { Paths.get(it, ".venv") }
 
-        globalVenv?.let {
-            if (it.exists()) {
-                setSdkToProject(project, it.toString())
-                return
-            } else {
-                logger.warn("The passed path to the venv ($it) does not exist. Trying to use a local venv.")
-            }
-        } ?: logger.info("The path to the venv is not passed. Trying to use a local venv.")
+        logger.info("Trying to use a global venv.")
+        if (tryToSetupVenv(project, globalVenv)) {
+            logger.info("The analysis will run with the global venv ($globalVenv).")
+            return
+        }
 
-        localVenv?.let {
-            if (it.exists()) {
-                setSdkToProject(project, it.toString())
-                return
-            } else {
-                logger.warn("The path to the local venv ($it) does not exist. The analysis will run without the SDK.")
-            }
-        } ?: logger.warn("The path to the local venv was not found. The analysis will run without the SDK.")
+        logger.info("Trying to use a local venv.")
+        if (tryToSetupVenv(project, localVenv)) {
+            logger.info("The analysis will run with the local venv ($localVenv).")
+            return
+        }
+
+        logger.warn("The analysis will run without the SDK.")
+    }
+
+    /**
+     * Trying to set up a virtual environment.
+     *
+     * If the [virtual environment path][venvPath] exists,
+     * set up the virtual environment and return true,
+     * otherwise log a warning and return false.
+     */
+    private fun tryToSetupVenv(project: Project, venvPath: Path?): Boolean {
+        if (venvPath != null && venvPath.exists()) {
+            setSdkToProject(project, venvPath.toString())
+            return true
+        }
+
+        logger.warn("The path to venv was not found or does not exist.")
+        return false
     }
 
     /**
