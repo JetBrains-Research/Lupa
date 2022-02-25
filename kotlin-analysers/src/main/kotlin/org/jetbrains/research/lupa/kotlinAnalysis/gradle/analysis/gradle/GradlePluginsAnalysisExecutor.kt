@@ -42,7 +42,7 @@ class GradlePluginsAnalysisExecutor(
                         project.name,
                         it.pluginId,
                         it.version ?: "",
-                        it.pluginArgs.joinToString(separator = ","),
+                        it.pluginArgs.joinToString(separator = "#"),
                         it.applied,
                         it.allProjects
                     ).joinToString(separator = ",")
