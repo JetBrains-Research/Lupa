@@ -74,6 +74,8 @@ def main() -> bool:
                 args.pip_for_each,
             )
 
+            # If we have an error when installing requirements from some file,
+            # we should try to install requirements from other files instead of skipping them.
             if exit_code != 0:
                 is_error = True
 
