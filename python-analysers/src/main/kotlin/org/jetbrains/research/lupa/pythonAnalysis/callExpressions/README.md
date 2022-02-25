@@ -41,10 +41,14 @@ file from the [`data_collection`](../../../../../../../../../../scripts/data_col
 The virtual environment is necessary to resolve external dependencies in project. 
 If you don't set up it, you can not extract libraries' names for functions, classes and decorators calls.
 
-Run the following command to set up a virtual environment:
-
+Run this command to set up a shared virtual environment for the entire dataset:
 ``` 
-python3 -m scripts/plugin_runner/create_venv /path/to/dataset/dir /path/to/venv
+python3 -m scripts/plugin_runner/python_venv/create_shared_venv /path/to/dataset/dir /path/to/venv
+```
+
+Or run this command to set up a virtual environment for each project in the dataset individually:
+```
+python3 -m scripts/plugin_runner/python_venv/create_venv_for_each_project /path/to/dataset/dir
 ```
 
 To get more information, please see the [README](../../../../../../../../../../scripts/plugin_runner/python_venv/README.md)
@@ -66,6 +70,8 @@ To get more information, please see the [README](../../../../../../../../../../s
 file from the [`plugin_runner`](../../../../../../../../../../scripts/plugin_runner) module.
 
 **Note**: if you don't want to run the analysis with a virtual environment, just pass an empty string as path. For example: `-Pvenv=""`.
+
+**Note**: if an empty string is passed to the `--Pvenv` argument and the project root contains the `.venv` folder, the virtual environment will be set up from it.
 
 #### 6. Run statistics visualisation
 
