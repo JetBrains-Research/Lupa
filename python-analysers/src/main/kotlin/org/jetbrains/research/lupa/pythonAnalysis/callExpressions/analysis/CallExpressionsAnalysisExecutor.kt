@@ -18,6 +18,7 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
 import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_VENV_FOLDER_NAME
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
@@ -87,7 +88,7 @@ class CallExpressionsAnalysisExecutor(
      * in the root of the [project] in the ".venv" folder and set up it.
      */
     private fun setupVenv(project: Project, globalVenv: Path?) {
-        val localVenv = project.basePath?.let { Paths.get(it, ".venv") }
+        val localVenv = project.basePath?.let { Paths.get(it, PYTHON_VENV_FOLDER_NAME) }
 
         logger.info("Trying to use a global venv.")
         if (tryToSetupVenv(project, globalVenv)) {
