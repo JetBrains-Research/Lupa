@@ -18,7 +18,7 @@ import kotlin.io.path.name
  */
 abstract class AnalysisExecutor(
     protected open val executorHelper: ExecutorHelper? = null,
-    protected open val repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
+    open val repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener
 ) {
 
