@@ -21,7 +21,7 @@ class GradleDependenciesByModulesAnalysisExecutor(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
-        RepositoryOpenerUtil.Companion::standardRepositoryOpener,
+        RepositoryOpenerUtil.Companion::openReloadKotlinJavaRepositoryOpener,
     filename: String = "gradle_dependencies_by_modules_data.csv"
 ) :
     AnalysisExecutor(executorHelper, repositoryOpener) {
