@@ -35,13 +35,18 @@ enum class FileExtension(val value: String) {
 val KOTLIN_EXTENSIONS = setOf(FileExtension.KT, FileExtension.KTS)
 val PYTHON_EXTENSIONS = setOf(FileExtension.PY)
 
+const val PYTHON_VENV_FOLDER_NAME = ".venv"
+
 fun VirtualFile.isKotlinRelatedFile(): Boolean {
     return this.extension == FileExtension.KT.value || this.extension == FileExtension.KTS.value
 }
 
-fun VirtualFile.isPythonRelatedFile(): Boolean {
-    return this.extension == FileExtension.PY.value
-}
+fun VirtualFile.isPythonRelatedFile(ignoreVenvFolder: Boolean = true): Boolean =
+    this.extension == FileExtension.PY.value && !(ignoreVenvFolder && this.isPythonVirtualEnvironmentFile())
+
+fun VirtualFile.isPythonVirtualEnvironmentFile(): Boolean =
+    this.canonicalPath?.contains("${File.separator}$PYTHON_VENV_FOLDER_NAME${File.separator}") ?: false
+
 
 fun requireDirectory(path: Path) {
     require(path.isDirectory()) { "Argument has to be directory" }
