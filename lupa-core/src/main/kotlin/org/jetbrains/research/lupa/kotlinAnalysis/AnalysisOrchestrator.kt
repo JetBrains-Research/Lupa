@@ -5,14 +5,12 @@ import org.jetbrains.research.lupa.kotlinAnalysis.util.*
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 /**
  * Classes that inherit from this interface filter the project files by the extension needed to perform the analysis.
  */
 interface Orchestrator {
     fun execute(projectsDir: Path, outputDir: Path)
 }
-
 
 /**
  * Class for execution analyzer for all projects in given directory.
@@ -56,7 +54,6 @@ class AnalysisOrchestrator(
         tempFolderPath.delete()
     }
 }
-
 
 /**
  * Class for execution multiple analyzers for all projects in given directory.
