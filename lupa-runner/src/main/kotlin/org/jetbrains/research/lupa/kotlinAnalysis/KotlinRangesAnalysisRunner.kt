@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinRangesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-ranges-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        RangesAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
+        AnalysisOrchestrator(RangesAnalysisExecutor(args.outputDir)).execute(args.inputDir, args.outputDir)
     }
 }

@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinGradlePropertiesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-gradle-properties-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        GradlePropertiesAnalysisExecutor(args.outputDir).executeAllProjects(args.inputDir)
+        AnalysisOrchestrator(GradlePropertiesAnalysisExecutor(args.outputDir)).execute(args.inputDir, args.outputDir)
     }
 }
