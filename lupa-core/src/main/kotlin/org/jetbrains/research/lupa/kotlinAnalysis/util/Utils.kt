@@ -47,7 +47,6 @@ fun VirtualFile.isPythonRelatedFile(ignoreVenvFolder: Boolean = true): Boolean =
 fun VirtualFile.isPythonVirtualEnvironmentFile(): Boolean =
     this.canonicalPath?.contains("${File.separator}$PYTHON_VENV_FOLDER_NAME${File.separator}") ?: false
 
-
 fun requireDirectory(path: Path) {
     require(path.isDirectory()) { "Argument has to be directory" }
 }
