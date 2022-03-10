@@ -1,6 +1,7 @@
 package org.jetbrains.research.lupa.pythonAnalysis.callExpressions.analysis
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.io.exists
 import com.jetbrains.python.actions.PyQualifiedNameProvider
 import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyDecorator
@@ -17,11 +18,13 @@ import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractPyElementsOfType
 import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
 import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_EXTENSIONS
+import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_VENV_FOLDER_NAME
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Executor for call expressions analysis which collects full qualified names of all call expressions in projects
@@ -46,9 +49,7 @@ class CallExpressionsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
-        venv?.let { setSdkToProject(project, venv.toString()) } ?: logger.warn(
-            "The path to the virtual environment has not been passed. The analysis will run without the SDK."
-        )
+        setupVenv(project, venv)
 
         val typeEvalContext = TypeEvalContext.deepCodeInsight(project)
         val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)
@@ -77,6 +78,48 @@ class CallExpressionsAnalysisExecutor(
 
         filterLocalFqNames(fqNamesByCategory, packageNames)
         writeFqNames(fqNamesByCategory, project)
+    }
+
+    /**
+     * Setting up a virtual environment.
+     *
+     * If the [path to the virtual environment][globalVenv] is passed,
+     * then try to set up it, otherwise try to find a local virtual environment
+     * in the root of the [project] in the ".venv" folder and set up it.
+     */
+    private fun setupVenv(project: Project, globalVenv: Path?) {
+        val localVenv = project.basePath?.let { Paths.get(it, PYTHON_VENV_FOLDER_NAME) }
+
+        logger.info("Trying to use a global venv.")
+        if (tryToSetupVenv(project, globalVenv)) {
+            logger.info("The analysis will run with the global venv ($globalVenv).")
+            return
+        }
+
+        logger.info("Trying to use a local venv.")
+        if (tryToSetupVenv(project, localVenv)) {
+            logger.info("The analysis will run with the local venv ($localVenv).")
+            return
+        }
+
+        logger.warn("The analysis will run without the SDK.")
+    }
+
+    /**
+     * Trying to set up a virtual environment.
+     *
+     * If the [virtual environment path][venvPath] exists,
+     * set up the virtual environment and return true,
+     * otherwise log a warning and return false.
+     */
+    private fun tryToSetupVenv(project: Project, venvPath: Path?): Boolean {
+        if (venvPath != null && venvPath.exists()) {
+            setSdkToProject(project, venvPath.toString())
+            return true
+        }
+
+        logger.warn("The path to venv was not found or does not exist.")
+        return false
     }
 
     /**

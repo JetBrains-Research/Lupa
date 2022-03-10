@@ -8,7 +8,7 @@ import httpretty
 
 import pkg_resources
 
-from plugin_runner.create_venv import (
+from plugin_runner.python_venv.common import (
     PYPI_PACKAGE_METADATA_URL,
     Requirements,
     _get_available_versions,
