@@ -1,5 +1,9 @@
-project_name,plugin_id
-in_2_kotlin_multi_module_project,java
-in_2_kotlin_multi_module_project,kotlin
-in_2_kotlin_multi_module_project,org.jetbrains.groovy
-in_2_kotlin_multi_module_project,org.jetbrains.kotlin.jvm
+project_name,plugin_id,plugin_version,plugin_args,applied,allProjects
+in_2_kotlin_multi_module_project,java,,,true,true
+in_2_kotlin_multi_module_project,maven-publish,,,true,false
+in_2_kotlin_multi_module_project,java-gradle-plugin,,,true,false
+in_2_kotlin_multi_module_project,org.jetbrains.intellij,1.1.3,,true,false
+in_2_kotlin_multi_module_project,kotlin,kotlinVersion,jvm,true,true
+in_2_kotlin_multi_module_project,kotlin,1.5.21,jvm,true,true
+in_2_kotlin_multi_module_project,kotlin,1.5.21,jvm,false,true
+in_2_kotlin_multi_module_project,org.jetbrains.groovy,,,true,true

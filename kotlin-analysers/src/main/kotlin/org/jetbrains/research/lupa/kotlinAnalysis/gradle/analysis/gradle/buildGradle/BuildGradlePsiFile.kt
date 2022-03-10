@@ -5,11 +5,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyFileImpl
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.context.GradleBlockContext
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.BuildGradleDependency
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.analyzers.GroovyBuildGradleDependenciesAnalyzer
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.analyzers.KtsBuildGradleDependenciesAnalyzer
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.BuildGradlePlugin
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.analyzers.GroovyBuildGradlePluginsAnalyzer
-import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.analyzers.KtsBuildGradlePluginsAnalyzer
+import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.depenencies.analyzers.*
+import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.plugins.*
 
 /**
  * Wrapper class for build gradle [PsiFile]. Sets the interface for working with build.gradle/build.gradle.kts files
@@ -43,9 +40,7 @@ class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
         return KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 
-    override fun extractBuildGradlePlugins(): Set<BuildGradlePlugin> {
-        return KtsBuildGradlePluginsAnalyzer.analyze(this, GradleBlockContext())
-    }
+    override fun extractBuildGradlePlugins() = KtsBuildGradlePluginsAnalyzer.analyze(this).toSet()
 }
 
 /**
@@ -58,7 +53,5 @@ class BuildGradleGroovyPsiFile(psiFile: GroovyFileImpl) : BuildGradlePsiFile(psi
         return GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
     }
 
-    override fun extractBuildGradlePlugins(): Set<BuildGradlePlugin> {
-        return GroovyBuildGradlePluginsAnalyzer.analyze(this, GradleBlockContext())
-    }
+    override fun extractBuildGradlePlugins() = GroovyBuildGradlePluginsAnalyzer.analyze(this).toSet()
 }
