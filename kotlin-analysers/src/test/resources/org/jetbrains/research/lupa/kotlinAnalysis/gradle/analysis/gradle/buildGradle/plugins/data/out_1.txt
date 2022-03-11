@@ -1,8 +1,9 @@
-project_name,plugin_id
-in_1_groovy_multi_module_project,java
-in_1_groovy_multi_module_project,java
-in_1_groovy_multi_module_project,java
-in_1_groovy_multi_module_project,kotlin
-in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm
-in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm
-in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm
+project_name,plugin_id,plugin_version,plugin_args,applied,allProjects
+in_1_groovy_multi_module_project,java,,,true,true
+in_1_groovy_multi_module_project,java,,,true,false
+in_1_groovy_multi_module_project,java,,,true,false
+in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm,1.5.21,,true,false
+in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm,,,true,false
+in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm,,,true,false
+in_1_groovy_multi_module_project,org.jetbrains.kotlin.jvm,1.5.21,,false,false
+in_1_groovy_multi_module_project,maven-publish,,,true,false

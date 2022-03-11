@@ -5,7 +5,12 @@ plugins {
     java
     apply(plugin = "maven-publish")
     `java-gradle-plugin`
+    val kotlinVersion = "1.5.21"
+    id("org.jetbrains.intellij") version "1.1.3" apply true
+    kotlin("jvm") version kotlinVersion apply true
     kotlin("jvm") version "1.5.21" apply true
+    kotlin("jvm") version "1.5.21" apply false
+    kotlin("jvm") version "1.5.21"
 }
 
 repositories {
