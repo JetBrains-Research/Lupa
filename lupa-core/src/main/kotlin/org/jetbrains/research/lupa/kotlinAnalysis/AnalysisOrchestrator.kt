@@ -38,6 +38,10 @@ class AnalysisOrchestrator(
     executorHelper: ExecutorHelper? = null
 ) : Orchestrator(executorHelper) {
 
+    /**
+     * Executes analysis of all projects in dataset using [analyzer][analysisExecutor].
+     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     */
     override fun doAnalysis(projectPath: Path, projectTmpFolderPath: Path): Boolean {
         symbolicCopyOnlyRequiredExtensions(
             fromDirectory = projectPath.toRealPath(),
@@ -60,6 +64,11 @@ class MultipleAnalysisOrchestrator(
 
     private val analyzersByExtensions = analysisExecutors.groupBy { it.requiredFileExtensions }
 
+    /**
+     * Executes analysis of all projects in dataset
+     * using all analyzers from [list of analysis executors][analysisExecutors].
+     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     */
     override fun doAnalysis(projectPath: Path, projectTmpFolderPath: Path): Boolean {
         return analyzersByExtensions.map { (extensions, analyzers) ->
             symbolicCopyOnlyRequiredExtensions(
