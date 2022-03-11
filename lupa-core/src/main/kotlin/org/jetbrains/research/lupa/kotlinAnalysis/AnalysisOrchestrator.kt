@@ -6,12 +6,19 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
- * Abstract class for analysis orchestrator that provides an interface that allows
- * to filter project files by the extension needed for analysis.
+ * Abstract class for the analysis orchestrator that provides an interface
+ * that allows to execute analysis of the whole dataset and filter project files by the extension needed for analysis.
  */
 abstract class Orchestrator(protected open val executorHelper: ExecutorHelper? = null) {
+    /**
+     * Filters the project by extension and does its analysis.
+     */
     abstract fun doAnalysis(projectPath: Path, projectTmpFolderPath: Path): Boolean
 
+    /**
+     * Executes analysis for all projects in given directory.
+     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     */
     fun execute(projectsDir: Path, outputDir: Path) {
         val tempFolderPath = Paths.get(outputDir.toString(), "tmp")
         tempFolderPath.delete(recursively = true)
@@ -39,8 +46,7 @@ class AnalysisOrchestrator(
 ) : Orchestrator(executorHelper) {
 
     /**
-     * Executes analysis of all projects in dataset using [analyzer][analysisExecutor].
-     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     * Do analysis of all projects in dataset using [analyzer][analysisExecutor].
      */
     override fun doAnalysis(projectPath: Path, projectTmpFolderPath: Path): Boolean {
         symbolicCopyOnlyRequiredExtensions(
@@ -65,9 +71,7 @@ class MultipleAnalysisOrchestrator(
     private val analyzersByExtensions = analysisExecutors.groupBy { it.requiredFileExtensions }
 
     /**
-     * Executes analysis of all projects in dataset
-     * using all analyzers from [list of analysis executors][analysisExecutors].
-     * Also runs [executorHelper.postExecuteAction()] on each repository after processing it.
+     * Do analysis of all projects in dataset using all analyzers from [list of analysis executors][analysisExecutors].
      */
     override fun doAnalysis(projectPath: Path, projectTmpFolderPath: Path): Boolean {
         return analyzersByExtensions.map { (extensions, analyzers) ->
