@@ -60,6 +60,9 @@ jobs:
           path: ./scripts/venv
           key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('./scripts/requirements*.txt') }}
 
+      - name: Flake8 help
+        run: flake8 --help
+
       - name: Run python static code analyzers
         run: |
           source ./scripts/venv/bin/activate
