@@ -9,6 +9,6 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object KotlinClonesAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("kotlin-clones-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
-        FormattedMethodMiner(args.outputDir).executeAllProjects(args.inputDir)
+        AnalysisOrchestrator(FormattedMethodMiner(args.outputDir)).execute(args.inputDir, args.outputDir)
     }
 }

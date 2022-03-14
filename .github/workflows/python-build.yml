@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ./scripts/venv
-          key: ${{ runner.os }}-pip-cache-v3-${{ hashFiles('./scripts/requirements*.txt') }}
+          key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('./scripts/requirements*.txt') }}
 
       - name: Install Python requirements
         if: steps.pip-cache.outputs.cache-hit != 'true'
@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ./scripts/venv
-          key: ${{ runner.os }}-pip-cache-v3-${{ hashFiles('./scripts/requirements*.txt') }}
+          key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('./scripts/requirements*.txt') }}
       
       - name: Run tests
         run: |
@@ -58,7 +58,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ./scripts/venv
-          key: ${{ runner.os }}-pip-cache-v3-${{ hashFiles('./scripts/requirements*.txt') }}
+          key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('./scripts/requirements*.txt') }}
 
       - name: Run python static code analyzers
         run: |

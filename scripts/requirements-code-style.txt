@@ -1,3 +1,5 @@
 flake8==3.9.2
 flake8-import-order==0.18.1
 wemake_python_styleguide==0.15.3
+
+bandit==1.7.2  # TODO: remove when flake8-bandit supports the new version of bandit
