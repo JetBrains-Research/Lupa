@@ -8,7 +8,6 @@ import java.util.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-
 class JupyterInverter(input: String, output: String) {
     val inputDir = input
     val outputDir = output
@@ -118,7 +117,6 @@ class JupyterInverter(input: String, output: String) {
         try {
             val path = Paths.get(targetDir)
             Files.createDirectory(path)
-
         } catch (e: IOException) {
             System.err.println("Directory already exists ")
         } finally {
