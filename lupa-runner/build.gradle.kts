@@ -37,6 +37,20 @@ open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
     val venv: String? by project
 }
 
+open class JupyterDatasetRefactoringCliTask : DefaultTask() {
+    // Name of the analysis runner
+    @get:Input
+    val runner: String? by project
+
+    // Input directory of dataset with repositories
+    @get:Input
+    val input: String? by project
+
+    // Output directory of refactored dataset
+    @get:Input
+    val output: String? by project
+}
+
 dependencies {
     implementation(project(":kotlin-analysers"))
     implementation(project(":python-analysers"))
@@ -45,6 +59,14 @@ dependencies {
 }
 
 tasks {
+//    register<JupyterDatasetRefactoringCliTask>("preprocessJupyterDataset") {
+//        args = listOfNotNull(
+//            runner,
+//            input?.let { "--input=$it" },
+//            output?.let { "--output=$it" }
+//        )
+//    }
+
     register<BaseAnalysisCliTask>("cli") {
         dependsOn("buildPlugin")
         args = listOfNotNull(
