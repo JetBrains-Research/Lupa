@@ -13,8 +13,8 @@ In the current version of the script, if we find different versions of the same 
 Run the [`create_shared_venv.py`](./create_shared_venv.py) with the arguments from command line.
 
 **Required arguments:**
-- `dataset_path` — Path to dataset with projects from which you want to get requirements and create a virtual environment.
-- `venv_path` — Path to the folder where you want to create the virtual environment.
+- `dataset_path` &ndash; Path to dataset with projects from which you want to get requirements and create a virtual environment.
+- `venv_path` &ndash; Path to the folder where you want to create the virtual environment.
 
 **Optional arguments:**
 | Argument                                                       | Description                                                                                                                                         |
@@ -33,7 +33,7 @@ The virtual environment is created in the root of the project in the `.venv` fol
 Run the [`create_venv_for_each_project.py`](./create_venv_for_each_project.py) with the arguments from command line.
 
 **Required arguments:**
-- `dataset_path` — Path to the dataset with projects, for each of which a virtual environment must be created.
+- `dataset_path` &ndash; Path to the dataset with projects, for each of which a virtual environment must be created.
 
 **Optional arguments:**
 | Argument                                              | Description                                                                                                                                         |

@@ -6,19 +6,19 @@ with runners extensions points should be separated.
 
 The plugin to run various project analysis from the CLI:
 1. [Kotlin's analysers](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis):
-    * [```java-reflections-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/JavaReflectionsFunctionsAnalysisRunner.kt) - search for Kava reflections calls
-    * [```kotlin-clones-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinClonesAnalysisRunner.kt) - command process code clones analysis
-    * [```kotlin-dependencies-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinDependenciesAnalysisRunner.kt) - command process project dependencies and imports analysis
-    * [```kotlin-gradle-dependencies-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradleDependenciesAnalysisRunner.kt) - command process Gradle dependencies and imports analysis
-    * [```kotlin-gradle-dependencies-by-modules-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradleDependenciesByModulesAnalysisRunner.kt) - command process Gradle dependencies and imports analysis by each module in the projects
-    * [```kotlin-gradle-plugins-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePluginsAnalysisRunner.kt) - command process Gradle plugins 
-    * [```kotlin-gradle-properties-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePropertiesAnalysisRunner.kt) - command process Gradle properties 
-    * [```kotlin-project-metrics-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinProjectMetricsAnalysisAnalysisRunner.kt) - command process projects metrics
-    * [```kotlin-ranges-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinRangesAnalysisRunner.kt) - command process various ranges implementations usage analysis
-    * [```kotlin-project-tags-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/ProjectsTaggingRunner.kt) - command process projects from dataset tagging according to theme or content
+    * [```java-reflections-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/JavaReflectionsFunctionsAnalysisRunner.kt) &ndash; search for Kava reflections calls
+    * [```kotlin-clones-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinClonesAnalysisRunner.kt) &ndash; command process code clones analysis
+    * [```kotlin-dependencies-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinDependenciesAnalysisRunner.kt) &ndash; command process project dependencies and imports analysis
+    * [```kotlin-gradle-dependencies-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradleDependenciesAnalysisRunner.kt) &ndash; command process Gradle dependencies and imports analysis
+    * [```kotlin-gradle-dependencies-by-modules-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradleDependenciesByModulesAnalysisRunner.kt) &ndash; command process Gradle dependencies and imports analysis by each module in the projects
+    * [```kotlin-gradle-plugins-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePluginsAnalysisRunner.kt) &ndash; command process Gradle plugins 
+    * [```kotlin-gradle-properties-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinGradlePropertiesAnalysisRunner.kt) &ndash; command process Gradle properties 
+    * [```kotlin-project-metrics-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinProjectMetricsAnalysisAnalysisRunner.kt) &ndash; command process projects metrics
+    * [```kotlin-ranges-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/KotlinRangesAnalysisRunner.kt) &ndash; command process various ranges implementations usage analysis
+    * [```kotlin-project-tags-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/ProjectsTaggingRunner.kt) &ndash; command process projects from dataset tagging according to theme or content
 2. [Python's analysers](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis):
-    * [```python-call-expressions-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonCallExpressionsAnalysisRunner.kt) - command process python call expressions analysis
-    * [```python-imports-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonImportsAnalysisRunner.kt) - command process python imports analysis
+    * [```python-call-expressions-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonCallExpressionsAnalysisRunner.kt) &ndash; command process python call expressions analysis
+    * [```python-imports-analysis```](./src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/PythonImportsAnalysisRunner.kt) &ndash; command process python imports analysis
 
 ### Usage
 

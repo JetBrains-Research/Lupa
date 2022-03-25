@@ -8,8 +8,8 @@ This script allows you to filter out unnecessary FQ names (private names, stdlib
 Run the [filter_unnecessary_fq_names.py](filter_unnecessary_fq_names.py) with the arguments from command line.
 
 **Required arguments:**
-- `--input` — path to csv file with FQ names.
-- `--output` — path to output csv file with filtered FQ names.
+- `--input` &ndash; path to csv file with FQ names.
+- `--output` &ndash; path to output csv file with filtered FQ names.
 
 **Optional arguments:**
 | Argument | Description |

@@ -5,7 +5,7 @@ This module contains functions common to all modules and analyzers.
 Each analyzer has:
 - an [analyzer](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/Analyzers.kt) that describes a filter that should be applied to the 
   [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) to obtain the necessary result;
-- an [executor](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/AnalysisExecutor.kt) - a simple class that executes one or more analyzers 
+- an [executor](./src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/AnalysisExecutor.kt) &ndash; a simple class that executes one or more analyzers 
   and manage of the resources (e.g. csv file) to write all results into it;
 - a runner that runs an executor with the necessary data (see the [`lupa-runner`](../lupa-runner) module).
 

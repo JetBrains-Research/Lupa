@@ -60,19 +60,19 @@ Examples of import directives fq names analysis results visualization:
 <img width="1440" alt="total_by_package_bar_plot" src="https://user-images.githubusercontent.com/31625351/126789888-43bba161-c59e-4df0-a596-e1df4ad60cad.png">
 
 
-* "root.png" - dot packages tree with occurrence on edges, build from import dependencies names according to filters
+* "root.png" &ndash; dot packages tree with occurrence on edges, build from import dependencies names according to filters
    and simplifications with selected parameters (MAX_SUBPACKAGES, MAX_LEAF_SUBPACKAGES, MIN_OCCURRENCE, MAX_OCCURRENCE,
    MAX_U_OCCURRENCE)
 
 ![root](https://user-images.githubusercontent.com/31625351/126790347-f2519427-13cc-4a6b-bab4-de97a6d78e61.png)
 
  
-* "{package_name}.png" - dot import dependencies fq names subtrees with occurrence on edges for each package
+* "{package_name}.png" &ndash; dot import dependencies fq names subtrees with occurrence on edges for each package
 
 ![org springframework](https://user-images.githubusercontent.com/31625351/126790465-bec3ae4a-81c7-47e7-9b7e-fc66b2a07484.png)
 
    
-* "root.txt" - txt packages tree with occurrence on edges 
+* "root.txt" &ndash; txt packages tree with occurrence on edges 
 
 ```
 ├── org [14280]
@@ -93,7 +93,7 @@ Examples of import directives fq names analysis results visualization:
 │   ├── springframework [406] 
 ...
 ```
-* "{package_name}.txt" - txt import dependencies fq names subtrees with occurrence on edges for each package
+* "{package_name}.txt" &ndash; txt import dependencies fq names subtrees with occurrence on edges for each package
 ```
 org.springframework [406] 
 ├── beans.factory [58] 

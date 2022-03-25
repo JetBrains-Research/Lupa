@@ -11,10 +11,10 @@ such as [IntelliJ IDEA](https://www.jetbrains.com/idea/),
 [PyCharm](https://www.jetbrains.com/pycharm/), 
 or [CLion](https://www.jetbrains.com/clion/).
 
-Currently, our framework supports analyzing two languages: Python --- 
+Currently, our framework supports analyzing two languages: Python &mdash; 
 a mature language [most popular](https://octoverse.github.com/#top-languages-over-the-years) 
 in data science and machine learning, 
-and Kotlin --- a relatively young but [quickly growing](https://developer-economics.cdn.prismic.io/developer-economics/dbf9f36f-a31a-440a-9c22-c599cc235fa4_20th+edition+-+State+of+the+developer+Nation.pdf) language.
+and Kotlin &mdash; a relatively young but [quickly growing](https://developer-economics.cdn.prismic.io/developer-economics/dbf9f36f-a31a-440a-9c22-c599cc235fa4_20th+edition+-+State+of+the+developer+Nation.pdf) language.
 
 ## How it works
 
@@ -31,20 +31,20 @@ To perform the analysis, the tool needs two obvious components:
 a _dataset_ and _analyzers_, _i.e._, sets of instructions of what [PSI tree](https://plugins.jetbrains.com/docs/intellij/psi.html) nodes need to be analyzed and how.
 To get more information about data collection see the [data_collection](./scripts/data_collection/README.md) module.
 The repository contains several core-modules:
-- [`lupa-core`](./lupa-core/README.md) - functions common to all modules and analyzers;
-- [`lupa-test`](./lupa-test/README.md) - common tests' architecture for all modules;
-- [`lupa-runner`](./lupa-runner/README.md) - the module with runners for all analyzers;
-- [`scripts`](./scripts/README.md) - common functionality for data gathering, processing and visualization (written in Python).
+- [`lupa-core`](./lupa-core/README.md) &ndash; functions common to all modules and analyzers;
+- [`lupa-test`](./lupa-test/README.md) &ndash common tests' architecture for all modules;
+- [`lupa-runner`](./lupa-runner/README.md) &ndash the module with runners for all analyzers;
+- [`scripts`](./scripts/README.md) &ndash common functionality for data gathering, processing and visualization (written in Python).
 
 And several examples of analyzers that we used for our purposes:
 1. [Kotlin's analysers](./kotlin-analysers/README.md):
-   - [`clones`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/clones/README.md) - functionality related to clones analysis in Kotlin projects;
-   - [`dependencies`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/dependencies/README.md) - functionality related to dependency analysis in Kotlin projects;
-   - [`gradle`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/gradle/README.md) - functionality related to code analysis of the Gradle files in Kotlin projects;
-   - [`statistic`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/statistic/README.md) - functionality related to different code analysis in Kotlin projects, like range analysis;
+   - [`clones`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/clones/README.md) &ndash functionality related to clones analysis in Kotlin projects;
+   - [`dependencies`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/dependencies/README.md) &ndash functionality related to dependency analysis in Kotlin projects;
+   - [`gradle`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/gradle/README.md) &ndash functionality related to code analysis of the Gradle files in Kotlin projects;
+   - [`statistic`](./kotlin-analysers/src/main/kotlin/org/jetbrains/research/lupa/kotlinAnalysis/statistic/README.md) &ndash functionality related to different code analysis in Kotlin projects, like range analysis;
 2. [Python's analysers](./python-analysers/README.md):
-   - [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions/README.md) - functionality related to call expressions (functions, classes, decorators) analysis in Python projects;
-   - [`imports`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/imports/README.md) - functionality related to imports analysis in Python projects.
+   - [`callExpressions`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/callExpressions/README.md) &ndash functionality related to call expressions (functions, classes, decorators) analysis in Python projects;
+   - [`imports`](./python-analysers/src/main/kotlin/org/jetbrains/research/lupa/pythonAnalysis/imports/README.md) &ndash functionality related to imports analysis in Python projects.
 
 To get more information see these modules (each of them has a README file).
 
