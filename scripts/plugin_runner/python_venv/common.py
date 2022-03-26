@@ -178,12 +178,12 @@ def filter_unavailable_versions(specs: Requirements) -> Requirements:
     logger.info('Filtering unavailable versions.')
 
     filtered_requirements = {}
-    for package_name, specs in specs.items():
+    for package_name, package_specs in specs.items():
         logger.info(f'Checking {package_name} versions.')
 
         available_versions = _get_available_versions(package_name)
 
-        filtered_specs = specs
+        filtered_specs = package_specs
         if available_versions:
             filtered_specs = {
                 (operator, version) for operator, version in filtered_specs if version in available_versions
