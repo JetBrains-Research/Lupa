@@ -25,11 +25,15 @@ def filter_unavailable_packages(requirements: Requirements) -> Requirements:
     for package_name in requirements.keys():
         logger.info(f'Checking {package_name}.')
 
-        if check_package_exists(package_name):
+        exists = check_package_exists(package_name)
+
+        if exists is None:
+            logger.warning(f'Unable to check the {package_name} package. Skipping.')
             continue
 
-        logger.warning(f'The {package_name} package does not exist on PyPI. Removing the package from requirements.')
-        filtered_requirements.pop(package_name)
+        if not exists:
+            logger.warning(f'The {package_name} package does not exist on PyPI. Removing the package from requirements.')
+            filtered_requirements.pop(package_name)
 
     logger.info(f'Filtered {len(requirements) - len(filtered_requirements)} packages.')
     return filtered_requirements

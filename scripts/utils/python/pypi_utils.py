@@ -1,7 +1,7 @@
 import json
 import logging
 from distutils.version import Version
-from typing import Set
+from typing import Optional, Set
 
 from pkg_resources import parse_version
 
@@ -50,12 +50,12 @@ def get_available_versions(package_name: str) -> Set[Version]:
     return set(map(parse_version, versions))
 
 
-def check_package_exists(package_name: str) -> bool:
+def check_package_exists(package_name: str) -> Optional[bool]:
     """
     Check if a package exists.
 
     :param package_name: PyPI package name.
-    :return: True if the package exists, otherwise False.
+    :return: If it was not possible to find out whether the package exists or not, None will be returned.
     """
     session = _create_session()
     url = PYPI_PACKAGE_METADATA_URL.format(package_name=package_name)
@@ -64,7 +64,7 @@ def check_package_exists(package_name: str) -> bool:
         response = session.get(url)
     except requests.exceptions.RequestException:
         logger.error('An error occurred when accessing the PyPI.')
-        return False
+        return None
 
     if response.status_code == 200:
         return True
@@ -73,4 +73,4 @@ def check_package_exists(package_name: str) -> bool:
         return False
 
     logger.warning(f'PyPI returned an unexpected code ({response.status_code}).')
-    return False
+    return None
