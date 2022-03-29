@@ -1,5 +1,5 @@
 from distutils.version import Version
-from typing import Set
+from typing import Optional, Set
 
 from httpretty import httpretty
 
@@ -7,7 +7,7 @@ import pkg_resources
 
 import pytest
 
-from utils.python.pypi_utils import PYPI_PACKAGE_METADATA_URL, get_available_versions
+from utils.python.pypi_utils import PYPI_PACKAGE_METADATA_URL, check_package_exists, get_available_versions
 
 
 @pytest.fixture
@@ -75,3 +75,34 @@ def test_get_available_versions(
     )
 
     assert expected_versions == get_available_versions(package_name)
+
+
+CHECK_PACKAGE_EXISTS_TEST_DATA = [
+    (
+        200,
+        True,
+    ),
+    (
+        404,
+        False,
+    ),
+    (
+        300,
+        None,
+    ),
+]
+
+
+@pytest.mark.parametrize(('html_status', 'expected_existence'), CHECK_PACKAGE_EXISTS_TEST_DATA)
+def test_check_package_exists(
+    _httpretty_fixture,
+    html_status: int,
+    expected_existence: Optional[bool],
+):
+    httpretty.register_uri(
+        httpretty.GET,
+        PYPI_PACKAGE_METADATA_URL.format(package_name='some_package'),
+        status=html_status,
+    )
+
+    assert expected_existence == check_package_exists('some_package')
