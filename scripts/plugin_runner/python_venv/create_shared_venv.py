@@ -23,10 +23,11 @@ from plugin_runner.python_venv.common import (
     create_venv,
     filter_unavailable_packages,
     filter_unavailable_versions,
-    gather_requirements,
     install_requirements,
     merge_requirements,
 )
+
+from utils.python.requirements_utils import gather_requirements
 
 logger = logging.getLogger(__name__)
 
