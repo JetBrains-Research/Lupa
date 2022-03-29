@@ -1,9 +1,11 @@
 from distutils.version import Version
 from typing import Set
 
-import pkg_resources
-import pytest
 from httpretty import httpretty
+
+import pkg_resources
+
+import pytest
 
 from utils.python.pypi_utils import PYPI_PACKAGE_METADATA_URL, get_available_versions
 

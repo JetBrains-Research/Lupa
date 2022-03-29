@@ -1,7 +1,9 @@
+from test.utils.python import REQUIREMENTS_UTILS_TEST_DATA_FOLDER
+
 import pkg_resources
+
 import pytest
 
-from test.utils.python import REQUIREMENTS_UTILS_TEST_DATA_FOLDER
 from utils.python.requirements_utils import Requirements, gather_requirements, normalize_requirement_name
 
 NORMALIZE_REQUIREMENT_NAME_TEST_DATA = [

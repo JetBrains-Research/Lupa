@@ -32,7 +32,7 @@ def filter_unavailable_packages(requirements: Requirements) -> Requirements:
             continue
 
         if not exists:
-            logger.warning(f'The {package_name} package does not exist on PyPI. Removing the package from requirements.')
+            logger.warning(f'The {package_name} package doesnt exist on PyPI. Removing the package from requirements.')
             filtered_requirements.pop(package_name)
 
     logger.info(f'Filtered {len(requirements) - len(filtered_requirements)} packages.')

@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import httpretty
+
 import pkg_resources
-import pytest as pytest
 
 from plugin_runner.python_venv.common import (
     Requirements,
@@ -14,6 +14,9 @@ from plugin_runner.python_venv.common import (
     filter_unavailable_versions,
     merge_requirements,
 )
+
+import pytest as pytest
+
 from utils.python.pypi_utils import PYPI_PACKAGE_METADATA_URL
 
 
