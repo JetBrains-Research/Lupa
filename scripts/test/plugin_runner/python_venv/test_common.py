@@ -1,26 +1,23 @@
 import tempfile
 from distutils.version import Version
 from pathlib import Path
-from test.plugin_runner import CREATE_VENV_TEST_DATA_FOLDER
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 
 import httpretty
 
 import pkg_resources
 
 from plugin_runner.python_venv.common import (
-    PYPI_PACKAGE_METADATA_URL,
     Requirements,
-    _get_available_versions,
-    _normalize_requirement_name,
     create_requirements_file,
     filter_unavailable_packages,
     filter_unavailable_versions,
-    gather_requirements,
     merge_requirements,
 )
 
 import pytest as pytest
+
+from utils.python.pypi_utils import PYPI_PACKAGE_METADATA_URL
 
 
 @pytest.fixture
@@ -28,50 +25,6 @@ def _httpretty_fixture():
     httpretty.enable(allow_net_connect=False)
     yield
     httpretty.disable()
-
-
-NORMALIZE_REQUIREMENT_NAME_TEST_DATA = [
-    ('', ''),
-    ('numpy', 'numpy'),
-    ('PaNdAs', 'pandas'),
-    ('sphinxcontrib.napoleon', 'sphinxcontrib-napoleon'),
-    ('rUaMeL_yAmL', 'ruamel-yaml'),
-    ('sOmE.lOnG_pAcKaGe-NaMe', 'some-long-package-name'),
-]
-
-
-@pytest.mark.parametrize(('given_name', 'expected_name'), NORMALIZE_REQUIREMENT_NAME_TEST_DATA)
-def test_normalize_requirement_name(given_name: str, expected_name: str):
-    assert _normalize_requirement_name(given_name) == expected_name
-
-
-GATHER_REQUIREMENTS_TEST_DATA = [
-    ('project_with_incorrect_requirement_file', {}),
-    ('project_without_requirements_files', {}),
-    ('project_with_empty_requirements_file', {}),
-    (
-        'project_with_several_requirements_files',
-        {
-            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
-            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
-            'plotly': set(),
-        },
-    ),
-    (
-        'project_with_nested_structure',
-        {
-            'numpy': set(zip(['==', '=='], map(pkg_resources.parse_version, ['1.2.3', '3.2.1']))),
-            'pandas': set(zip(['==', '=='], map(pkg_resources.parse_version, ['4.5.6', '6.5.4']))),
-            'plotly': set(),
-        },
-    ),
-    # TODO: Add a test for nested requirements files (see: project_with_nested_requirements_files)
-]
-
-
-@pytest.mark.parametrize(('folder_name', 'expected_requirements'), GATHER_REQUIREMENTS_TEST_DATA)
-def test_gather_requirements(folder_name: str, expected_requirements: Requirements):
-    assert expected_requirements == gather_requirements(CREATE_VENV_TEST_DATA_FOLDER / folder_name)
 
 
 FILTER_UNAVAILABLE_PACKAGES_TEST_DATA = [
@@ -130,66 +83,6 @@ def test_filter_unavailable_packages(
         )
 
     assert expected_requirements == filter_unavailable_packages(requirements)
-
-
-GET_AVAILABLE_VERSIONS_TEST_DATA = [
-    (
-        'numpy',
-        """
-        {
-            "releases": {
-                "1.2.3": {},
-                "3.4.5": {},
-                "6.7.8": {}
-            }
-        }
-        """,
-        set(map(pkg_resources.parse_version, ['1.2.3', '3.4.5', '6.7.8'])),
-    ),
-    (
-        'numpy',
-        """
-        {
-            "releases": {}
-        }
-        """,
-        set(),
-    ),
-    (
-        'numpy',
-        'This is not a json.',
-        set(),
-    ),
-    (
-        'numpy',
-        """
-        {
-            "incorrect_key": {
-                "1.2.3": {},
-                "3.4.5": {},
-                "6.7.8": {}
-            }
-        }
-        """,
-        set(),
-    ),
-]
-
-
-@pytest.mark.parametrize(('package_name', 'response_json', 'expected_versions'), GET_AVAILABLE_VERSIONS_TEST_DATA)
-def test_get_available_versions(
-    _httpretty_fixture,
-    package_name: str,
-    response_json: str,
-    expected_versions: Set[Version],
-):
-    httpretty.register_uri(
-        httpretty.GET,
-        PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
-        body=response_json,
-    )
-
-    assert expected_versions == _get_available_versions(package_name)
 
 
 FILTER_UNAVAILABLE_VERSIONS_TEST_DATA = [

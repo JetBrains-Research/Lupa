@@ -14,9 +14,10 @@ import logging
 import sys
 from pathlib import Path
 
-from plugin_runner.python_venv.common import create_venv, gather_requirements_file_paths, install_requirements
+from plugin_runner.python_venv.common import create_venv, install_requirements
 
 from utils.file_utils import FileSystemItem, get_all_file_system_items
+from utils.python.requirements_utils import gather_requirements_file_paths
 
 logger = logging.getLogger(__name__)
 
