@@ -1,15 +1,27 @@
-# TODO: doc
+"""
+This script tries to determine the Python version for projects from a dataset using metadata from PyPI.
+
+It accepts
+    * path to the folder with python projects.
+    * path to `csv` file, where to save versions.
+
+First, we try to determine the version using the classifiers from the `setup.py` or `setup.cfg` files. If this fails,
+for each project we collect the requirements and use their classifiers specified on the PyPI to determine the version.
+"""
 
 import argparse
 import logging
+import re
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Set
 
 import pandas as pd
 
-from plugin_runner.python_version.utils import PythonClassifiers, PythonVersion
+from plugin_runner.python_version.python_classifiers import PythonClassifiers, PythonVersion
 
 from utils.file_utils import FileSystemItem, get_all_file_system_items
+from utils.python.pypi_utils import get_available_versions, get_package_classifiers
+from utils.python.requirements_utils import Requirements, gather_requirements
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +44,87 @@ def _try_to_find_version_in_setup_file(file_path: Path) -> Optional[PythonVersio
 
     for python_version in PythonVersion:
         if any(classifier in content for classifier in PythonClassifiers.get_classifiers_by_version(python_version)):
+            return python_version
+
+    return None
+
+
+def _try_to_determine_version_using_classifiers(classifiers: Set[str]) -> Optional[PythonVersion]:
+    """
+    Try to determine the Python version using the classifiers obtained from the PyPI package metadata.
+
+    :param classifiers: List of PyPI classifiers.
+    :return: Python version. If it could not be determined will be returned None.
+    """
+    is_python_3 = any(
+        version_classifier in PythonClassifiers.get_classifiers_by_version(PythonVersion.PYTHON_3)
+        for version_classifier in classifiers
+    )
+
+    is_python_2 = any(
+        version_classifier in PythonClassifiers.get_classifiers_by_version(PythonVersion.PYTHON_2)
+        for version_classifier in classifiers
+    )
+
+    if is_python_2 and is_python_3:
+        return None
+
+    if is_python_2:
+        return PythonVersion.PYTHON_2
+
+    if is_python_3:
+        return PythonVersion.PYTHON_3
+
+    return None
+
+
+def _try_to_determine_version_using_requirements(requirements: Requirements) -> Optional[PythonVersion]:
+    """
+    Try to determine the python version using the requirements files.
+
+    All requirements are considered to determine the version, except those that use the operators "<", ">", "!=".
+    Also, if the version ends with ".*", any existing version with the same prefix is taken instead.
+
+    :param requirements: Dictionary, where for each package the collected specs are listed.
+                         The spec is a pair of operator and version.
+    :return: Python version. If it could not be determined will be returned None.
+    """
+    packages_without_specs = set()
+    for package_name, package_specs in requirements.items():
+        if not package_specs:
+            packages_without_specs.add(package_name)
+            continue
+
+        for operator, version in package_specs:
+            if operator in {'<', '>', '!='}:
+                continue
+
+            version = str(version)
+
+            if version.endswith('.*'):
+                available_versions = get_available_versions(package_name)
+                prefix = re.sub(r'\.\*$', '', version)
+                available_versions = {
+                    available_version
+                    for available_version in available_versions
+                    if str(available_version).startswith(prefix)
+                }
+
+                if not available_versions:
+                    continue
+
+                version = str(available_versions.pop())
+
+            version_classifiers = get_package_classifiers(package_name, version)
+
+            python_version = _try_to_determine_version_using_classifiers(version_classifiers)
+            if python_version is not None:
+                return python_version
+
+    for package_name in packages_without_specs:
+        package_classifiers = get_package_classifiers(package_name)
+        python_version = _try_to_determine_version_using_classifiers(package_classifiers)
+        if python_version is not None:
             return python_version
 
     return None
@@ -73,7 +166,11 @@ def determine_version(project_path: Path) -> Optional[PythonVersion]:
 
     logger.info('Try to determine the Python version using the requirements files.')
 
-    # TODO: try to determine the version using the requirements files.
+    requirements = gather_requirements(project_path)
+    python_version = _try_to_determine_version_using_requirements(requirements)
+    if python_version is not None:
+        logger.info(f'Determined Python version: {python_version.value}')
+        return python_version
 
     logger.warning('Unable to determine the version of Python.')
     return None
