@@ -2,7 +2,7 @@ from pathlib import Path
 from test.plugin_runner.python_version import SETUP_FILES_TEST_DATA_FOLDER
 
 from plugin_runner.python_version.determine_python_version import _try_to_find_version_in_setup_file
-from plugin_runner.python_version.utils import PythonVersion
+from plugin_runner.python_version.python_classifiers import PythonVersion
 
 import pytest
 
