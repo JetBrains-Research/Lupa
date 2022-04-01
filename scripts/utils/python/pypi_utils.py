@@ -54,6 +54,7 @@ def get_available_versions(package_name: str) -> Set[Version]:
 def get_package_classifiers(package_name: str, package_version: Optional[str] = None) -> Set[str]:
     """
     Return the list of classifiers of the given package by version.
+
     If no version is specified, the classifiers of the latest version will be returned.
 
     :param package_name: The name of the PyPI package.
@@ -69,7 +70,7 @@ def get_package_classifiers(package_name: str, package_version: Optional[str] = 
     try:
         metadata = session.get(url).json()
     except requests.exceptions.RequestException:
-        logger.error(f'An error occurred when accessing the PyPI.')
+        logger.error('An error occurred when accessing the PyPI.')
         return set()
     except json.JSONDecodeError:
         logger.error(f'Failed to get classifiers for the {package_name} package (version = {package_name}).')
