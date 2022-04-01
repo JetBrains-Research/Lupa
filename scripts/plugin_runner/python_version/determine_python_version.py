@@ -185,7 +185,7 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
 
     parser.add_argument(
         'output_path',
-        help='The path where you want to save the csv table with the versions.',
+        help='Path where you want to save the csv table with the versions.',
         type=lambda value: Path(value).absolute(),
     )
 
