@@ -1,0 +1,3 @@
+from test import TEST_DATA_FOLDER
+
+UTILS_TEST_DATA_FOLDER = TEST_DATA_FOLDER / 'utils'
