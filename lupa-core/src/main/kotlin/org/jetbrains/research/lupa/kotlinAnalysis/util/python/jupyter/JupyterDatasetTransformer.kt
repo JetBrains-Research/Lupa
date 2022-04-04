@@ -1,11 +1,11 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.util.python.jupyter
 
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import java.io.File
 import java.nio.file.Path
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import org.jetbrains.research.lupa.kotlinAnalysis.util.FileExtension
-//import org.jetbrains.research.lupa.kotlinAnalysis.util.getFilesWithExtensions
+// import org.jetbrains.research.lupa.kotlinAnalysis.util.getFilesWithExtensions
 
 /**
  * Class used to create copy of initial dataset, where jupyter notebooks

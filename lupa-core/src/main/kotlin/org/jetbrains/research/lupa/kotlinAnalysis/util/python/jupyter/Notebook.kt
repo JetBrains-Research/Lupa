@@ -53,8 +53,8 @@ class Notebook(notebookJson: JsonObject, private val notebookName: String) {
         val separator = ""
         val sb = StringBuilder()
 
-        cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList().
-            forEach { sb.append(it.asString).append(separator) }
+        cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList()
+            .forEach { sb.append(it.asString).append(separator) }
 
         return sb.removeSuffix(separator).toString()
     }
@@ -66,11 +66,10 @@ class Notebook(notebookJson: JsonObject, private val notebookName: String) {
         val separator = "\n"
         val sb = StringBuilder()
 
-        this.data.codeCells.toList().
-        forEach { sb.append(transformCellToString(it)).append(separator) }
+        this.data.codeCells.toList()
+            .forEach { sb.append(transformCellToString(it)).append(separator) }
 
         return sb.removeSuffix(separator).toString()
-
     }
 
     /**
