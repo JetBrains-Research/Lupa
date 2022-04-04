@@ -37,11 +37,7 @@ open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
     val venv: String? by project
 }
 
-open class JupyterDatasetRefactoringCliTask : DefaultTask() {
-    // Name of the analysis runner
-    @get:Input
-    val runner: String? by project
-
+open class JupyterDatasetRefactoringCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Input directory of dataset with repositories
     @get:Input
     val input: String? by project
@@ -49,6 +45,18 @@ open class JupyterDatasetRefactoringCliTask : DefaultTask() {
     // Output directory of refactored dataset
     @get:Input
     val output: String? by project
+
+    init {
+        jvmArgs = listOf(
+            "-Djava.awt.headless=true",
+            "--add-exports",
+            "java.base/jdk.internal.vm=ALL-UNNAMED",
+            "-Djdk.module.illegalAccess.silent=true"
+        )
+        maxHeapSize = "20g"
+        standardInput = System.`in`
+        standardOutput = System.`out`
+    }
 }
 
 dependencies {
@@ -59,13 +67,14 @@ dependencies {
 }
 
 tasks {
-//    register<JupyterDatasetRefactoringCliTask>("preprocessJupyterDataset") {
-//        args = listOfNotNull(
-//            runner,
-//            input?.let { "--input=$it" },
-//            output?.let { "--output=$it" }
-//        )
-//    }
+    register<JupyterDatasetRefactoringCliTask>("preprocessJupyterDataset") {
+        dependsOn("buildPlugin")
+        args = listOfNotNull(
+            "preprocessJupyterDataset",
+            input?.let { "--input=$it" },
+            output?.let { "--output=$it" }
+        )
+    }
 
     register<BaseAnalysisCliTask>("cli") {
         dependsOn("buildPlugin")

@@ -19,15 +19,25 @@ data class NotebookData(val codeCells: JsonArray, val name: String)
  * @property notebookJson a Json representation of Jupyter notebook.
  * @property notebookName name of Jupyter notebook file.
  */
-class Notebook (notebookJson: JsonObject, private val notebookName: String) {
+class Notebook(notebookJson: JsonObject, private val notebookName: String) {
     private val data = NotebookData(getCodeCells(notebookJson), notebookName)
     private val scriptNamePostfix = "_ntb2scr"
+
+    enum class NotebookJsonCell(val key: String) {
+        TYPE("cell_type"),
+        CODE("code"),
+        SOURCE("source")
+    }
+
+    enum class NotebookJson(val key: String) {
+        CELLS("cells"),
+    }
 
     private fun filterCellsByType(ntbJSON: JsonObject, cellType: String): JsonArray {
         return Gson().toJsonTree(ntbJSON.getAsJsonArray(NotebookJson.CELLS.key).toList()
             .mapIndexedNotNull { _, cellJson ->
                 cellJson as JsonObject
-                if (cellJson.get(NotebookJsonCell.TYPE.key).toString() == cellType) cellJson else null
+                if (cellJson.get(NotebookJsonCell.TYPE.key).asString == cellType) cellJson else null
         }).asJsonArray
     }
 
@@ -39,23 +49,28 @@ class Notebook (notebookJson: JsonObject, private val notebookName: String) {
      * @property cell is a Json representation of Notebook cell,
      * which contains source as a JsonArray of lines of the cell.
      */
-    private fun transformCellToString(cell: JsonElement) : String {
-        var cellString = ""
-        for (cellJson in cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList())
-            cellString += cellJson.asString
+    private fun transformCellToString(cell: JsonElement): String {
+        val separator = ""
+        val sb = StringBuilder()
 
-        return cellString
+        cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList().
+            forEach { sb.append(it.asString).append(separator) }
+
+        return sb.removeSuffix(separator).toString()
     }
 
     /**
      * Create string from sources of all cells in notebook.
      */
-    private fun transformNotebookToString() : String {
-        var notebookString = ""
-        for (cellJson in this.data.codeCells.toList())
-            notebookString += transformCellToString(cellJson) + "\n"
+    private fun transformNotebookToString(): String {
+        val separator = "\n"
+        val sb = StringBuilder()
 
-        return notebookString
+        this.data.codeCells.toList().
+        forEach { sb.append(transformCellToString(it)).append(separator) }
+
+        return sb.removeSuffix(separator).toString()
+
     }
 
     /**
@@ -64,15 +79,5 @@ class Notebook (notebookJson: JsonObject, private val notebookName: String) {
     fun saveNotebookAsScript(targetDir: String) {
         val scriptFile = File("$targetDir${this.notebookName}${this.scriptNamePostfix}.${FileExtension.PY.value}")
         scriptFile.writeText(transformNotebookToString())
-    }
-
-    enum class NotebookJsonCell(val key: String) {
-        TYPE("cell_type"),
-        CODE("code"),
-        SOURCE("source")
-    }
-
-    enum class NotebookJson(val key: String) {
-        CELLS("cells"),
     }
 }
