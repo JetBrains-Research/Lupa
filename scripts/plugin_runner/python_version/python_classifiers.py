@@ -23,18 +23,18 @@ class PythonClassifiers(Enum):
 
     # Python 3 classifiers
     PYTHON_3 = 'Programming Language :: Python :: 3'
-    Python_3_0 = 'Programming Language :: Python :: 3.0'
-    Python_3_1 = 'Programming Language :: Python :: 3.1'
-    Python_3_2 = 'Programming Language :: Python :: 3.2'
-    Python_3_3 = 'Programming Language :: Python :: 3.3'
-    Python_3_4 = 'Programming Language :: Python :: 3.4'
-    Python_3_5 = 'Programming Language :: Python :: 3.5'
-    Python_3_6 = 'Programming Language :: Python :: 3.6'
-    Python_3_7 = 'Programming Language :: Python :: 3.7'
-    Python_3_8 = 'Programming Language :: Python :: 3.8'
-    Python_3_9 = 'Programming Language :: Python :: 3.9'
-    Python_3_10 = 'Programming Language :: Python :: 3.10'
-    Python_3_11 = 'Programming Language :: Python :: 3.11'
+    PYTHON_3_0 = 'Programming Language :: Python :: 3.0'
+    PYTHON_3_1 = 'Programming Language :: Python :: 3.1'
+    PYTHON_3_2 = 'Programming Language :: Python :: 3.2'
+    PYTHON_3_3 = 'Programming Language :: Python :: 3.3'
+    PYTHON_3_4 = 'Programming Language :: Python :: 3.4'
+    PYTHON_3_5 = 'Programming Language :: Python :: 3.5'
+    PYTHON_3_6 = 'Programming Language :: Python :: 3.6'
+    PYTHON_3_7 = 'Programming Language :: Python :: 3.7'
+    PYTHON_3_8 = 'Programming Language :: Python :: 3.8'
+    PYTHON_3_9 = 'Programming Language :: Python :: 3.9'
+    PYTHON_3_10 = 'Programming Language :: Python :: 3.10'
+    PYTHON_3_11 = 'Programming Language :: Python :: 3.11'
 
     # Python 2 classifiers
     PYTHON_2 = 'Programming Language :: Python :: 2'
@@ -52,18 +52,18 @@ class PythonClassifiers(Enum):
             cls.PYTHON_2_ONLY.value: PythonVersion.PYTHON_2,
             # Python 3 classifiers
             cls.PYTHON_3.value: PythonVersion.PYTHON_3,
-            cls.Python_3_0.value: PythonVersion.PYTHON_3,
-            cls.Python_3_1.value: PythonVersion.PYTHON_3,
-            cls.Python_3_2.value: PythonVersion.PYTHON_3,
-            cls.Python_3_3.value: PythonVersion.PYTHON_3,
-            cls.Python_3_4.value: PythonVersion.PYTHON_3,
-            cls.Python_3_5.value: PythonVersion.PYTHON_3,
-            cls.Python_3_6.value: PythonVersion.PYTHON_3,
-            cls.Python_3_7.value: PythonVersion.PYTHON_3,
-            cls.Python_3_8.value: PythonVersion.PYTHON_3,
-            cls.Python_3_9.value: PythonVersion.PYTHON_3,
-            cls.Python_3_10.value: PythonVersion.PYTHON_3,
-            cls.Python_3_11.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_0.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_1.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_2.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_3.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_4.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_5.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_6.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_7.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_8.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_9.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_10.value: PythonVersion.PYTHON_3,
+            cls.PYTHON_3_11.value: PythonVersion.PYTHON_3,
             # Python 2 classifiers
             cls.PYTHON_2.value: PythonVersion.PYTHON_2,
             cls.PYTHON_2_3.value: PythonVersion.PYTHON_2,
