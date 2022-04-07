@@ -67,7 +67,7 @@ DETERMINE_VERSION_USING_CLASSIFIERS_TEST_DATA = [
         },
         None,
     ),
-    ({}, None),
+    (set(), None),
 ]
 
 
