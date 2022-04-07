@@ -87,3 +87,14 @@ def get_all_file_system_items(
             break
 
     return items
+
+
+def get_file_content(file_path: Path) -> str:
+    """
+    Get the content of the file.
+
+    :param file_path: Path to the file you want to read.
+    :return: File content.
+    """
+    with open(file_path) as file:
+        return file.read()
