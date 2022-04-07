@@ -19,7 +19,7 @@ import pandas as pd
 
 from plugin_runner.python_version.python_classifiers import PythonClassifiers, PythonVersion
 
-from utils.file_utils import FileSystemItem, get_all_file_system_items
+from utils.file_utils import FileSystemItem, get_all_file_system_items, get_file_content
 from utils.python.pypi_utils import get_available_versions, get_package_classifiers
 from utils.python.requirements_utils import Requirements, gather_requirements
 
@@ -33,8 +33,7 @@ def _try_to_find_version_in_setup_file(file_path: Path) -> Optional[PythonVersio
     :param file_path: The path to the setup file.
     :return: The found version of Python. If no Python version could be found, None will be returned.
     """
-    with open(file_path) as file:
-        content = file.read()
+    content = get_file_content(file_path)
 
     if PythonClassifiers.PYTHON_3_ONLY.value in content:
         return PythonVersion.PYTHON_3
@@ -56,24 +55,10 @@ def _try_to_determine_version_using_classifiers(classifiers: Set[str]) -> Option
     :param classifiers: List of PyPI classifiers.
     :return: Python version. If it could not be determined will be returned None.
     """
-    is_python_3 = any(
-        version_classifier in PythonClassifiers.get_classifiers_by_version(PythonVersion.PYTHON_3)
-        for version_classifier in classifiers
-    )
+    python_versions = PythonClassifiers.get_versions_by_classifiers(classifiers)
 
-    is_python_2 = any(
-        version_classifier in PythonClassifiers.get_classifiers_by_version(PythonVersion.PYTHON_2)
-        for version_classifier in classifiers
-    )
-
-    if is_python_2 and is_python_3:
-        return None
-
-    if is_python_2:
-        return PythonVersion.PYTHON_2
-
-    if is_python_3:
-        return PythonVersion.PYTHON_3
+    if len(python_versions) == 1:
+        return python_versions.pop()
 
     return None
 
