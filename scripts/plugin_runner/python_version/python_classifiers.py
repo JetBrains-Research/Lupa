@@ -1,5 +1,6 @@
+from collections import defaultdict
 from enum import Enum, unique
-from typing import Set
+from typing import Dict, Optional, Set
 
 
 @unique
@@ -44,33 +45,52 @@ class PythonClassifiers(Enum):
     PYTHON_2_7 = 'Programming Language :: Python :: 2.7'
 
     @classmethod
-    def get_classifiers_by_version(cls, python_versions: PythonVersion) -> Set[str]:
-        version_to_classifiers = {
-            PythonVersion.PYTHON_2: {
-                cls.PYTHON_2_ONLY.value,
-                cls.PYTHON_2.value,
-                cls.PYTHON_2_3.value,
-                cls.PYTHON_2_4.value,
-                cls.PYTHON_2_5.value,
-                cls.PYTHON_2_6.value,
-                cls.PYTHON_2_7.value,
-            },
-            PythonVersion.PYTHON_3: {
-                cls.PYTHON_3_ONLY.value,
-                cls.PYTHON_3.value,
-                cls.Python_3_0.value,
-                cls.Python_3_1.value,
-                cls.Python_3_2.value,
-                cls.Python_3_3.value,
-                cls.Python_3_4.value,
-                cls.Python_3_5.value,
-                cls.Python_3_6.value,
-                cls.Python_3_7.value,
-                cls.Python_3_8.value,
-                cls.Python_3_9.value,
-                cls.Python_3_10.value,
-                cls.Python_3_11.value,
-            },
+    def _get_classifier_to_version_dict(cls) -> Dict[str, PythonVersion]:
+        return {
+            # Python Only classifiers
+            PythonClassifiers.PYTHON_3_ONLY.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.PYTHON_2_ONLY.value: PythonVersion.PYTHON_2,
+            # Python 3 classifiers
+            PythonClassifiers.PYTHON_3.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_0.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_1.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_2.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_3.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_4.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_5.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_6.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_7.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_8.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_9.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_10.value: PythonVersion.PYTHON_3,
+            PythonClassifiers.Python_3_11.value: PythonVersion.PYTHON_3,
+            # Python 2 classifiers
+            PythonClassifiers.PYTHON_2.value: PythonVersion.PYTHON_2,
+            PythonClassifiers.PYTHON_2_3.value: PythonVersion.PYTHON_2,
+            PythonClassifiers.PYTHON_2_4.value: PythonVersion.PYTHON_2,
+            PythonClassifiers.PYTHON_2_5.value: PythonVersion.PYTHON_2,
+            PythonClassifiers.PYTHON_2_6.value: PythonVersion.PYTHON_2,
+            PythonClassifiers.PYTHON_2_7.value: PythonVersion.PYTHON_2,
         }
 
-        return version_to_classifiers.get(python_versions, {})
+    @classmethod
+    def _get_version_to_classifiers_dict(cls) -> Dict[PythonVersion, Set[str]]:
+        version_to_classifiers = defaultdict(set)
+        for classifier, version in cls._get_classifier_to_version_dict().items():
+            version_to_classifiers[version].add(classifier)
+        return version_to_classifiers
+
+    @classmethod
+    def get_classifiers_by_version(cls, python_versions: PythonVersion) -> Set[str]:
+        return cls._get_version_to_classifiers_dict().get(python_versions, {})
+
+    @classmethod
+    def get_version_by_classifier(cls, classifier: str) -> Optional[PythonVersion]:
+        return cls._get_classifier_to_version_dict().get(classifier)
+
+    @classmethod
+    def get_versions_by_classifiers(cls, classifiers: Set[str]) -> Set[PythonVersion]:
+        classifier_to_version = cls._get_classifier_to_version_dict()
+        return {
+            classifier_to_version[classifier] for classifier in classifiers.intersection(classifier_to_version.keys())
+        }
