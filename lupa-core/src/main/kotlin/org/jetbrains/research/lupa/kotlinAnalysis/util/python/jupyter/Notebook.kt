@@ -62,8 +62,8 @@ class Notebook(notebookJson: JsonObject, private val notebookName: String) {
     /**
      * Create string from sources of all cells in notebook.
      */
-    private fun transformNotebookToString(): String {
-        val separator = "\n"
+    fun transformNotebookToString(): String {
+        val separator = System.lineSeparator()
         val sb = StringBuilder()
 
         this.data.codeCells.toList()

@@ -9,12 +9,10 @@ fun copyDataset(datasetDir: Path, targetDir: Path) {
     try {
         Files.createDirectory(targetDir)
     } catch (e: IOException) {
-        System.err.println("Directory already exists.")
+        System.err.println("Directory $targetDir already exists.")
     } finally {
         File(datasetDir.toString()).copyRecursively(File(targetDir.toString()), overwrite = true)
     }
 }
 
-fun readFileAsText(filename: String): String {
-    return File(filename).readText()
-}
+fun readFileAsText(filename: String) = File(filename).readText()

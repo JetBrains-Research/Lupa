@@ -7,6 +7,7 @@ import org.jetbrains.research.pluginUtilities.runners.IORunnerArgsParser
 object JupyterDatasetTransformationRunner : BaseRunner<IORunnerArgs, IORunnerArgsParser>
     ("preprocessJupyterDataset", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
+        println("IM HERE")
         val transformer = JupyterDatasetTransformer(args.inputDir, args.outputDir)
         transformer.transformDataset()
     }
