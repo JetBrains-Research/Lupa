@@ -8,6 +8,8 @@ class PythonVersion(Enum):
     PYTHON_3 = 'PYTHON_3'
     PYTHON_2 = 'PYTHON_2'
 
+    PYTHON_MIXED = 'PYTHON_MIXED'
+
 
 @unique
 class PythonClassifiers(Enum):
