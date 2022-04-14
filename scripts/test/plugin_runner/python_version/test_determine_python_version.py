@@ -56,7 +56,7 @@ DETERMINE_VERSION_USING_CLASSIFIERS_TEST_DATA = [
             'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
         },
-        None,
+        PythonVersion.PYTHON_MIXED,
     ),
     (
         {
