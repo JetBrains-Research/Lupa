@@ -4,6 +4,7 @@ This script tries to determine the Python version for projects from a dataset us
 It accepts
     * path to the folder with python projects.
     * path to `csv` file, where to save versions.
+    * path to the file where to save the logs.
 
 First, we try to determine the version using the classifiers from the `setup.py` or `setup.cfg` files. If this fails,
 for each project we collect the requirements and use their classifiers specified on the PyPI to determine the version.
@@ -211,14 +212,27 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
         type=lambda value: Path(value).absolute(),
     )
 
+    parser.add_argument(
+        '--log-output',
+        help='Path to the file where you want to save the logs. By default, the logs are output to stdout.',
+        type=lambda value: Path(value).absolute(),
+    )
+
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s')
-
     parser = argparse.ArgumentParser()
     configure_arguments(parser)
 
     args = parser.parse_args()
+
+    if args.log_output is not None:
+        args.log_output.parent.mkdir(parents=True, exist_ok=True)
+
+    logging.basicConfig(
+        filename=args.log_output,
+        level=logging.INFO,
+        format='%(asctime)s | %(levelname)s | %(message)s',
+    )
 
     projects = get_all_file_system_items(args.dataset_path, item_type=FileSystemItem.SUBDIR, with_subdirs=False)
 
