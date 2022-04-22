@@ -79,7 +79,7 @@ def get_package_classifiers(package_name: str, package_version: Optional[str] = 
     except requests.exceptions.RequestException:
         logger.error('An error occurred when accessing the PyPI.')
         return set()
-    except json.JSONDecodeError:
+    except JSONDecodeError:
         logger.error(f'Failed to get classifiers for the {package_name} package (version = {package_name}).')
         return set()
 
