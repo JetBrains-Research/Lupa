@@ -10,3 +10,7 @@ Run the [`determine_python_version.py`](./determine_python_version.py) with the 
 - `dataset_path` — Path to the dataset with the projects for which you want to determine the python version used.
 - `output_path` — Path where you want to save the csv table with the versions.
 
+**Optional arguments:**
+| Argument                           | Description                                                                                  |
+|------------------------------------|----------------------------------------------------------------------------------------------|
+| **&#8209;&#8209;log&#8209;output** | Path to the file where you want to save the logs. By default, the logs are output to stdout. |

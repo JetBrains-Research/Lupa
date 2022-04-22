@@ -13,7 +13,7 @@ from utils.file_utils import get_all_file_system_items
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
 
-REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirements[\S]*\.txt$'
+REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirement[\S]*\.txt$'
 
 logger = logging.getLogger(__name__)
 
