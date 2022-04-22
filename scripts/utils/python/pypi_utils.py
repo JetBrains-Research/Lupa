@@ -10,6 +10,13 @@ from requests.adapters import HTTPAdapter
 
 from urllib3 import Retry
 
+# If the "simplejson" package is installed, then "requests" uses it to handle json,
+# otherwise it uses the standard "json" package.
+try:
+    from simplejson import JSONDecodeError
+except ImportError:
+    from json import JSONDecodeError
+
 PYPI_PACKAGE_METADATA_URL = 'https://pypi.org/pypi/{package_name}/json'
 PYPI_VERSION_METADATA_URL = 'https://pypi.org/pypi/{package_name}/{package_version}/json'
 
@@ -38,7 +45,7 @@ def get_available_versions(package_name: str) -> Set[Version]:
     except requests.exceptions.RequestException:
         logger.error('An error occurred when accessing the PyPI.')
         return set()
-    except json.JSONDecodeError:
+    except JSONDecodeError:
         logger.error(f'Failed to get a version for the {package_name} package.')
         return set()
 
