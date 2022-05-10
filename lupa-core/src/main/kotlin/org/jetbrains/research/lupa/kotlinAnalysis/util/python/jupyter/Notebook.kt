@@ -52,11 +52,13 @@ class Notebook(notebookJson: JsonObject, private val notebookName: String) {
     private fun transformCellToString(cell: JsonElement): String {
         val separator = ""
         val sb = StringBuilder()
-
-        cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList()
-            .forEach { sb.append(it.asString).append(separator) }
-
-        return sb.removeSuffix(separator).toString()
+        return try {
+            cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asJsonArray.toList()
+                .forEach { sb.append(it.asString).append(separator) }
+            sb.removeSuffix(separator).toString()
+        } catch (e: Exception) {
+            cell.asJsonObject.get(NotebookJsonCell.SOURCE.key).asString
+        }
     }
 
     /**
