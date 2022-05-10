@@ -33,11 +33,9 @@ class JupyterDatasetTransformer(private val inputPath: Path, private val outputP
                 val file = File(it.toString())
                 val filename = file.toString()
                 val targetDir = filename.substringBefore(file.name)
-
                 val notebookJSON: JsonObject? = try {
                     JsonParser.parseString(readFileAsText(filename)).asJsonObject
                 } catch (e: Exception) { null }
-                
                 val notebookName = file.nameWithoutExtension
 
                 if (notebookJSON != null) {
