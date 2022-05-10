@@ -148,7 +148,7 @@ def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:
 def build_fq_name_tree_decomposition(
     fq_names_dict: FqNamesDict,
     max_subpackages: int,
-    max_leaf_subpackages: int,
+    max_leaf_subpackages: float,
     min_occurrence: int,
     max_occurrence: int,
     max_u_occurrence: int,
