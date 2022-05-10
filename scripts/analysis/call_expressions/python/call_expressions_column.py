@@ -7,3 +7,4 @@ class CallExpressionsColumn(Enum):
     COUNT = 'count'
     CATEGORY = 'category'
     TOTAL = 'total'
+    PYTHON_VERSION = 'python_version'
