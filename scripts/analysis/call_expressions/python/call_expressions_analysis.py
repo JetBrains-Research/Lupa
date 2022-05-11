@@ -1,3 +1,5 @@
+# TODO: docs + fix README + check README python-analysers
+
 import argparse
 import logging
 from pathlib import Path
@@ -33,6 +35,12 @@ def configure_parser(parser: argparse.ArgumentParser):
 
 
 def collect_stats(fq_names: pd.DataFrame) -> pd.DataFrame:
+    """
+    TODO
+
+    :param fq_names:
+    :return:
+    """
     total_stats = fq_names.drop(CallExpressionsColumn.CATEGORY.value, axis=1).drop_duplicates()
     total_stats = total_stats.value_counts([CallExpressionsColumn.FQ_NAME.value])
     total_stats = total_stats.reset_index(name=CallExpressionsColumn.TOTAL.value)
@@ -86,8 +94,6 @@ def main():
         for python_version, fq_names in fq_names_by_version:
             if pd.isna(python_version):
                 python_version = 'PYTHON_UNKNOWN'
-
-            fq_names.drop(columns=[CallExpressionsColumn.PYTHON_VERSION.value], inplace=True)
 
             logging.info(f'Processing {python_version}.')
             stats = collect_stats(fq_names)
