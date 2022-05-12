@@ -1,13 +1,12 @@
 import os
 from typing import List, Tuple
 
+from analysis.dependencies.column_names_utils import ImportDirectivesColumn
+from analysis.dependencies.fq_names_types import FqNamesDict
+
 from anytree import NodeMixin
 from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
-
-from analysis.dependencies.column_names_utils import ImportDirectivesColumn
-
-from analysis.dependencies.fq_names_types import FqNamesDict
 
 from utils.file_utils import Extensions, create_directory, write_to_file
 

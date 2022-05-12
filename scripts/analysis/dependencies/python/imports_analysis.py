@@ -17,8 +17,6 @@ import logging
 from pathlib import Path
 from typing import Optional, Tuple
 
-import pandas as pd
-
 from analysis.dependencies.fq_names_tree import build_fq_name_tree_decomposition
 from analysis.dependencies.import_directives_analysis import (
     fq_names_groups_to_stats,
@@ -27,6 +25,8 @@ from analysis.dependencies.import_directives_analysis import (
     group_fq_names_by,
 )
 from analysis.dependencies.python.imports_column import ImportsColumn
+
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 
