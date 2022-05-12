@@ -1,11 +1,18 @@
-# Python call expressions preprocessing
-Analysis python call expressions, which include fully-qualified names of call expressions usage statistics.
+# Python call expressions analysis
 
-## Python call expressions analysis
-[call_expressions_analysis.py](call_expressions_analysis.py) will allow you to count the number of unique fq names in 
-python projects, keeping their category. 
+This script will allow you to count the number of unique call expressions in python projects, keeping their category. 
+It is also possible to group statistics by language version of Python.
 
-### Usage
-```bash
-python3 -m call_expressions_analysis --input /path/to/file/with/gathered/stats.csv --output /path/to/file/with/grouped/stats.csv
-```
+## Usage
+
+Run the [`call_expressions_analysis.py`](./call_expressions_analysis.py) with the arguments from command line.
+
+**Required arguments:**
+- `--input` — Path to csv file with FQ names. Must contain columns: `project_name`, `fq_name` and `category`.
+- `--output` — Path to the folder where to save the stats.
+
+**Optional arguments:**
+
+| Argument                                | Description                                                                                                              |
+|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| **&#8209;&#8209;python&#8209;versions** | Path to the csv file with labeled projects by python version. Must contain columns: `project_name` and `python_version`. |
