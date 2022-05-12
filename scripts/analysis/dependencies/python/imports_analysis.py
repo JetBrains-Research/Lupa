@@ -1,4 +1,16 @@
-# TODO: docs + README + check README python-analysers
+"""
+This script analyzes Python call expressions.
+
+It accepts
+    * path to csv file with FQ names.
+    * path to the folder where to save the stats.
+    * path to the csv file with labeled projects by python version.
+
+For each unique import name, the number of projects in which it occurs is counted.
+It is also possible to group statistics by language version of Python.
+
+This script is a wrapper over import_directives_analysis.py.
+"""
 
 import argparse
 import logging
@@ -18,7 +30,7 @@ from analysis.dependencies.python.imports_column import ImportsColumn
 
 logging.basicConfig(level=logging.INFO)
 
-# TODO: comment
+# These are the default Python arguments passed to import_directives_analysis.py
 MAX_PACKAGE_LEN = 3
 MAX_SUBPACKAGES = 10000
 MAX_LEAF_SUBPACKAGES = 0.8
@@ -50,7 +62,6 @@ def configure_parser(parser: argparse.ArgumentParser):
 
 
 def collect_stats(imports: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    # TODO: docs
     total_stats = imports.value_counts([ImportsColumn.IMPORT.value])
     total_stats = total_stats.reset_index(name=ImportsColumn.COUNT.value)
     total_stats.rename(columns={ImportsColumn.IMPORT.value: ImportsColumn.FQ_NAME.value}, inplace=True)
