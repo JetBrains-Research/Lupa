@@ -1,5 +1,5 @@
 """
-This script analyzes Python call expressions.
+This script analyzes Python imports.
 
 It accepts
     * path to csv file with FQ names.
