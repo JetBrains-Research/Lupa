@@ -1,13 +1,12 @@
 import os
 from typing import List, Tuple
 
+from analysis.dependencies.column_names_utils import ImportDirectivesColumn
+from analysis.dependencies.fq_names_types import FqNamesDict
+
 from anytree import NodeMixin
 from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
-
-from column_names_utils import ImportDirectivesColumn
-
-from fq_names_types import FqNamesDict
 
 from utils.file_utils import Extensions, create_directory, write_to_file
 
@@ -148,7 +147,7 @@ def build_fq_name_tree(fq_names_dict: FqNamesDict) -> FqNameNode:
 def build_fq_name_tree_decomposition(
     fq_names_dict: FqNamesDict,
     max_subpackages: int,
-    max_leaf_subpackages: int,
+    max_leaf_subpackages: float,
     min_occurrence: int,
     max_occurrence: int,
     max_u_occurrence: int,

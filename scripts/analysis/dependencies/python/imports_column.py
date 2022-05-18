@@ -1,10 +1,9 @@
 from enum import Enum
 
 
-class CallExpressionsColumn(Enum):
+class ImportsColumn(Enum):
     PROJECT_NAME = 'project_name'
+    IMPORT = 'import'
     FQ_NAME = 'fq_name'
     COUNT = 'count'
-    CATEGORY = 'category'
-    TOTAL = 'total'
     PYTHON_VERSION = 'python_version'

@@ -1,14 +1,15 @@
-# Python call expressions analysis
+# Python imports analysis
 
-This script will allow you to count the number of unique call expressions in python projects, keeping their category. 
+This script will allow you to count the number of unique imports in python projects. 
 It is also possible to group statistics by language version of Python.
 
+This script is a wrapper over [import_directives_analysis.py](../import_directives_analysis.py).
 ## Usage
 
-Run the [`call_expressions_analysis.py`](./call_expressions_analysis.py) with the arguments from command line.
+Run the [`imports_analysis.py`](./imports_analysis.py) with the arguments from command line.
 
 **Required arguments:**
-- `--input` — Path to csv file with FQ names. Must contain columns: `project_name`, `fq_name` and `category`.
+- `--input` — Path to csv file with imports. Must contain columns: `project_name` and `import`.
 - `--output` — Path to the folder where to save the stats.
 
 **Optional arguments:**

@@ -5,11 +5,9 @@ import sys
 from collections import Counter, defaultdict
 from typing import Callable, Dict, List, Set
 
-from column_names_utils import ImportDirectivesColumn
-
-from fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
-
-from fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
+from analysis.dependencies.column_names_utils import ImportDirectivesColumn
+from analysis.dependencies.fq_names_tree import FqNameNode, build_fq_name_tree_decomposition, save_to_png, save_to_txt
+from analysis.dependencies.fq_names_types import FqNamesDict, FqNamesGroups, FqNamesStats
 
 import pandas as pd
 
