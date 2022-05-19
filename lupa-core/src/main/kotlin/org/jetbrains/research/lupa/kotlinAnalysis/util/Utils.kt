@@ -24,7 +24,8 @@ enum class FileExtension(val value: String) {
     KTS("kts"),
     GRADLE("gradle"),
     PROPERTIES("properties"),
-    PY("py");
+    PY("py"),
+    IPYNB("ipynb");
 
     companion object {
         private val mapExtension = values().associateBy(FileExtension::value)

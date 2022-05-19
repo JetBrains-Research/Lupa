@@ -25,6 +25,7 @@
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.JavaReflectionsFunctionsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.pythonAnalysis.PythonImportsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.pythonAnalysis.PythonCallExpressionsAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.util.python.jupyter.JupyterDatasetTransformationRunner"/>
     </extensions>
 
 </idea-plugin>
