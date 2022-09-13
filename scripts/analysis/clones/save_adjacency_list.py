@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Dict
 
-from utils import Extensions
+from utils.file_utils import Extensions
 
 CLOSENESS_NEAR_MISS = 80
 CLOSENESS_EXACT = 100
