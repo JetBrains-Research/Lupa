@@ -25,7 +25,6 @@ def _httpretty_fixture():
 
 GET_AVAILABLE_VERSIONS_TEST_DATA = [
     (
-        'numpy',
         """
         {
             "releases": {
@@ -38,7 +37,6 @@ GET_AVAILABLE_VERSIONS_TEST_DATA = [
         set(map(pkg_resources.parse_version, ['1.2.3', '3.4.5', '6.7.8'])),
     ),
     (
-        'numpy',
         """
         {
             "releases": {}
@@ -47,12 +45,10 @@ GET_AVAILABLE_VERSIONS_TEST_DATA = [
         set(),
     ),
     (
-        'numpy',
         'This is not a json.',
         set(),
     ),
     (
-        'numpy',
         """
         {
             "incorrect_key": {
@@ -67,20 +63,19 @@ GET_AVAILABLE_VERSIONS_TEST_DATA = [
 ]
 
 
-@pytest.mark.parametrize(('package_name', 'response_json', 'expected_versions'), GET_AVAILABLE_VERSIONS_TEST_DATA)
+@pytest.mark.parametrize(('response_json', 'expected_versions'), GET_AVAILABLE_VERSIONS_TEST_DATA)
 def test_get_available_versions(
     _httpretty_fixture,
-    package_name: str,
     response_json: str,
     expected_versions: Set[Version],
 ):
     httpretty.register_uri(
         httpretty.GET,
-        PYPI_PACKAGE_METADATA_URL.format(package_name=package_name),
+        PYPI_PACKAGE_METADATA_URL.format(package_name='some_package'),
         body=response_json,
     )
 
-    assert expected_versions == get_available_versions(package_name)
+    assert expected_versions == get_available_versions('some_package')
 
 
 GET_PACKAGE_CLASSIFIERS_TEST_DATA = [
