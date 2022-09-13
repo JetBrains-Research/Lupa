@@ -20,7 +20,7 @@ from github import Github
 
 import pandas as pd
 
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 
 import schedule
 
