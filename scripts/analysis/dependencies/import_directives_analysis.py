@@ -97,7 +97,7 @@ def fq_names_groups_to_stats(fq_names_groups: FqNamesGroups) -> FqNamesStats:
 
 
 def fq_names_groups_to_dict(fq_names_groups: FqNamesGroups) -> FqNamesDict:
-    return {group_name: fq_names_to_dict(list(map(lambda fq_name: '.'.join(fq_name.split('.')[1:]), group_members)))
+    return {group_name: fq_names_to_dict(['.'.join(fq_name.split('.')[1:]) for fq_name in group_members])
             for group_name, group_members in fq_names_groups.items()}
 
 

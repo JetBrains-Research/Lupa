@@ -388,7 +388,7 @@ def _is_stdlib_name(fq_name: str) -> bool:
     """Check if the FQ name starts with the name of the standard module."""
     # Add a dot at the end of the FQ name and at the end of the module names.
     # This is necessary to correctly identify FQ names that start with the name of the standard library.
-    stdlib_modules_with_dot = list(map(lambda module_name: f'{module_name}.', STDLIB_MODULES))
+    stdlib_modules_with_dot = [f'{module_name}.' for module_name in STDLIB_MODULES]
     fq_name_with_dot = f'{fq_name}.'
 
     return any(fq_name_with_dot.startswith(stdlib_module) for stdlib_module in stdlib_modules_with_dot)
@@ -421,7 +421,7 @@ def _is_builtin_name(fq_name: str) -> bool:
     """Check if the FQ name starts with the Python builtin name."""
     # Add a dot at the end of the FQ name and at the end of the builtin names.
     # This is necessary to correctly identify FQ names that start with the name of builtin.
-    builtins_with_dot = list(map(lambda builtin_name: f'{builtin_name}.', BUILTINS))
+    builtins_with_dot = [f'{builtin_name}.' for builtin_name in BUILTINS]
     fq_name_with_dot = f'{fq_name}.'
 
     return any(fq_name_with_dot.startswith(builtin) for builtin in builtins_with_dot)

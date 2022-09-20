@@ -20,9 +20,9 @@ from github import Github
 
 import pandas as pd
 
-from urllib3.util.retry import Retry
-
 import schedule
+
+from urllib3.util.retry import Retry
 
 from utils.file_utils import create_directory
 

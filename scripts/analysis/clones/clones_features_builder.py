@@ -34,8 +34,8 @@ def number_of_clones(method_id: int, clones_graph: nx.Graph, predicates: List[Ed
     if method_id not in clones_graph:
         return 0
 
-    edges = map(lambda method_end_id: clones_graph[method_id][method_end_id], clones_graph[method_id])
-    return sum(map(lambda edge: all(map(lambda predicate: predicate.apply(edge), predicates)), edges))
+    edges = [clones_graph[method_id][method_end_id] for method_end_id in clones_graph[method_id]]
+    return sum(all(predicate.apply(edge) for predicate in predicates) for edge in edges)
 
 
 def add_number_of_projects_features(methods_df: pd.DataFrame, clones_graph: nx.Graph = None) -> None:
@@ -55,6 +55,6 @@ def get_projects_amount(node_start: int, clones_graph: nx.Graph, predicates: Lis
     for node_end in clones_graph[node_start]:
         project_end = clones_graph.nodes[node_end][MethodsColumn.PROJECT_ID.value]
         edge = clones_graph[node_start][node_end]
-        if all(map(lambda predicate: predicate.apply(edge), predicates)):
+        if all(predicate.apply(edge) for predicate in predicates):
             all_projects.add(project_end)
     return len(all_projects)

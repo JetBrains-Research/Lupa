@@ -90,7 +90,7 @@ def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
     db_conn = DatabaseConn()
     table = RepositoriesTable(db_conn)
     repositories_to_analyse = table.select_repositories_to_analyse()
-    repositories_to_analyse_names = list(map(lambda repo: f'{repo[0]}#{repo[1]}', repositories_to_analyse))
+    repositories_to_analyse_names = [f'{repo[0]}#{repo[1]}' for repo in repositories_to_analyse]
     return lambda path: os.path.basename(path) in repositories_to_analyse_names
 
 
