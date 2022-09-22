@@ -1,6 +1,7 @@
 import argparse
 import re
 from pathlib import Path
+from typing import List
 
 import pandas as pd
 
@@ -381,17 +382,39 @@ BUILTIN_EXCEPTIONS = [
     'ResourceWarning',
 ]
 
-BUILTINS = BUILTIN_FUNCTIONS + BUILTIN_EXCEPTIONS
+# Other builtins from builtins.py
+OTHER_BUILTINS = [
+    'copyright',
+    'credits',
+    'exit',
+    'license',
+    'quit',
+    'IOError',
+    'EnvironmentError',
+]
+
+BUILTINS = BUILTIN_FUNCTIONS + BUILTIN_EXCEPTIONS + OTHER_BUILTINS
+
+NOISY_NAMES = [
+    'src',
+    'test',
+    'tests',
+    'util',
+    'utils',
+    'config',
+    'configs',
+    'Ellipsis',
+    'NotImplemented',
+]
 
 
-def _is_stdlib_name(fq_name: str) -> bool:
-    """Check if the FQ name starts with the name of the standard module."""
-    # Add a dot at the end of the FQ name and at the end of the module names.
-    # This is necessary to correctly identify FQ names that start with the name of the standard library.
-    stdlib_modules_with_dot = [f'{module_name}.' for module_name in STDLIB_MODULES]
+def _is_fq_name_in_list(fq_name: str, fq_name_list: List[str]) -> bool:
+    """Check if the FQ name starts with the name from the FQ name list."""
+    # Add a dot at the end of the FQ name and at the end of the FQ name list.
+    # This is necessary to correctly identify FQ names that start with the name of the FQ list.
+    fq_names_with_dot = [f'{fq_name}.' for fq_name in fq_name_list]
     fq_name_with_dot = f'{fq_name}.'
-
-    return any(fq_name_with_dot.startswith(stdlib_module) for stdlib_module in stdlib_modules_with_dot)
+    return any(fq_name_with_dot.startswith(fq_name) for fq_name in fq_names_with_dot)
 
 
 def __is_dunder_name(name: str) -> bool:
@@ -417,16 +440,6 @@ def _is_private_name(fq_name: str) -> bool:
     )
 
 
-def _is_builtin_name(fq_name: str) -> bool:
-    """Check if the FQ name starts with the Python builtin name."""
-    # Add a dot at the end of the FQ name and at the end of the builtin names.
-    # This is necessary to correctly identify FQ names that start with the name of builtin.
-    builtins_with_dot = [f'{builtin_name}.' for builtin_name in BUILTINS]
-    fq_name_with_dot = f'{fq_name}.'
-
-    return any(fq_name_with_dot.startswith(builtin) for builtin in builtins_with_dot)
-
-
 def main(
     path_to_fq_names: Path,
     path_to_result: Path,
@@ -435,6 +448,7 @@ def main(
     filter_stdlib_names: bool,
     filter_dunder_names: bool,
     filter_builtin_names: bool,
+    noisy_names: List[str],
 ) -> None:
     fq_names = pd.read_csv(path_to_fq_names, keep_default_na=False)
 
@@ -446,7 +460,7 @@ def main(
         print(f'Filtered {mask.values.sum()} private names.')
 
     if filter_stdlib_names:
-        mask = fq_names.apply(lambda row: _is_stdlib_name(row[column_name]), axis=1)
+        mask = fq_names.apply(lambda row: _is_fq_name_in_list(row[column_name], STDLIB_MODULES), axis=1)
         fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} stdlib names.')
 
@@ -459,9 +473,16 @@ def main(
         print(f'Filtered {mask.values.sum()} dunder names.')
 
     if filter_builtin_names:
-        mask = fq_names.apply(lambda row: _is_builtin_name(row[column_name]), axis=1)
+        mask = fq_names.apply(lambda row: _is_fq_name_in_list(row[column_name], BUILTINS), axis=1)
         fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} builtin names.')
+
+    EnvironmentError
+
+    if noisy_names:
+        mask = fq_names.apply(lambda row: _is_fq_name_in_list(row[column_name], noisy_names), axis=1)
+        fq_names = fq_names[~mask]
+        print(f'Filtered {mask.values.sum()} noisy names.')
 
     path_to_result.parent.mkdir(parents=True, exist_ok=True)
     fq_names.to_csv(path_to_result, index=False)
@@ -510,6 +531,16 @@ if __name__ == '__main__':
         action='store_true',
     )
 
+    parser.add_argument(
+        '--noisy-names',
+        nargs='*',
+        help=(
+            'If specified, the names passed with the argument will be renamed. By default, the following '
+            'names are filtered out: "src", "test", "tests", "util", "utils", "config", "configs".'
+        ),
+        default=NOISY_NAMES,
+    )
+
     args = parser.parse_args()
 
     main(
@@ -520,4 +551,5 @@ if __name__ == '__main__':
         args.filter_stdlib_names,
         args.filter_dunder_names,
         args.filter_builtin_names,
+        args.noisy_names,
     )
