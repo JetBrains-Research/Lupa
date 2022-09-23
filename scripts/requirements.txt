@@ -10,3 +10,4 @@ plotly~=5.1.0
 anytree~=2.8.0
 typing~=3.7.4.3
 dacite~=1.6.0
+psycopg2~=2.9.3
