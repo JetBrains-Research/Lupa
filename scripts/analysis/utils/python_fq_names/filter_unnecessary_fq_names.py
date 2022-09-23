@@ -477,8 +477,6 @@ def main(
         fq_names = fq_names[~mask]
         print(f'Filtered {mask.values.sum()} builtin names.')
 
-    EnvironmentError
-
     if noisy_names:
         mask = fq_names.apply(lambda row: _is_fq_name_in_list(row[column_name], noisy_names), axis=1)
         fq_names = fq_names[~mask]
