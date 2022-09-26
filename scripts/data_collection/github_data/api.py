@@ -4,7 +4,7 @@ from typing import Optional
 from github import Github
 from github.Repository import Repository
 
-from requests.packages.urllib3.util.retry import Retry
+from urllib3.util.retry import Retry
 
 
 def get_github_token() -> str:

@@ -16,7 +16,7 @@ class Analyzer:
 
     @staticmethod
     def get_analyzers_names(analyzers: List['Analyzer']) -> List[str]:
-        return list(map(lambda a: a.name, analyzers))
+        return [analyzer.name for analyzer in analyzers]
 
     @staticmethod
     def get_analyzer_by_name(analyzers: List['Analyzer'], name: str) -> 'Analyzer':

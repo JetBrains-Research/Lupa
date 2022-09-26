@@ -77,7 +77,6 @@ def move_indexes_line(line: str, project_offset: int, method_offset: int, sep: s
 def move_indexes_file(batch_output_path: str, output_path: str, filename: str, project_offset: int,
                       method_offset: int, sep: str = ','):
     with open(os.path.join(batch_output_path, filename)) as batch_output:
-        lines = list(map(lambda line: move_indexes_line(line, project_offset, method_offset, sep),
-                         batch_output.readlines()))
+        lines = [move_indexes_line(line, project_offset, method_offset, sep) for line in batch_output.readlines()]
     with open(os.path.join(output_path, filename), 'a') as final_output:
         final_output.writelines(lines)

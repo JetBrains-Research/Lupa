@@ -1,6 +1,6 @@
 import os
 
-from utils import run_in_subprocess
+from utils.run_process_utils import run_in_subprocess
 
 
 class GitRepository:

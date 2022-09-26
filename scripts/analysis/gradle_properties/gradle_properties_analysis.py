@@ -75,7 +75,7 @@ def analyze_properties_key_value_stats(df: pd.DataFrame, path_to_result_dir: str
 def get_gradle_properties(path_to_properties: str, path_to_select_properties: str) -> pd.DataFrame:
     df = pd.read_csv(path_to_properties)
     if path_to_select_properties is not None:
-        selected_properties = list(map(lambda p: p.rstrip(), get_file_lines(path_to_select_properties)))
+        selected_properties = [line.rstrip() for line in get_file_lines(path_to_select_properties)]
         df = df[df[GradlePropertiesColumn.PROPERTY_KEY].apply(lambda x: x in selected_properties)]
     return df
 
