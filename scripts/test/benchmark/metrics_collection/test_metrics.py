@@ -40,7 +40,7 @@ GET_FILE_SIZE_TEST_DATA = [
     ('one_line_file.txt', 13),
     ('multi_line_file.txt', 23),
     ('file_with_trailing_newline.txt', 14),
-    ('file_with_non_utf8_encoding.txt', 54),
+    ('file_with_non_utf8_encoding.txt', 50),
 ]
 
 
