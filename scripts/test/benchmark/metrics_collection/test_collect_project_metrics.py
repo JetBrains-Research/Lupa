@@ -9,7 +9,6 @@ import pytest
 
 COLLECT_PROJECT_METRICS_TEST_DATA = [
     ('non_existent_project', None),
-    ('empty_project', {}),
     (
         'project_with_one_language',
         {
