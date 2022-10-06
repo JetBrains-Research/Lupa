@@ -18,5 +18,7 @@ ignore=WPS, # TODO: Do not ignore WPS inspections
        P101, # Format string does contain unindexed parameters.
        P102, # Docstring does contain unindexed parameters.
        P103, # Other string does contain unindexed parameters.
+       I201,
+       I100,
 
 exclude=venv,

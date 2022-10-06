@@ -1,12 +1,9 @@
 """This class contains methods for merging analysis results from different batches into a single file."""
 import logging
 import os
-from pathlib import Path
-from typing import List
-
 import pandas as pd
-
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
+from typing import List
 from utils.file_utils import get_files_by_name
 
 PROJECT_INDEX = 'project_index.csv'
