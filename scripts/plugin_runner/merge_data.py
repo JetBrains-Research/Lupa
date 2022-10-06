@@ -7,6 +7,7 @@ from typing import List
 import pandas as pd
 
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
+from utils.file_utils import get_files_by_name
 
 PROJECT_INDEX = 'project_index.csv'
 METHOD_INDEX = 'method_index.csv'
@@ -26,14 +27,13 @@ def merge_csv(batch_output_paths: List[str], csv_filename: str, result_dir: str)
     result_df = pd.DataFrame()
 
     for batch_output_path in batch_output_paths:
-        logging.info(f'Merging {batch_output_path} file...')
         try:
-            file_path = Path(os.path.join(batch_output_path, csv_filename))
-            if not file_path.is_file():
-                logging.warning(f'File {batch_output_path} does not exist!')
-                continue
-            batch_df = pd.read_csv(file_path, sep='\t')
-            result_df = pd.concat([result_df, batch_df])
+            logging.info(f'Searching for {csv_filename} files in {batch_output_path}...')
+            file_paths = get_files_by_name(batch_output_path, csv_filename)
+            for file_path in file_paths:
+                logging.info(f'Merging {file_path} file...')
+                batch_df = pd.read_csv(file_path, sep='\t')
+                result_df = pd.concat([result_df, batch_df])
         except pd.errors.EmptyDataError:
             logging.warning(f'File {batch_output_path} is empty!')
             continue

@@ -57,10 +57,10 @@ class FileSystemItem(Enum):
 
 
 def get_all_file_system_items(
-    root: Path,
-    item_condition: Callable[[str], bool] = lambda name: True,
-    item_type: FileSystemItem = FileSystemItem.FILE,
-    with_subdirs: bool = True,
+        root: Path,
+        item_condition: Callable[[str], bool] = lambda name: True,
+        item_type: FileSystemItem = FileSystemItem.FILE,
+        with_subdirs: bool = True,
 ) -> List[Path]:
     """
     Return the paths to all file system items from the root that satisfy the condition.
@@ -98,3 +98,14 @@ def get_file_content(file_path: Path) -> str:
     """
     with open(file_path, encoding='utf-8', errors='ignore') as file:
         return file.read()
+
+
+def get_files_by_name(dir_path: str, file_name: str) -> List[str]:
+    file_paths = []
+    for root, dirs, files in os.walk(dir_path):
+        print(root, dirs, files)
+        for file in files:
+            file_path = os.path.join(root, file)
+            if os.path.isfile(file_path) and os.path.basename(file_path) == file_name:
+                file_paths.append(file_path)
+    return file_paths
