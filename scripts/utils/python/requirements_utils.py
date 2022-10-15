@@ -6,14 +6,14 @@ from distutils.version import Version
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
-from pkg_resources import parse_requirements as parse_line, parse_version
+from pkg_resources import Requirement, parse_requirements as parse_line, parse_version
 
 from utils.file_utils import get_all_file_system_items
 
 Specs = Set[Tuple[str, Version]]
 Requirements = Dict[str, Specs]
 
-REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirement[\S]*\.txt$'
+PYTHON_REQUIREMENTS_FILE_NAME_REGEXP = r'^[\S]*requirement[\S]*\.txt$'
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def gather_requirements_file_paths(root: Path) -> List[Path]:
     """
     requirements_file_paths = get_all_file_system_items(
         root=root,
-        item_condition=lambda name: re.match(REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
+        item_condition=lambda name: re.match(PYTHON_REQUIREMENTS_FILE_NAME_REGEXP, name) is not None,
     )
 
     # TODO: handle symlinks
@@ -49,6 +49,27 @@ def gather_requirements_file_paths(root: Path) -> List[Path]:
     logger.info(f'{len(requirements_file_paths)} requirement files have been collected.')
 
     return requirements_file_paths
+
+
+def gather_requirements_from_file(file_path: Path) -> List[Requirement]:
+    """
+    Gather the requirements from the passed path.
+
+    :param file_path: Path to the file from which the requirements should be parsed.
+    :return: List of the gathered requirements.
+    """
+    file_requirements = []
+    with open(file_path, encoding='utf8', errors='ignore') as file:
+        for line in file.readlines():
+            try:
+                file_requirements.extend(list(parse_line(line)))
+            except Exception:
+                # For some reason you can't catch RequirementParseError
+                # (or InvalidRequirement), so we catch Exception.
+                logger.warning(f'Unable to parse line "{line.strip()}" in the file {str(file_path)}.')
+                continue
+
+    return file_requirements
 
 
 def gather_requirements(root: Path) -> Requirements:
@@ -65,18 +86,7 @@ def gather_requirements(root: Path) -> Requirements:
     requirements_file_paths = gather_requirements_file_paths(root)
 
     for file_path in requirements_file_paths:
-        file_requirements = []
-        with open(file_path, encoding='utf8', errors='ignore') as file:
-            for line in file.readlines():
-                try:
-                    file_requirements.extend(list(parse_line(line)))
-                except Exception:
-                    # For some reason you can't catch RequirementParseError
-                    # (or InvalidRequirement), so we catch Exception.
-                    logger.warning(f'Unable to parse line "{line.strip()}" in the file {str(file_path)}.')
-                    continue
-
-        for requirement in file_requirements:
+        for requirement in gather_requirements_from_file(file_path):
             specs = {(operator, parse_version(version)) for operator, version in requirement.specs}
             requirements[normalize_requirement_name(requirement.key)] |= specs
 
