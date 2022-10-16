@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum, unique
 from os.path import getsize
 from pathlib import Path
-from typing import Dict, List, Set, Type
+from typing import Dict, List, Optional, Set, Type
 
 from utils.language import Language, group_files_by_language
 from utils.python.requirements_utils import PYTHON_REQUIREMENTS_FILE_NAME_REGEXP, gather_requirements_from_file
@@ -66,7 +66,7 @@ class NumberOfLines(Metric):
         ignore_empty_lines = kwargs.get(MetricArgument.IGNORE_EMPTY_LINES.value, False)
         ignore_comments = kwargs.get(MetricArgument.IGNORE_COMMENTS.value, False)
 
-        lines_by_language = {}  # Do not use the defaultdict, since the file may be empty
+        lines_by_language = {}
         for language, file_group in group_files_by_language(files).items():
             lines_by_language[language] = 0
             for file in file_group:
@@ -152,29 +152,37 @@ class NumberOfDependencies(Metric):
 
         :return: Number of dependencies by language.
         """
-        return {
+        number_of_requirements = {
             Language.PYTHON: cls._collect_number_of_python_requirements(files),
             Language.KOTLIN: cls._collect_number_of_kotlin_requirements(files),
         }
 
+        return {
+            langauge: number for langauge, number in number_of_requirements.items() if number is not None
+        }
+
     @staticmethod
-    def _collect_number_of_python_requirements(files: List[Path]) -> int:
+    def _collect_number_of_python_requirements(files: List[Path]) -> Optional[int]:
         """
         Collect the number of python requirements from ``files``.
 
         To do this, try to parse the files with the name like ``requirements.txt`` and count the number of requirements.
 
         :param files: List of the file paths.
-        :return: Number of python requirements.
+        :return: Number of python requirements. If no files with dependencies are found, None will be returned
         """
-        requirements_files = filter(
+        requirements_files = list(filter(
             lambda file: re.match(PYTHON_REQUIREMENTS_FILE_NAME_REGEXP, file.name) is not None,
             files,
-        )
+        ))
+
+        if not requirements_files:
+            return None
+
         return sum(len(gather_requirements_from_file(file)) for file in requirements_files)
 
     @classmethod
-    def _collect_number_of_kotlin_requirements(cls, files: List[Path]) -> int:
+    def _collect_number_of_kotlin_requirements(cls, files: List[Path]) -> Optional[int]:
         """
         Collect the number of kotlin requirements from ``files``.
 
@@ -182,9 +190,11 @@ class NumberOfDependencies(Metric):
         in the ``build.gradle.kts`` and ``build.gradle`` files.
 
         :param files: List of the file paths.
-        :return: Number of kotlin requirements.
+        :return: Number of kotlin requirements. If no files with dependencies are found, None will be returned
         """
-        requirements_files = filter(lambda file: file.name in ('build.gradle.kts', 'build.gradle'), files)
+        requirements_files = list(filter(lambda file: file.name in ('build.gradle.kts', 'build.gradle'), files))
+        if not requirements_files:
+            return None
 
         number_of_requirements = 0
         for requirements_file in requirements_files:
