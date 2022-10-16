@@ -25,11 +25,7 @@ COLLECT_PROJECT_METRICS_TEST_DATA = [
             MetricName.FILE_SIZE.value: {Language.PYTHON.value: 233, Language.TEXT.value: 28, TOTAL_FIELD_NAME: 261},
             MetricName.NUMBER_OF_FILES.value: {Language.PYTHON.value: 2, Language.TEXT.value: 1, TOTAL_FIELD_NAME: 3},
             MetricName.NUMBER_OF_LINES.value: {Language.PYTHON.value: 15, Language.TEXT.value: 2, TOTAL_FIELD_NAME: 17},
-            MetricName.NUMBER_OF_DEPENDENCIES.value: {
-                Language.PYTHON.value: 2,
-                Language.KOTLIN.value: 0,
-                TOTAL_FIELD_NAME: 2,
-            },
+            MetricName.NUMBER_OF_DEPENDENCIES.value: {Language.PYTHON.value: 2, TOTAL_FIELD_NAME: 2},
         },
     ),
     (
