@@ -35,6 +35,7 @@ def test_collect_number_of_files(files: List[str], expected_values: Dict[Languag
 
 
 COLLECT_NUMBER_OF_LINES_TEST_DATA = [
+    ([], {}, {}),
     (['empty_file.txt'], {Language.TEXT: 0}, {}),
     (['one_line_file.txt'], {Language.TEXT: 1}, {}),
     (['multi_line_file.txt'], {Language.TEXT: 12}, {}),
@@ -85,6 +86,7 @@ def test_collect_number_of_lines(files: List[str], expected_number_of_lines: Dic
 
 
 COLLECT_FILE_SIZE_TEST_DATA = [
+    ([], {}),
     (['empty_file.txt'], {Language.TEXT: 0}),
     (['one_line_file.txt'], {Language.TEXT: 13}),
     (['multi_line_file.txt'], {Language.TEXT: 23}),
@@ -117,9 +119,11 @@ def test_collect_file_size(files: List[str], expected_size: Dict[Language, int])
 
 
 COLLECT_NUMBER_OF_REQUIREMENTS = [
-    (['empty_file.txt'], {Language.PYTHON: 0, Language.KOTLIN: 0}),
-    (['requirements.txt'], {Language.PYTHON: 3, Language.KOTLIN: 0}),
-    (['build.gradle.kts'], {Language.PYTHON: 0, Language.KOTLIN: 9}),  # 8 implementations + 1 false positive
+    ([], {}),
+    (['empty_file.txt'], {}),
+    (['empty_requirements.txt'], {Language.PYTHON: 0}),
+    (['requirements.txt'], {Language.PYTHON: 3}),
+    (['build.gradle.kts'], {Language.KOTLIN: 9}),  # 8 implementations + 1 false positive
     (
         [
             'empty_file.txt',
