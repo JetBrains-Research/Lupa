@@ -21,4 +21,4 @@ ignore=WPS, # TODO: Do not ignore WPS inspections
        I201,
        I100,
 
-exclude=venv,
+exclude=venv,test/resources,

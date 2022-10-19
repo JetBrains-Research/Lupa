@@ -1,11 +1,7 @@
 from dataclasses import dataclass
-from enum import Enum
 from typing import List
 
-
-class Language(Enum):
-    KOTLIN = 'kotlin'
-    PYTHON = 'python'
+from utils.language import Language
 
 
 @dataclass
