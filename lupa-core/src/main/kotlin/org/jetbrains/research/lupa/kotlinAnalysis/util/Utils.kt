@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.util
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.isDirectory
@@ -82,4 +83,11 @@ fun getPrintWriter(directory: Path, fileName: String): PrintWriter {
     directory.createDirectories()
     val file = File(directory.toFile(), fileName)
     return file.printWriter()
+}
+
+fun String.getRelativePath(project: Project): Path {
+    val filePath = Paths.get(this)
+    val projectPath = project.basePath ?: error("Cannot find path to the project ${project.name}")
+    val projectPathParent = Paths.get(projectPath).parent
+    return projectPathParent.relativize(filePath)
 }

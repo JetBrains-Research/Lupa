@@ -1,0 +1,3 @@
+InternalUsagesAnalysisResult(declarationFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.B2, usageFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.topLevel, moduleName=light_idea_test_case, sourceSet=null)
+InternalUsagesAnalysisResult(declarationFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.B2, usageFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.TestClass, moduleName=light_idea_test_case, sourceSet=null)
+InternalUsagesAnalysisResult(declarationFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.B2.Nested, usageFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.TestNestedClass, moduleName=light_idea_test_case, sourceSet=null)
