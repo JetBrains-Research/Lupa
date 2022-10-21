@@ -1,21 +1,15 @@
-package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.usages
+package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.usages.analyzer
 
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.configuration.sourceSetName
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
-
-data class InternalUsagesAnalysisResult(
-    val declarationFqName: String,
-    val usageFqName: String,
-    val moduleName: String?,
-    val sourceSet: String?,
-)
+import org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.usages.InternalUsagesAnalysisResult
+import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.isInternal
 
 object InternalUsagesPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, List<InternalUsagesAnalysisResult>?> {
 
@@ -36,7 +30,7 @@ object InternalUsagesPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, List<Internal
     }
 
     override fun analyze(psiElement: KtNamedDeclaration): List<InternalUsagesAnalysisResult>? {
-        if (psiElement.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+        if (psiElement.isInternal()) {
             val processor = RenamePsiElementProcessor.forElement(psiElement)
             val references = processor.findReferences(psiElement, psiElement.useScope, false)
             val usages = references.map { UsageInfo(it) }.toTypedArray()

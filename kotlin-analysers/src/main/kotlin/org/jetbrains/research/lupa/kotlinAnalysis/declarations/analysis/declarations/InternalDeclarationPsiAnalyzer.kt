@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
+import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.isInternal
 
 data class InternalDeclarationAnalysisResult(
     val fqName: String,
@@ -17,7 +18,7 @@ data class InternalDeclarationAnalysisResult(
 object InternalDeclarationPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, InternalDeclarationAnalysisResult?> {
 
     override fun analyze(psiElement: KtNamedDeclaration): InternalDeclarationAnalysisResult? {
-        if (psiElement.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+        if (psiElement.isInternal()) {
             val isExpect = psiElement.hasModifier(KtTokens.EXPECT_KEYWORD)
             val isActual = psiElement.hasModifier(KtTokens.ACTUAL_KEYWORD)
             return InternalDeclarationAnalysisResult(
