@@ -1,9 +1,4 @@
-from typing import Dict
-
 from benchmark.metrics_collection.metrics import MetricArgument, MetricName
-
-from cerberus import Validator
-from cerberus.errors import ErrorList
 
 SCHEMA = {
     'metrics': {
@@ -39,9 +34,3 @@ SCHEMA = {
         },
     },
 }
-
-
-def check_config(config: Dict) -> ErrorList:
-    v = Validator()
-    v.validate(config, SCHEMA)
-    return v.errors
