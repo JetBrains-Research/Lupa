@@ -49,13 +49,13 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def read_metrics(dataset: Path, language: Language) -> pd.DataFrame:
+def read_metrics(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
     """
     Read metric files from ``dataset`` into a dataframe.
 
     :param dataset: Path to the dataset with projects.
     :param language: Language, the metrics for which must be read.
-    :return: Dataframe with the language metrics.
+    :return: Dataframe with the language metrics. If no metrics are found, None will be returned.
     """
     projects = get_all_file_system_items(dataset, item_type=FileSystemItem.SUBDIR, with_subdirs=False)
 
@@ -63,7 +63,12 @@ def read_metrics(dataset: Path, language: Language) -> pd.DataFrame:
     for project in projects:
         logger.info(f'Reading {project.name}')
 
-        with open(project / METRICS_FILE) as file:
+        metrics_file_path = project / METRICS_FILE
+        if not metrics_file_path.exists():
+            logger.warning(f'File with metrics not found in {project.name}')
+            continue
+
+        with open(metrics_file_path) as file:
             metric_values = yaml.safe_load(file)
 
         metrics_by_project[project.name] = {
@@ -71,6 +76,9 @@ def read_metrics(dataset: Path, language: Language) -> pd.DataFrame:
         }
 
     metrics = pd.DataFrame.from_dict(metrics_by_project, orient='index')
+    if metrics.isna().values.all():
+        return None
+
     metrics.index.name = PROJECT_COLUMN
     metrics.reset_index(inplace=True)
 
@@ -111,15 +119,29 @@ def get_stratified_sample(
     To do this, group ``data`` by columns specified in ``strata`` and take from each group a proportional number of
     samples.
 
+    If the ``size`` value is greater than the number of elements in the group, all elements in the group will be
+    selected.
+
+    If the ``strata`` list is empty, the function behaves like ``pd.DataFrame.sample``.
+
     :param data: Dataframe from which the sample must be extracted.
     :param strata: List of columns whose distribution should be saved.
     :param size: Sample size.
     :param random_state: Seed for random number generator.
     :return: Sample dataframe.
     """
+    if not strata:
+        logger.warning('Columns for stratification are not specified. Stratification will not be performed.')
+        return data.sample(min(size, len(data)), random_state=random_state).reset_index(drop=True)
+
     return (
         data.groupby(strata, observed=True)
-        .apply(lambda group: group.sample(round(size / len(data) * len(group)), random_state=random_state))
+        .apply(
+            lambda group: group.sample(
+                min(round(size / len(data) * len(group)), len(group)),
+                random_state=random_state,
+            ),
+        )
         .reset_index(drop=True)
     )
 
@@ -147,6 +169,9 @@ def main() -> None:
 
     logger.info('Reading metrics.')
     metrics = read_metrics(args.dataset_path, Language(config[ConfigField.LANGUAGE.value]))
+    if metrics is None:
+        logger.error('Metrics not found.')
+        return
 
     logger.info('Converting metrics.')
     converted_metrics = convert_to_intervals(metrics, config[ConfigField.STRATA.value])
