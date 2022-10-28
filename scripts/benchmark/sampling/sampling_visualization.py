@@ -46,7 +46,7 @@ def get_bins(key: str) -> Union[int, str, List[float]]:
             index=BinsType.values().index(BinsType.ESTIMATOR.value),
             help=f"""
                 Possible bins types:
-                * `{BinsType.COUNT.value}` means a number of the bins by which to divide the data.
+                * `{BinsType.COUNT.value}` means a number of the bins by which to group the data.
                 * `{BinsType.ESTIMATOR.value}` means a name of an estimator which automatically determines the
                   optimal number of the bins.
                 * `{BinsType.EDGES.value}` means an array of edges by which the bins are defined.
@@ -60,7 +60,7 @@ def get_bins(key: str) -> Union[int, str, List[float]]:
                 'Count:',
                 value=50,
                 min_value=1,
-                help='The number of the bins by which to divide the data. The number must be greater than 1.',
+                help='The number of the bins by which to group the data. The number must be greater than 1.',
                 key=f'{key}_bins_value',
             )
 
