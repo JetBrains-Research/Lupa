@@ -1,3 +1,15 @@
+"""
+This script will extract a stratified sample from a dataset where the distribution of the selected metrics is saved.
+
+It accepts:
+    * ``dataset_path`` -- Path to a dataset with projects.
+    * ``config_path`` -- Path to a yaml config. More information about the config can be found in the README file.
+    * ``output_path`` -- Path to a csv file with selected projects.
+
+You can also specify:
+    * ``--random-state`` -- Seed for random number generator.
+    * ``--logs-path`` -- Path to a file where you want to save the logs. By default, the logs will be written to stderr.
+"""
 import argparse
 import json
 import logging

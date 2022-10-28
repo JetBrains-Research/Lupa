@@ -1,3 +1,4 @@
+"""Visualization for stratified sampling."""
 import ast
 from enum import Enum, unique
 from pathlib import Path
