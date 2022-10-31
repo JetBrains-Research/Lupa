@@ -45,28 +45,27 @@ abstract class InternalUsagesPsiAnalysisExecutorBase(
         project: Project, clazz: Class<out KtElement>,
         analyze: (KtElement) -> List<InternalUsagesAnalysisResult>?
     ) {
-        project.extractModules()
-            .forEach { module ->
-                val files = module.findPsiFilesByExtension(Extension.KT.value)
-                files.forEach { psi ->
-                    val relativePath = psi.virtualFile.path.getRelativePath(project).toString()
-                    psi.extractElementsOfType(clazz).forEach {
-                        analyze(it)?.let { analysisResultList ->
-                            analysisResultList.toSet().forEach { r ->
-                                internalUsagesDataWriter.writer.println(
-                                    listOf(
-                                        project.name,
-                                        r.moduleName,
-                                        r.declarationFqName,
-                                        r.usageFqName,
-                                        r.sourceSet,
-                                        relativePath,
-                                    ).joinToString(separator = ",")
-                                )
-                            }
+        project.extractModules().forEach { module ->
+            val files = module.findPsiFilesByExtension(Extension.KT.value)
+            files.forEach { psi ->
+                val relativePath = psi.virtualFile.path.getRelativePath(project).toString()
+                psi.extractElementsOfType(clazz).forEach {
+                    analyze(it)?.let { analysisResultList ->
+                        analysisResultList.toSet().forEach { r ->
+                            internalUsagesDataWriter.writer.println(
+                                listOf(
+                                    project.name,
+                                    r.moduleName,
+                                    r.declarationFqName,
+                                    r.usageFqName,
+                                    r.sourceSet,
+                                    relativePath,
+                                ).joinToString(separator = ",")
+                            )
                         }
                     }
                 }
             }
+        }
     }
 }

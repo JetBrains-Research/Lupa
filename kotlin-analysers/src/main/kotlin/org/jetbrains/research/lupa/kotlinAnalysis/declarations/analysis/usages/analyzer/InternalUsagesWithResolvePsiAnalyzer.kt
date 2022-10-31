@@ -19,12 +19,8 @@ object InternalUsagesWithResolvePsiAnalyzer :
     private fun KtNameReferenceExpression.fqName(): FqName? =
         this.parents.find { it.getKotlinFqName() != null }?.getKotlinFqName()
 
-    private fun KtNamedDeclaration.isInternalDeclaration(): Boolean {
-        if (this.isInternal() || this.hasInternalParent()) {
-            return true
-        }
-        return false
-    }
+    private fun KtNamedDeclaration.isInternalDeclaration(): Boolean =
+        this.isInternal() || this.hasInternalParent()
 
     private fun KtNamedDeclaration.hasInternalParent() = getInternalParent()?.isInternal() ?: false
 
@@ -44,10 +40,13 @@ object InternalUsagesWithResolvePsiAnalyzer :
     }
 
     override fun analyze(psiElement: KtNameReferenceExpression): List<InternalUsagesAnalysisResult>? {
-        val resolvedReferencesFqNames = psiElement.references.mapNotNull { it.resolve() }
+        val resolvedReferencesFqNames = psiElement.references.asSequence()
+            .mapNotNull { it.resolve() }
             .mapNotNull { it as? KtNamedDeclaration }
             .filter { it.isInternalDeclaration() }
             .mapNotNull { it.fqName() }
+            .toList()
+
         psiElement.fqName()?.let { fqName ->
             return resolvedReferencesFqNames.map {
                 InternalUsagesAnalysisResult(
@@ -58,6 +57,7 @@ object InternalUsagesWithResolvePsiAnalyzer :
                 )
             }
         }
+
         return null
     }
 }
