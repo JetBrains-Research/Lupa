@@ -21,6 +21,9 @@ from benchmark.sampling.stratified_sampling import (
 from utils.language import Language
 
 
+BINS = Union[int, str, List[float]]
+
+
 @unique
 class BinsType(Enum):
     COUNT = 'Count'
@@ -37,7 +40,7 @@ def load_data(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
     return read_metrics(dataset, language)
 
 
-def get_bins(key: str) -> Union[int, str, List[float]]:
+def get_bins(key: str) -> BINS:
     left_column, right_column = st.columns(2)
 
     with left_column:
@@ -97,7 +100,7 @@ def compare_histograms(
     data: pd.DataFrame,
     sample: pd.DataFrame,
     metric: str,
-    bins: Union[int, str, List[float]],
+    bins: BINS,
 ) -> None:
     fig = go.Figure()
 
@@ -139,23 +142,23 @@ def main():
     if not metrics:
         st.stop()
 
-    row_data = load_data(file_path, Language(language))
-    if row_data is None:
+    raw_data = load_data(file_path, Language(language))
+    if raw_data is None:
         st.error('Metrics not found.')
         st.stop()
 
-    data = row_data.dropna(subset=metrics)
+    data = raw_data.dropna(subset=metrics)
 
     left_column, right_column = st.columns(2)
 
     with left_column:
-        st.metric('Total number of projects:', len(row_data), help='The number of projects in the dataset.')
+        st.metric('Total number of projects:', len(raw_data), help='The number of projects in the dataset.')
 
     with right_column:
         st.metric(
             'Actual number of projects:',
             len(data),
-            delta=len(data) - len(row_data),
+            delta=len(data) - len(raw_data),
             help='The number of projects in which all the specified metrics are present.',
         )
 
