@@ -26,6 +26,7 @@ streamlit run sampling_visualization.py
 In this visualization you can interactively select different histograms for metrics and download the resulting config. 
 Also, if you specify the sample size, you can start sampling and download the result. 
 An example of working with visualization is shown below:
+
 https://user-images.githubusercontent.com/55441714/200190994-a2e7a6b6-3086-400d-a816-ce473512acc9.mp4
 
 ### Config
