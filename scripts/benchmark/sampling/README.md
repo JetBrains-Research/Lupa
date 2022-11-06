@@ -23,6 +23,10 @@ To do this, run the following command:
 streamlit run sampling_visualization.py
 ```
 
+In this visualization you can interactively select different histograms for metrics and download the resulting config. 
+Also, if you specify the sample size, you can start sampling and download the result. 
+An example of working with visualization is shown below:
+
 ### Config
 
 **Required fields**:
