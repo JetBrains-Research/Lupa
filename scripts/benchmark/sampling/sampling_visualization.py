@@ -2,16 +2,17 @@
 import ast
 from enum import Enum, unique
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+import yaml
 
 from benchmark.metrics_collection.metrics import MetricName
-from benchmark.sampling.config import BinsEstimator
+from benchmark.sampling.config import BinsEstimator, ConfigField
 from benchmark.sampling.stratified_sampling import (
     PROJECT_COLUMN,
     convert_to_intervals,
@@ -36,11 +37,51 @@ class BinsType(Enum):
 
 
 @st.cache
-def load_data(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
+def _read_data(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
     return read_metrics(dataset, language)
 
 
-def get_bins(key: str) -> BINS:
+def read_data_and_metrics() -> Tuple[pd.DataFrame, List[str]]:
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        file_path = Path(st.text_input('Dataset path:'))
+
+    with right_column:
+        language = st.selectbox(
+            'Language:',
+            options=Language.values(),
+            index=Language.values().index(Language.PYTHON.value),
+        )
+
+    metrics = st.multiselect('Metrics:', options=MetricName.values())
+    if not metrics:
+        st.stop()
+
+    raw_data = _read_data(file_path, Language(language))
+    if raw_data is None:
+        st.error('Metrics not found.')
+        st.stop()
+
+    data = raw_data.dropna(subset=metrics)
+
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        st.metric('Total number of projects:', len(raw_data), help='The number of projects in the dataset.')
+
+    with right_column:
+        st.metric(
+            'Actual number of projects:',
+            len(data),
+            delta=len(data) - len(raw_data),
+            help='The number of projects in which all the specified metrics are present.',
+        )
+
+    return data, metrics
+
+
+def _read_bins(key: str) -> BINS:
     left_column, right_column = st.columns(2)
 
     with left_column:
@@ -96,6 +137,80 @@ def get_middle_of_bins(bin_edges: np.ndarray) -> np.ndarray:
     return 0.5 * (bin_edges[:-1] + bin_edges[1:])
 
 
+def show_bins_config_and_histograms(data: pd.DataFrame, metric: str) -> BINS:
+    st.subheader(metric)
+
+    bins = _read_bins(metric)
+    values, bin_edges = np.histogram(data[metric], bins=bins)
+
+    number_of_bins = len(bin_edges) - 1
+    number_of_non_empty_bins = len([value for value in values if value != 0])
+
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        st.metric('Number of bins:', number_of_bins)
+
+    with right_column:
+        st.metric(
+            'Number of non-empty bins:',
+            number_of_non_empty_bins,
+            delta=number_of_non_empty_bins - number_of_bins,
+        )
+
+    with st.expander('Histogram:'):
+        fig = px.bar(x=get_middle_of_bins(bin_edges), y=values)
+        fig.update_layout(xaxis_title='Bin', yaxis_title='Number of projects')
+        st.plotly_chart(fig, use_container_width=True)
+
+    return bins
+
+
+def read_sample_size_and_random_state(data: pd.DataFrame) -> Tuple[int, int]:
+    left_column, right_column = st.columns(2)
+
+    with left_column:
+        sample_size = st.number_input(
+            'Sample size:',
+            min_value=1,
+            value=round(len(data) * 0.2),
+            help='The expected number of projects in the sample.',
+        )
+
+    with right_column:
+        random_state = st.number_input('Random state:', value=42, help='Seed for random number generator.')
+
+    return sample_size, random_state
+
+
+def get_sample(
+    data: pd.DataFrame,
+    converted_data: pd.DataFrame,
+    metrics: List[str],
+    metric_bins: Dict[str, Any],
+    sample_size: int,
+    random_state: int,
+) -> pd.DataFrame:
+    with st.spinner('Sampling...'):
+        sample = get_stratified_sample(converted_data, metrics, sample_size, random_state)
+
+    st.metric(
+        'Actual sample size:',
+        len(sample),
+        delta=len(sample) - sample_size,
+        help=(
+            'Since it is impossible to collect projects from some small groups with saving the distribution, '
+            'the actual number of projects in the sample may be less than expected. '
+        ),
+    )
+
+    for metric in metrics:
+        with st.expander(metric):
+            compare_histograms(data, sample, metric, metric_bins[metric])
+
+    return sample
+
+
 def compare_histograms(
     data: pd.DataFrame,
     sample: pd.DataFrame,
@@ -126,70 +241,14 @@ def compare_histograms(
 def main():
     st.title('Stratified Project Sampling')
 
-    left_column, right_column = st.columns(2)
-
-    with left_column:
-        file_path = Path(st.text_input('Dataset path:'))
-
-    with right_column:
-        language = st.selectbox(
-            'Language:',
-            options=Language.values(),
-            index=Language.values().index(Language.PYTHON.value),
-        )
-
-    metrics = st.multiselect('Metrics:', options=MetricName.values())
-    if not metrics:
-        st.stop()
-
-    raw_data = load_data(file_path, Language(language))
-    if raw_data is None:
-        st.error('Metrics not found.')
-        st.stop()
-
-    data = raw_data.dropna(subset=metrics)
-
-    left_column, right_column = st.columns(2)
-
-    with left_column:
-        st.metric('Total number of projects:', len(raw_data), help='The number of projects in the dataset.')
-
-    with right_column:
-        st.metric(
-            'Actual number of projects:',
-            len(data),
-            delta=len(data) - len(raw_data),
-            help='The number of projects in which all the specified metrics are present.',
-        )
+    data, metrics = read_data_and_metrics()
 
     st.header('Histograms')
 
     metric_bins = {}
     for metric in metrics:
-        st.subheader(metric)
-
-        metric_bins[metric] = get_bins(metric)
-        values, bin_edges = np.histogram(data[metric], bins=metric_bins[metric])
-
-        number_of_bins = len(bin_edges) - 1
-        number_of_non_empty_bins = len([value for value in values if value != 0])
-
-        left_column, right_column = st.columns(2)
-
-        with left_column:
-            st.metric('Number of bins:', number_of_bins)
-
-        with right_column:
-            st.metric(
-                'Number of non-empty bins:',
-                number_of_non_empty_bins,
-                delta=number_of_non_empty_bins - number_of_bins,
-            )
-
-        with st.expander('Histogram:'):
-            fig = px.bar(x=get_middle_of_bins(bin_edges), y=values)
-            fig.update_layout(xaxis_title='Bin', yaxis_title='Number of projects')
-            st.plotly_chart(fig, use_container_width=True)
+        metric_bins[metric] = show_bins_config_and_histograms(data, metric)
+    st.download_button('Download config', yaml.dump({ConfigField.STRATA.value: metric_bins}), 'config.yaml')
 
     st.header('Sampling')
 
@@ -200,38 +259,11 @@ def main():
         help='Number of non-empty groups, after grouping by all metrics.',
     )
 
-    left_column, right_column = st.columns(2)
-
-    with left_column:
-        sample_size = st.number_input(
-            'Sample size:',
-            min_value=1,
-            value=round(len(converted_data) * 0.2),
-            help='The expected number of projects in the sample.',
-        )
-
-    with right_column:
-        random_state = st.number_input('Random state:', value=42, help='Seed for random number generator.')
+    sample_size, random_state = read_sample_size_and_random_state(converted_data)
 
     if st.button('Sample'):
-        with st.spinner('Sampling...'):
-            sample = get_stratified_sample(converted_data, metrics, sample_size, random_state)
-
-        st.metric(
-            'Actual sample size:',
-            len(sample),
-            delta=len(sample) - sample_size,
-            help=(
-                'Since it is impossible to collect projects from some small groups with saving the distribution, '
-                'the actual number of projects in the sample may be less than expected. '
-            ),
-        )
-
-        for metric in metrics:
-            with st.expander(metric):
-                compare_histograms(data, sample, metric, metric_bins[metric])
-
-        st.download_button('Download', sample[PROJECT_COLUMN].to_csv(index=False), 'sample.csv', 'text/csv')
+        sample = get_sample(data, converted_data, metrics, metric_bins, sample_size, random_state)
+        st.download_button('Download sample', sample[PROJECT_COLUMN].to_csv(index=False), 'sample.csv', 'text/csv')
 
 
 if __name__ == '__main__':
