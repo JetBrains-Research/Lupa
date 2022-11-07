@@ -17,10 +17,11 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Dict, Optional
 
-from benchmark.metrics_collection.config import check_config
+from benchmark.metrics_collection.config import SCHEMA
 from benchmark.metrics_collection.metrics import MetricName
 
 from utils.file_utils import FileSystemItem, get_all_file_system_items
+from utils.config_utils import check_config
 
 from yaml import dump, safe_load
 
@@ -130,7 +131,7 @@ def main():
     with open(args.config_path) as file:
         config = safe_load(file)
 
-    errors = check_config(config)
+    errors = check_config(config, SCHEMA)
     if errors:
         # Using json.dumps to display the error list nicely
         logger.error(json.dumps(errors, indent=4))
