@@ -1,18 +1,14 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions
 
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtElement
-import java.nio.file.Path
-import java.nio.file.Paths
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.research.lupa.kotlinAnalysis.util.getRelativePath
 
 /**
  * Returns the path to the file, containing given ktElement.
  * Path is relative from the ktElement's project directory. )
  */
-fun KtElement.getRelativePathToKtElement(): Path {
-    val filePath = Paths.get(this.containingKtFile.virtualFilePath)
-    val projectPath = this.project.basePath
-        ?: throw IllegalArgumentException("Cannot find path to the project containing element ${this.name}")
-    val projectPathParent = Paths.get(projectPath).parent
-    val fileRelativePath = projectPathParent.relativize(filePath)
-    return fileRelativePath
-}
+fun KtElement.getRelativePathToKtElement() = this.containingKtFile.virtualFilePath.getRelativePath(this.project)
+
+fun KtNamedDeclaration.isInternal() = hasModifier(KtTokens.INTERNAL_KEYWORD)

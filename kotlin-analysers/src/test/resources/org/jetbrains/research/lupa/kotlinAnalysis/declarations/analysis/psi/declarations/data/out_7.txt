@@ -1,0 +1,1 @@
+InternalDeclarationAnalysisResult(fqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.Interface7.InternalInterface7, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)

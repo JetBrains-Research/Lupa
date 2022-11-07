@@ -1,0 +1,7 @@
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.InternalClass, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.InternalClass.internalFun, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.InternalClass.Nested, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.internalFun, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.internalExpectFun, isExpect=true, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.SameFileUsages.test2, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)
+InternalDeclarationAnalysisResult(fqName=org.test.main.declarations.SameFileUsages.test3, isExpect=false, isActual=false, moduleName=light_idea_test_case, sourceSet=null)

@@ -1,0 +1,1 @@
+InternalUsagesAnalysisResult(declarationFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.B1, usageFqName=org.jetbrains.research.lupa.kotlinAnalysis.psi.data.test2, moduleName=light_idea_test_case, sourceSet=null)
