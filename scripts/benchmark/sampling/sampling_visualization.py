@@ -2,7 +2,7 @@
 import ast
 from enum import Enum, unique
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,6 @@ from benchmark.sampling.stratified_sampling import (
     read_metrics,
 )
 from utils.language import Language
-
 
 BINS = Union[int, str, List[float]]
 
@@ -137,7 +136,7 @@ def get_middle_of_bins(bin_edges: np.ndarray) -> np.ndarray:
     return 0.5 * (bin_edges[:-1] + bin_edges[1:])
 
 
-def show_bins_config_and_histograms(data: pd.DataFrame, metric: str) -> BINS:
+def show_bins_config_and_histogram(data: pd.DataFrame, metric: str) -> BINS:
     st.subheader(metric)
 
     bins = _read_bins(metric)
@@ -184,10 +183,8 @@ def read_sample_size_and_random_state(data: pd.DataFrame) -> Tuple[int, int]:
 
 
 def get_sample(
-    data: pd.DataFrame,
     converted_data: pd.DataFrame,
     metrics: List[str],
-    metric_bins: Dict[str, Any],
     sample_size: int,
     random_state: int,
 ) -> pd.DataFrame:
@@ -203,10 +200,6 @@ def get_sample(
             'the actual number of projects in the sample may be less than expected. '
         ),
     )
-
-    for metric in metrics:
-        with st.expander(metric):
-            compare_histograms(data, sample, metric, metric_bins[metric])
 
     return sample
 
@@ -247,7 +240,7 @@ def main():
 
     metric_bins = {}
     for metric in metrics:
-        metric_bins[metric] = show_bins_config_and_histograms(data, metric)
+        metric_bins[metric] = show_bins_config_and_histogram(data, metric)
     st.download_button('Download config', yaml.dump({ConfigField.STRATA.value: metric_bins}), 'config.yaml')
 
     st.header('Sampling')
@@ -262,7 +255,12 @@ def main():
     sample_size, random_state = read_sample_size_and_random_state(converted_data)
 
     if st.button('Sample'):
-        sample = get_sample(data, converted_data, metrics, metric_bins, sample_size, random_state)
+        sample = get_sample(converted_data, metrics, sample_size, random_state)
+
+        for metric in metrics:
+            with st.expander(metric):
+                compare_histograms(data, sample, metric, metric_bins[metric])
+
         st.download_button('Download sample', sample[PROJECT_COLUMN].to_csv(index=False), 'sample.csv', 'text/csv')
 
 
