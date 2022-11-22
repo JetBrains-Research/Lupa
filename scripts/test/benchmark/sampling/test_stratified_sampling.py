@@ -3,8 +3,13 @@ from typing import Any, Dict, List, Optional
 import pandas as pd
 import pytest
 
-from benchmark.sampling.stratified_sampling import convert_to_intervals, get_stratified_sample, read_metrics
-from test.benchmark.sampling import STRATIFIED_SAMPLING_TEST_DATA_FOLDER
+from benchmark.sampling.stratified_sampling import (
+    convert_to_intervals,
+    get_stratified_sample,
+    read_metrics,
+    read_project_metrics,
+)
+from test.benchmark.sampling import DATASETS_DATA_FOLDER, PROJECTS_DATA_FOLDER
 from utils.language import Language
 
 
@@ -16,7 +21,37 @@ def _assert_df_equals(actual: Optional[pd.DataFrame], expected: Optional[pd.Data
         pd.testing.assert_frame_equal(actual, expected, check_index_type=False)
 
 
+READ_PROJECT_METRICS_TEST_DATA = [
+    ('non_existent_project', Language.UNKNOWN, None),
+    ('project_without_metric_file', Language.UNKNOWN, None),
+    ('project_with_single_language', Language.PYTHON, {'number_of_lines': 42, 'number_of_files': 10, 'file_size': 24}),
+    ('project_with_single_language', Language.UNKNOWN, {}),
+    (
+        'project_with_several_languages',
+        Language.PYTHON,
+        {'number_of_lines': 42, 'number_of_files': 10, 'file_size': 24},
+    ),
+    (
+        'project_with_several_languages',
+        Language.KOTLIN,
+        {'number_of_lines': 20, 'number_of_files': 53, 'file_size': 74},
+    ),
+    ('project_with_several_languages', Language.UNKNOWN, {}),
+]
+
+
+@pytest.mark.parametrize(('project_name', 'language', 'expected_metrics'), READ_PROJECT_METRICS_TEST_DATA)
+def test_read_project_metrics(
+    project_name: str,
+    language: Language,
+    expected_metrics: Optional[Dict[str, int]],
+) -> None:
+    dataset_path = PROJECTS_DATA_FOLDER / project_name
+    assert read_project_metrics(dataset_path, language) == expected_metrics
+
+
 READ_METRICS_TEST_DATA = [
+    ('non_existent_dataset', Language.PYTHON, None),
     ('dataset_without_metrics', Language.PYTHON, None),
     ('dataset_without_metrics', Language.KOTLIN, None),
     ('dataset_without_metrics', Language.UNKNOWN, None),
@@ -44,8 +79,8 @@ READ_METRICS_TEST_DATA = [
                 'project': ['project_A', 'project_B'],
                 'number_of_lines': [42, None],
                 'number_of_files': [10, None],
-                'file_size': [None, 93],
                 'number_of_dependencies': [None, 3],
+                'file_size': [None, 93],
             },
         ),
     ),
@@ -56,9 +91,9 @@ READ_METRICS_TEST_DATA = [
             {
                 'project': ['project_A', 'project_B'],
                 'number_of_lines': [24, None],
-                'number_of_files': [None, 12],
                 'file_size': [24, None],
                 'number_of_dependencies': [None, 10],
+                'number_of_files': [None, 12],
             },
         ),
     ),
@@ -67,7 +102,7 @@ READ_METRICS_TEST_DATA = [
 
 @pytest.mark.parametrize(('dataset_name', 'language', 'expected_metrics'), READ_METRICS_TEST_DATA)
 def test_read_metrics(dataset_name: str, language: Language, expected_metrics: Optional[pd.DataFrame]) -> None:
-    dataset_path = STRATIFIED_SAMPLING_TEST_DATA_FOLDER / dataset_name
+    dataset_path = DATASETS_DATA_FOLDER / dataset_name
     _assert_df_equals(read_metrics(dataset_path, language), expected_metrics)
 
 
