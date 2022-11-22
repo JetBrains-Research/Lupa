@@ -13,13 +13,12 @@ You can also specify:
 import argparse
 import json
 import logging
-from collections import defaultdict
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 import yaml
-from typing import Any, Dict, List, Optional
 
 from benchmark.metrics_collection.collect_project_metrics import METRICS_FILE
 from benchmark.sampling.config import ConfigField, SCHEMA
@@ -61,6 +60,31 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def read_project_metrics(project: Path, language: Language) -> Optional[Dict[str, int]]:
+    """
+    Read a metric file from ``project`` into a dictionary.
+
+    :param project: Path to the project with the metric file.
+    :param language: Language, the metrics for which must be read.
+    :return: Dictionary with the language metrics. If the metric file are not found, None will be returned.
+    """
+    logger.info(f'Reading {project.name}')
+
+    metrics_file_path = project / METRICS_FILE
+    if not metrics_file_path.exists():
+        logger.warning(f'File with metrics not found in {project.name}')
+        return None
+
+    with open(metrics_file_path) as file:
+        metric_values = yaml.safe_load(file)
+
+    return {
+        metric: values[language.value]
+        for metric, values in metric_values.items()
+        if values is not None and values.get(language.value) is not None
+    }
+
+
 def read_metrics(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
     """
     Read metric files from ``dataset`` into a dataframe.
@@ -69,24 +93,13 @@ def read_metrics(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
     :param language: Language, the metrics for which must be read.
     :return: Dataframe with the language metrics. If no metrics are found, None will be returned.
     """
+    if not dataset.is_dir() or not dataset.exists():
+        logger.error('The dataset path is not a directory or the dataset does not exist.')
+        return None
+
     projects = get_all_file_system_items(dataset, item_type=FileSystemItem.SUBDIR, with_subdirs=False)
 
-    metrics_by_project = defaultdict()
-    for project in projects:
-        logger.info(f'Reading {project.name}')
-
-        metrics_file_path = project / METRICS_FILE
-        if not metrics_file_path.exists():
-            logger.warning(f'File with metrics not found in {project.name}')
-            continue
-
-        with open(metrics_file_path) as file:
-            metric_values = yaml.safe_load(file)
-
-        metrics_by_project[project.name] = {
-            metric: values.get(language.value) for metric, values in metric_values.items() if values is not None
-        }
-
+    metrics_by_project = {project.name: read_project_metrics(project, language) for project in projects}
     metrics = pd.DataFrame.from_dict(metrics_by_project, orient='index')
     if metrics.isna().values.all():
         return None
