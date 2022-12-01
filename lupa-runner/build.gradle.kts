@@ -5,7 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "6.1.0" apply true
 }
 
-open class BaseAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+abstract class BaseAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Name of the analysis runner
     @get:Input
     val runner: String? by project
@@ -31,13 +31,13 @@ open class BaseAnalysisCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     }
 }
 
-open class PythonAnalysisCliTask : BaseAnalysisCliTask() {
+abstract class PythonAnalysisCliTask : BaseAnalysisCliTask() {
     // Virtual environment directory for Python
     @get:Input
     val venv: String? by project
 }
 
-open class JupyterDatasetRefactoringCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
+abstract class JupyterDatasetRefactoringCliTask : org.jetbrains.intellij.tasks.RunIdeTask() {
     // Input directory of dataset with repositories
     @get:Input
     val input: String? by project
