@@ -17,7 +17,7 @@ fun <P : PyCallExpression> testCallExpressionFqNamesInFile(
     inFile: File,
     outFile: File,
     analyzer: CallExpressionAnalyzer<P>,
-    expressionPredicate: (PyCallExpression) -> Boolean,
+    expressionPredicate: (PyCallExpression) -> Boolean
 ) {
     val typeEvalContext = TypeEvalContext.deepCodeInsight(myFixture.project)
     val pyResolveContext = PyResolveContext.defaultContext(typeEvalContext)

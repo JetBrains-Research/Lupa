@@ -29,7 +29,7 @@ class RangesAnalysisExecutor(
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     rangesFilename: String = "ranges_data.csv",
-    otherContextFilename: String = "other_context.csv",
+    otherContextFilename: String = "other_context.csv"
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
@@ -98,7 +98,7 @@ class RangesAnalysisExecutor(
                     smallContext,
                     contextText,
                     tenParentsClasses,
-                    usageContextText,
+                    usageContextText
                 ).joinToString(separator = ",")
             )
         }

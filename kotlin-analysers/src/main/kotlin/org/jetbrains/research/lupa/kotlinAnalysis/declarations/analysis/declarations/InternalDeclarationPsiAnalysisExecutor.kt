@@ -30,7 +30,7 @@ class InternalDeclarationPsiAnalysisExecutor(
             "declaration",
             "is_expect",
             "source_set",
-            "file_path",
+            "file_path"
         )
             .joinToString(separator = ",")
     )
@@ -55,7 +55,7 @@ class InternalDeclarationPsiAnalysisExecutor(
                                         analysisResult.fqName,
                                         analysisResult.isExpect,
                                         analysisResult.sourceSet,
-                                        relativePath,
+                                        relativePath
                                     ).joinToString(separator = ",")
                                 )
                             }

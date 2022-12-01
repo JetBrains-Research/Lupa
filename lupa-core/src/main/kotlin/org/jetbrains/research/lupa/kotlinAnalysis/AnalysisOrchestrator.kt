@@ -1,7 +1,9 @@
 package org.jetbrains.research.lupa.kotlinAnalysis
 
 import com.intellij.util.io.delete
-import org.jetbrains.research.lupa.kotlinAnalysis.util.*
+import org.jetbrains.research.lupa.kotlinAnalysis.util.GitRepository
+import org.jetbrains.research.lupa.kotlinAnalysis.util.getSubdirectories
+import org.jetbrains.research.lupa.kotlinAnalysis.util.symbolicCopyOnlyRequiredExtensions
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -52,7 +54,7 @@ class AnalysisOrchestrator(
         symbolicCopyOnlyRequiredExtensions(
             fromDirectory = projectPath.toRealPath(),
             toDirectory = projectTmpFolderPath,
-            analysisExecutor.requiredFileExtensions,
+            analysisExecutor.requiredFileExtensions
         )
         val isSuccessful = analysisExecutor.execute(projectTmpFolderPath)
         projectTmpFolderPath.delete(true)

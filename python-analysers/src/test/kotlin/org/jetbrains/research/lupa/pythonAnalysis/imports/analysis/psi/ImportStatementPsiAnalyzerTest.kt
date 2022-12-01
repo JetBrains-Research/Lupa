@@ -36,7 +36,7 @@ class ImportStatementPsiAnalyzerTest : ParametrizedBaseTest(
                 ::ImportStatementPsiAnalyzerTest,
                 resourcesRootName = "importStatementsData",
                 inExtension = Extension.PY,
-                outExtension = Extension.TXT,
+                outExtension = Extension.TXT
             )
     }
 

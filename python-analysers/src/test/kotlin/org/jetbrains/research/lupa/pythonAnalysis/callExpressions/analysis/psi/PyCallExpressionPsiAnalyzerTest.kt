@@ -32,7 +32,7 @@ class PyCallExpressionPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
                 ::PyCallExpressionPsiAnalyzerTest,
                 resourcesRootName = "callExpressionPsiAnalyzerTestData",
                 inExtension = Extension.PY,
-                outExtension = Extension.TXT,
+                outExtension = Extension.TXT
             )
     }
 

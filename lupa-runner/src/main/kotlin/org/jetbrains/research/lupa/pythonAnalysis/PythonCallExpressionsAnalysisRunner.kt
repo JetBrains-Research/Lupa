@@ -15,7 +15,7 @@ object PythonCallExpressionsAnalysisRunner :
         AnalysisOrchestrator(
             CallExpressionsAnalysisExecutor(
                 args.outputDir,
-                venv = args.venvDir,
+                venv = args.venvDir
             )
         ).execute(args.inputDir, args.outputDir)
     }

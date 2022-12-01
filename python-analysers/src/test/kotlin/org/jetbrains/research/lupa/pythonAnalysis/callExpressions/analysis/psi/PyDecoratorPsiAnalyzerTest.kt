@@ -32,7 +32,7 @@ class PyDecoratorPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
                 ::PyDecoratorPsiAnalyzerTest,
                 resourcesRootName = "decoratorPsiAnalyzerTestData",
                 inExtension = Extension.PY,
-                outExtension = Extension.TXT,
+                outExtension = Extension.TXT
             )
     }
 

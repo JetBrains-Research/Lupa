@@ -53,7 +53,7 @@ object InternalUsagesWithResolvePsiAnalyzer :
                     it.toString(),
                     fqName.toString(),
                     psiElement.module?.name,
-                    psiElement.module?.sourceSetName,
+                    psiElement.module?.sourceSetName
                 )
             }
         }

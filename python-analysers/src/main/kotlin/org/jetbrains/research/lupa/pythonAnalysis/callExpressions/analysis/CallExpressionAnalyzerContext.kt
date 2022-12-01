@@ -10,5 +10,5 @@ import org.jetbrains.research.lupa.kotlinAnalysis.AnalyzerContext
  */
 data class CallExpressionAnalyzerContext(
     val resolveContext: PyResolveContext,
-    val fqNamesProvider: PyQualifiedNameProvider,
+    val fqNamesProvider: PyQualifiedNameProvider
 ) : AnalyzerContext

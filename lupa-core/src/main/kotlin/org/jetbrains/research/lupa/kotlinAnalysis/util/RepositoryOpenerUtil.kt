@@ -22,7 +22,7 @@ class RepositoryOpenerUtil {
          */
         fun openReloadKotlinJavaRepositoryOpener(
             repositoryRoot: Path,
-            action: (Project) -> Boolean,
+            action: (Project) -> Boolean
         ): Boolean {
             if (getKotlinJavaRepositoryOpener().openRepository(
                     repositoryRoot.toFile()
@@ -43,7 +43,7 @@ class RepositoryOpenerUtil {
          */
         fun standardRepositoryOpener(
             projectPath: Path,
-            action: (Project) -> Boolean,
+            action: (Project) -> Boolean
         ): Boolean {
             var isSuccessful = true
             try {
