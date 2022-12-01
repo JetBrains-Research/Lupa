@@ -10,8 +10,8 @@ import org.junit.runners.Parameterized
 open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     getResourcesRootPath(
         ::ImportStatementsAnalysisExecutorTest,
-        "importStatementsAnalysisExecutorData"
-    )
+        "importStatementsAnalysisExecutorData",
+    ),
 ) {
 
     companion object {
@@ -21,7 +21,7 @@ open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
             ::ImportStatementsAnalysisExecutorTest,
             "importStatementsAnalysisExecutorData",
             inExtension = Extension.EMPTY,
-            outExtension = Extension.CSV
+            outExtension = Extension.CSV,
         )
     }
 

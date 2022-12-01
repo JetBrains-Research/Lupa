@@ -14,7 +14,7 @@ open class AndroidProjectTaggingTest : ParametrizedGoldenFileTest(getResourcesRo
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::AndroidProjectTaggingTest,
-            inExtension = Extension.EMPTY, outExtension = Extension.TXT
+            inExtension = Extension.EMPTY, outExtension = Extension.TXT,
         )
     }
 

@@ -13,8 +13,8 @@ import java.io.File
 class PyCallExpressionPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
     getResourcesRootPath(
         ::PyCallExpressionPsiAnalyzerTest,
-        resourcesRootName = "callExpressionPsiAnalyzerTestData"
-    )
+        resourcesRootName = "callExpressionPsiAnalyzerTestData",
+    ),
 ) {
     @JvmField
     @Parameterized.Parameter(0)
@@ -32,7 +32,7 @@ class PyCallExpressionPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
                 ::PyCallExpressionPsiAnalyzerTest,
                 resourcesRootName = "callExpressionPsiAnalyzerTestData",
                 inExtension = Extension.PY,
-                outExtension = Extension.TXT
+                outExtension = Extension.TXT,
             )
     }
 

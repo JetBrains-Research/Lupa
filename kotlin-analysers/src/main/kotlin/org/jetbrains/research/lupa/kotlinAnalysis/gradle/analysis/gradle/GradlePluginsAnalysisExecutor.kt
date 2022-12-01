@@ -18,14 +18,14 @@ class GradlePluginsAnalysisExecutor(
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-    filename: String = "gradle_plugins_data.csv"
+    filename: String = "gradle_plugins_data.csv",
 ) :
     AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val gradleDependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         listOf("project_name", "plugin_id", "plugin_version", "plugin_args", "applied", "allProjects")
-            .joinToString(separator = ",")
+            .joinToString(separator = ","),
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
@@ -44,8 +44,8 @@ class GradlePluginsAnalysisExecutor(
                         it.version ?: "",
                         it.pluginArgs.joinToString(separator = "#"),
                         it.applied,
-                        it.allProjects
-                    ).joinToString(separator = ",")
+                        it.allProjects,
+                    ).joinToString(separator = ","),
                 )
             }
         }

@@ -36,13 +36,13 @@ class CallExpressionsAnalysisExecutor(
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     filename: String = "call_expressions_data.csv",
-    private val venv: Path?
+    private val venv: Path?,
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val expressionsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        header = listOf("project_name", "fq_name", "category").joinToString(separator = ",")
+        header = listOf("project_name", "fq_name", "category").joinToString(separator = ","),
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(expressionsDataWriter)
@@ -127,13 +127,13 @@ class CallExpressionsAnalysisExecutor(
      */
     private fun filterLocalFqNames(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
-        packageNames: Set<String>
+        packageNames: Set<String>,
     ) {
         fqNamesByCategory.forEach { (_, fqNames) ->
             fqNames.removeAll { fqName ->
                 PyPackageUtil.isFqNameInAnyPackage(
                     fqName,
-                    packageNames
+                    packageNames,
                 )
             }
         }
@@ -145,13 +145,15 @@ class CallExpressionsAnalysisExecutor(
      */
     private fun writeFqNames(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
-        project: Project
+        project: Project,
     ) {
         fqNamesByCategory.forEach { (category, fqNames) ->
             fqNames.ifNotEmpty {
-                expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
-                })
+                expressionsDataWriter.writer.println(
+                    joinToString(separator = System.getProperty("line.separator")) {
+                        listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
+                    },
+                )
             }
             logger.info("In the $category category were collected ${fqNames.size} unique full qualified names.")
         }

@@ -10,7 +10,7 @@ object KotlinGradleDependenciesByModulesAnalysisRunner : BaseRunner<IORunnerArgs
     ("kotlin-gradle-dependencies-by-modules-analysis", IORunnerArgsParser) {
     override fun run(args: IORunnerArgs) {
         AnalysisOrchestrator(
-            GradleDependenciesByModulesAnalysisExecutor(args.outputDir)
+            GradleDependenciesByModulesAnalysisExecutor(args.outputDir),
         ).execute(args.inputDir, args.outputDir)
     }
 }

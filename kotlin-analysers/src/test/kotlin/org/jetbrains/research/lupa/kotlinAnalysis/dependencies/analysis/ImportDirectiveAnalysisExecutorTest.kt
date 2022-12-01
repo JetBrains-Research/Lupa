@@ -16,7 +16,7 @@ open class ImportDirectiveAnalysisExecutorTest :
         fun getTestData() = getInAndOutArray(
             ::ImportDirectiveAnalysisExecutorTest,
             inExtension = Extension.EMPTY,
-            outExtension = Extension.TXT
+            outExtension = Extension.TXT,
         )
     }
 

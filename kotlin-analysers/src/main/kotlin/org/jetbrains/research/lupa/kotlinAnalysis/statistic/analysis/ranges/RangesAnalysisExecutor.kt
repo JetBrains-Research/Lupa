@@ -29,7 +29,7 @@ class RangesAnalysisExecutor(
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
     rangesFilename: String = "ranges_data.csv",
-    otherContextFilename: String = "other_context.csv"
+    otherContextFilename: String = "other_context.csv",
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val rangeAndContextPairs = getRangesAndContextPairs()
@@ -60,7 +60,7 @@ class RangesAnalysisExecutor(
 
     private fun saveProjectStats(
         project: Project,
-        elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>
+        elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>,
     ) {
         val rangesAndContextStats = elementToRangeAndContext.values.groupingBy { it }.eachCount()
 
@@ -81,7 +81,7 @@ class RangesAnalysisExecutor(
      */
     private fun saveOtherContextStats(
         elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>,
-        smallContextNParents: Int = 3, contextNParents: Int = 6, nParentsTypes: Int = 10
+        smallContextNParents: Int = 3, contextNParents: Int = 6, nParentsTypes: Int = 10,
     ) {
         val elements = elementToRangeAndContext.filter { it.value.second == ContextType.OTHER }.keys
         elements.forEach { psiElement ->
@@ -98,8 +98,8 @@ class RangesAnalysisExecutor(
                     smallContext,
                     contextText,
                     tenParentsClasses,
-                    usageContextText
-                ).joinToString(separator = ",")
+                    usageContextText,
+                ).joinToString(separator = ","),
             )
         }
     }

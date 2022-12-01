@@ -16,7 +16,7 @@ open class ExtractGradlePropertiesTest :
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::ExtractGradlePropertiesTest,
-            inExtension = Extension.EMPTY, outExtension = Extension.TXT
+            inExtension = Extension.EMPTY, outExtension = Extension.TXT,
         )
     }
 

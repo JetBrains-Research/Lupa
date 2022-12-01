@@ -14,8 +14,10 @@ object KotlinMultipleAnalysisRunner : BaseRunner<IORunnerArgs, IORunnerArgsParse
     override fun run(args: IORunnerArgs) {
         val dbConn = KotlinTeamDatabaseConnection()
         val kotlinExecutorHelper = KotlinTeamExecutorHelper(dbConn)
-        val executors = listOf(GradleDependenciesAnalysisExecutor(args.outputDir),
-            ProjectMetricsAnalysisExecutor(args.outputDir))
+        val executors = listOf(
+            GradleDependenciesAnalysisExecutor(args.outputDir),
+            ProjectMetricsAnalysisExecutor(args.outputDir),
+        )
         MultipleAnalysisOrchestrator(executors, kotlinExecutorHelper).execute(args.inputDir, args.outputDir)
     }
 }

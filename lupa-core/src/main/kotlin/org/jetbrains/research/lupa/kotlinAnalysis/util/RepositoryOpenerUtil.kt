@@ -22,10 +22,10 @@ class RepositoryOpenerUtil {
          */
         fun openReloadKotlinJavaRepositoryOpener(
             repositoryRoot: Path,
-            action: (Project) -> Boolean
+            action: (Project) -> Boolean,
         ): Boolean {
             if (getKotlinJavaRepositoryOpener().openRepository(
-                    repositoryRoot.toFile()
+                    repositoryRoot.toFile(),
                 ) { project ->
                     action(project)
                 }
@@ -43,14 +43,14 @@ class RepositoryOpenerUtil {
          */
         fun standardRepositoryOpener(
             projectPath: Path,
-            action: (Project) -> Boolean
+            action: (Project) -> Boolean,
         ): Boolean {
             var isSuccessful = true
             try {
                 ApplicationManager.getApplication().invokeAndWait {
                     ProjectManagerEx.getInstanceEx().openProject(
                         projectPath,
-                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true),
                     )?.let { project ->
                         try {
                             isSuccessful = action(project)

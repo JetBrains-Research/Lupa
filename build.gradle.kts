@@ -65,7 +65,7 @@ allprojects {
     ktlint {
         enableExperimentalRules.set(true)
         filter {
-            exclude("**/resources/**")
+            exclude("**/resources/**", "**/build.gradle.kts")
         }
     }
 

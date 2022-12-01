@@ -9,14 +9,14 @@ import org.jetbrains.research.pluginUtilities.runners.BaseRunner
 object PythonCallExpressionsAnalysisRunner :
     BaseRunner<IORunnerArgsWithVenv, IORunnerArgsWithVenvParser>(
         "python-call-expressions-analysis",
-        IORunnerArgsWithVenvParser
+        IORunnerArgsWithVenvParser,
     ) {
     override fun run(args: IORunnerArgsWithVenv) {
         AnalysisOrchestrator(
             CallExpressionsAnalysisExecutor(
                 args.outputDir,
-                venv = args.venvDir
-            )
+                venv = args.venvDir,
+            ),
         ).execute(args.inputDir, args.outputDir)
     }
 }

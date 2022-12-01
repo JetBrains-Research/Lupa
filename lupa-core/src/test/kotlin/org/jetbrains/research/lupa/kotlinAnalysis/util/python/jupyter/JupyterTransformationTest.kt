@@ -33,8 +33,11 @@ open class JupyterTransformationTest : ParametrizedBaseTest(getResourcesRootPath
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
-        fun getTestData() = getInAndOutArray(::JupyterTransformationTest,
-            inExtension = Extension.TXT, outExtension = Extension.PY)
+        fun getTestData() = getInAndOutArray(
+            ::JupyterTransformationTest,
+            inExtension = Extension.TXT,
+            outExtension = Extension.PY,
+        )
     }
 
     @Test
@@ -43,7 +46,8 @@ open class JupyterTransformationTest : ParametrizedBaseTest(getResourcesRootPath
         val outPythonScriptString = getOutputScriptString(outFile!!)
         val blankLine = "${System.lineSeparator()}${System.lineSeparator()}"
         Assert.assertEquals(
-            inNotebookAsScriptString.replace("\n\n", System.lineSeparator()),
-            outPythonScriptString.replace("\n\n", System.lineSeparator()))
+            inNotebookAsScriptString.replace(blankLine, System.lineSeparator()),
+            outPythonScriptString.replace(blankLine, System.lineSeparator()),
+        )
     }
 }
