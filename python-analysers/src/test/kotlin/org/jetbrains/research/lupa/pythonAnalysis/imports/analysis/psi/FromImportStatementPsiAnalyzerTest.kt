@@ -16,8 +16,8 @@ import java.io.File
 class FromImportStatementPsiAnalyzerTest : ParametrizedBaseTest(
     getResourcesRootPath(
         ::FromImportStatementPsiAnalyzerTest,
-        resourcesRootName = "fromImportStatementsData"
-    )
+        resourcesRootName = "fromImportStatementsData",
+    ),
 ) {
 
     @JvmField

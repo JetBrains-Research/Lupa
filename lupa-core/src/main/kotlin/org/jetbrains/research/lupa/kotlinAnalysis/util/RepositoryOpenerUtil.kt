@@ -25,7 +25,7 @@ class RepositoryOpenerUtil {
             action: (Project) -> Boolean,
         ): Boolean {
             if (getKotlinJavaRepositoryOpener().openRepository(
-                    repositoryRoot.toFile()
+                    repositoryRoot.toFile(),
                 ) { project ->
                     action(project)
                 }
@@ -50,7 +50,7 @@ class RepositoryOpenerUtil {
                 ApplicationManager.getApplication().invokeAndWait {
                     ProjectManagerEx.getInstanceEx().openProject(
                         projectPath,
-                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true)
+                        OpenProjectTask(isNewProject = true, runConfigurators = true, forceOpenInNewFrame = true),
                     )?.let { project ->
                         try {
                             isSuccessful = action(project)

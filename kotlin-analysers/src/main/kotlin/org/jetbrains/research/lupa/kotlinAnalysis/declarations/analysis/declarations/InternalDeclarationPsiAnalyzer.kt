@@ -12,7 +12,7 @@ data class InternalDeclarationAnalysisResult(
     val isExpect: Boolean,
     val isActual: Boolean,
     val moduleName: String?,
-    val sourceSet: String?,
+    val sourceSet: String?
 )
 
 object InternalDeclarationPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, InternalDeclarationAnalysisResult?> {
@@ -26,7 +26,7 @@ object InternalDeclarationPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, Internal
                 isExpect,
                 isActual,
                 psiElement.module?.name,
-                psiElement.module?.sourceSetName,
+                psiElement.module?.sourceSetName
             )
         }
         return null

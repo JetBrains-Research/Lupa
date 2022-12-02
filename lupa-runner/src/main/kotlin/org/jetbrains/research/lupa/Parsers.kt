@@ -11,7 +11,7 @@ import java.nio.file.Paths
 class IORunnerArgsWithVenv(parser: ArgParser) : IORunnerArgs(parser) {
     val venvDir by parser.storing(
         "--venv",
-        help = "The path to the virtual environment"
+        help = "The path to the virtual environment",
     ) {
         if (this == "") null else Paths.get(this)
     }

@@ -29,7 +29,7 @@ data class BuildGradlePlugin(
     val version: String? = null,
     val applied: Boolean = true,
     val pluginArgs: Set<String> = emptySet(),
-    val allProjects: Boolean = false,
+    val allProjects: Boolean = false
 ) {
     constructor(
         pluginId: String,

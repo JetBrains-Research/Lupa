@@ -32,7 +32,7 @@ class ImportStatementsAnalysisExecutor(
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
         outputDir, filename,
-        header = listOf("project_name", "import").joinToString(separator = ","),
+        header = listOf("project_name", "import").joinToString(separator = ",")
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(dependenciesDataWriter)
@@ -51,7 +51,7 @@ class ImportStatementsAnalysisExecutor(
             fromImportStatements.flatMap {
                 FromImportStatementPsiAnalyzer.analyze(
                     it,
-                    ignoreRelativeImports = true,
+                    ignoreRelativeImports = true
                 )
             }
         )

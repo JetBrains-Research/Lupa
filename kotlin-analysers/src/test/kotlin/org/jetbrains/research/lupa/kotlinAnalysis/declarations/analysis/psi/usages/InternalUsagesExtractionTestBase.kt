@@ -14,7 +14,7 @@ interface InternalUsagesExtractionTestBase {
         outFile: File,
         fixture: CodeInsightTestFixture,
         clazz: Class<out KtElement>,
-        analyze: (KtElement) -> List<InternalUsagesAnalysisResult>?
+        analyze: (KtElement) -> List<InternalUsagesAnalysisResult>?,
     ) {
         val inPsiFile = getPsiFile(inFile, fixture)
         val actualInternalDeclarationResults = inPsiFile.extractElementsOfType(clazz)
@@ -23,8 +23,8 @@ interface InternalUsagesExtractionTestBase {
             .sortedWith(
                 compareBy(
                     InternalUsagesAnalysisResult::declarationFqName,
-                    InternalUsagesAnalysisResult::usageFqName
-                )
+                    InternalUsagesAnalysisResult::usageFqName,
+                ),
             )
         val expectedInternalDeclarationResults = outFile.readLines().sorted()
 

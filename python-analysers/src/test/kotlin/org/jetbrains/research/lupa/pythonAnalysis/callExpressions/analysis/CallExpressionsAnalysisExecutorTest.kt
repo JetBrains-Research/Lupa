@@ -18,8 +18,8 @@ import org.junit.runners.Parameterized
 open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     getResourcesRootPath(
         ::CallExpressionsAnalysisExecutorTest,
-        "callExpressionsAnalysisExecutorData"
-    )
+        "callExpressionsAnalysisExecutorData",
+    ),
 ) {
     private lateinit var sdk: Sdk
 
@@ -30,7 +30,7 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
             ::CallExpressionsAnalysisExecutorTest,
             "callExpressionsAnalysisExecutorData",
             inExtension = Extension.EMPTY,
-            outExtension = Extension.CSV
+            outExtension = Extension.CSV,
         )
     }
 

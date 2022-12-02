@@ -22,7 +22,7 @@ import java.util.*
 /** Extracts elements of given type from files in project. */
 fun <T : PsiElement> Project.extractElementsOfType(
     psiElementClass: Class<T>,
-    filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile,
+    filePredicate: (VirtualFile) -> Boolean = VirtualFile::isKotlinRelatedFile
 ): List<T> {
     return extractPsiFiles(filePredicate)
         .map { it.extractElementsOfType(psiElementClass) }
@@ -37,7 +37,7 @@ fun <T : KtElement> Project.extractKtElementsOfType(psiElementClass: Class<T>): 
 /** Extracts [python elements][PyElement] of given type from python related files in project. */
 fun <T : PyElement> Project.extractPyElementsOfType(
     psiElementClass: Class<T>,
-    ignoreVenvFolder: Boolean = true,
+    ignoreVenvFolder: Boolean = true
 ): List<T> {
     return extractElementsOfType(psiElementClass) { virtualFile -> virtualFile.isPythonRelatedFile(ignoreVenvFolder) }
 }

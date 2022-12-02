@@ -21,7 +21,7 @@ object InternalUsagesPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, List<Internal
                         declarationFqName,
                         it.toString(),
                         parent.module?.name,
-                        parent.module?.sourceSetName,
+                        parent.module?.sourceSetName
                     )
                 }
             }

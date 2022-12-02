@@ -133,7 +133,7 @@ class CallExpressionsAnalysisExecutor(
             fqNames.removeAll { fqName ->
                 PyPackageUtil.isFqNameInAnyPackage(
                     fqName,
-                    packageNames
+                    packageNames,
                 )
             }
         }
@@ -149,9 +149,11 @@ class CallExpressionsAnalysisExecutor(
     ) {
         fqNamesByCategory.forEach { (category, fqNames) ->
             fqNames.ifNotEmpty {
-                expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
-                })
+                expressionsDataWriter.writer.println(
+                    joinToString(separator = System.getProperty("line.separator")) {
+                        listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
+                    },
+                )
             }
             logger.info("In the $category category were collected ${fqNames.size} unique full qualified names.")
         }
