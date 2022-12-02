@@ -27,6 +27,7 @@
         <appStarter implementation="org.jetbrains.research.lupa.pythonAnalysis.PythonCallExpressionsAnalysisRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.util.python.jupyter.JupyterDatasetTransformationRunner"/>
         <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.KotlinInternalDeclarationPsiAnalysisRunner"/>
+        <appStarter implementation="org.jetbrains.research.lupa.kotlinAnalysis.StdlibInterfacesAnalysisRunner"/>
     </extensions>
 
 </idea-plugin>
