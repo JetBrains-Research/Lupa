@@ -1,7 +1,7 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.declarations
 
-import org.jetbrains.kotlin.idea.configuration.sourceSetName
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.base.util.module
+import org.jetbrains.kotlin.idea.gradleJava.configuration.sourceSetName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer

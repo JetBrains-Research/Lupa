@@ -14,7 +14,7 @@ open class CallExpressionAnalyzer<P : PyCallExpression>(pClass: Class<P>) :
     PsiAnalyzerWithContextImpl<P, CallExpressionAnalyzerContext, String>(pClass) {
     override fun analyzeWithContext(psiElement: P, context: CallExpressionAnalyzerContext?): String? {
         return context?.run {
-            fqNamesProvider.getQualifiedName(psiElement.multiResolveCalleeFunction(resolveContext).firstOrNull())
+            fqNamesProvider.getQualifiedName(psiElement.multiResolveCalleeFunction(resolveContext).firstOrNull()!!)
         }
     }
 }

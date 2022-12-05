@@ -1,15 +1,13 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.stdlib.analysis
 
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractElementsOfType
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import org.jetbrains.research.pluginUtilities.util.Extension
 import org.jetbrains.research.pluginUtilities.util.ParametrizedBaseTest
 import org.jetbrains.research.pluginUtilities.util.getPsiFile
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 import java.io.File
 
 @RunWith(Parameterized::class)

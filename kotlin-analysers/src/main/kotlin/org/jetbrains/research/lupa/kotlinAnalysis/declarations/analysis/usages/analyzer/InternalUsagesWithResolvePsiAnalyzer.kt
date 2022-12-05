@@ -1,8 +1,8 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.usages.analyzer
 
-import org.jetbrains.kotlin.idea.configuration.sourceSetName
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
+import org.jetbrains.kotlin.idea.base.util.module
+import org.jetbrains.kotlin.idea.gradleJava.configuration.sourceSetName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -17,7 +17,7 @@ object InternalUsagesWithResolvePsiAnalyzer :
     PsiAnalyzer<KtNameReferenceExpression, List<InternalUsagesAnalysisResult>?> {
 
     private fun KtNameReferenceExpression.fqName(): FqName? =
-        this.parents.find { it.getKotlinFqName() != null }?.getKotlinFqName()
+        this.parents.find { it.kotlinFqName != null }?.kotlinFqName
 
     private fun KtNamedDeclaration.isInternalDeclaration(): Boolean =
         this.isInternal() || this.hasInternalParent()
@@ -53,7 +53,7 @@ object InternalUsagesWithResolvePsiAnalyzer :
                     it.toString(),
                     fqName.toString(),
                     psiElement.module?.name,
-                    psiElement.module?.sourceSetName
+                    psiElement.module?.sourceSetName,
                 )
             }
         }

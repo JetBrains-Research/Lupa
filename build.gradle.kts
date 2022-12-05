@@ -27,7 +27,7 @@ allprojects {
     }
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
-    val utilitiesProjectBranch = "main"
+    val utilitiesProjectBranch = "try-open-projects"
     dependencies {
         val log4jVersion = "2.19.0"
         // Logging
@@ -70,11 +70,11 @@ allprojects {
 
     tasks {
         withType<JavaCompile> {
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
+            sourceCompatibility = "17"
+            targetCompatibility = "17"
         }
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "17"
         }
         withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
             .forEach { it.enabled = false }
