@@ -27,7 +27,7 @@ allprojects {
     }
 
     val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
-    val utilitiesProjectBranch = "try-open-projects"
+    val utilitiesProjectBranch = "main"
     dependencies {
         val log4jVersion = "2.19.0"
         // Logging
