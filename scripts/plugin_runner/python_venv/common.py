@@ -131,7 +131,13 @@ def create_venv(venv_path: Path) -> None:
     )
 
 
-def install_requirements(venv_path: Path, requirements_path: Path, no_package_dependencies: bool, for_each: bool):
+def install_requirements(
+    venv_path: Path,
+    requirements_path: Path,
+    no_package_dependencies: bool,
+    for_each: bool,
+    no_cache: bool,
+):
     """
     Install all requirements from the requirements file in the virtual environment.
 
@@ -139,6 +145,7 @@ def install_requirements(venv_path: Path, requirements_path: Path, no_package_de
     :param requirements_path: The path to the requirements file.
     :param no_package_dependencies: Whether it is necessary to not install dependencies for each package.
     :param for_each: Is it necessary to call `pip install` for each requirement individually or for the whole file.
+    :param no_cache: Whether it is necessary to not cache packages.
     :return: Pip return code or number of pip errors if for_each flag is specified.
     """
     logger.info(f'Installing requirements from {requirements_path}.')
@@ -151,6 +158,9 @@ def install_requirements(venv_path: Path, requirements_path: Path, no_package_de
 
     if no_package_dependencies:
         pip_command.append('--no-deps')
+
+    if no_cache:
+        pip_command.append('--no-cache-dir')
 
     if for_each:
         errors = 0

@@ -7,6 +7,7 @@ It accepts
     * flag that allows you not to do version validation using PyPI.
     * flag that allows you not to do package name validation using PyPI.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
+    * flag that allows you not to cache packages (--no-cache-dir flag for pip).
     * flag that allows you to install requirements individually.
 
 In the current version of the script, if we find different versions of the same library
@@ -67,6 +68,14 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
     parser.add_argument(
+        '--no-cache',
+        help=(
+            'If specified, the downloaded packages will not be cached. (the --no-cache-dir flag will be passed to pip).'
+        ),
+        action='store_true',
+    )
+
+    parser.add_argument(
         '--pip-for-each',
         help=(
             'Call `pip install` for each requirement individually. '
@@ -93,9 +102,15 @@ def main() -> int:
         requirements = filter_unavailable_versions(requirements)
 
     version_by_package_name = merge_requirements(requirements)
-    requirements_path = create_requirements_file(version_by_package_name, args.venv_path)
+    requirements_path = create_requirements_file(version_by_package_name, args.venv_path.parent)
     create_venv(args.venv_path)
-    return install_requirements(args.venv_path, requirements_path, args.no_package_dependencies, args.pip_for_each)
+    return install_requirements(
+        args.venv_path,
+        requirements_path,
+        args.no_package_dependencies,
+        args.pip_for_each,
+        args.no_cache,
+    )
 
 
 if __name__ == '__main__':
