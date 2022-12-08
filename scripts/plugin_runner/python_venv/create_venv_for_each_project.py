@@ -42,7 +42,7 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         '--no-cache',
         help=(
-            'If specified, the downloaded packages will not be cached. (the --no-cache-dir flag will be passed to pip)'
+            'If specified, the downloaded packages will not be cached (the --no-cache-dir flag will be passed to pip).'
         ),
         action='store_true',
     )
