@@ -8,11 +8,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
           
       # Cache Gradle dependencies
       - name: Setup Gradle Dependencies Cache
@@ -33,11 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
     
       - uses: actions/checkout@v2
       - run: ./gradlew build
@@ -53,11 +53,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
       - uses: actions/checkout@v2
       - name: Run tests
         run: ./gradlew test
@@ -66,10 +66,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
       - uses: actions/checkout@v2
       - run: ./gradlew ktlintCheck
