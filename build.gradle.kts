@@ -7,9 +7,9 @@ fun properties(key: String) = project.findProperty(key).toString()
 
 plugins {
     java
-    kotlin("jvm") version "1.5.21" apply true
-    id("org.jetbrains.intellij") version "1.1.3" apply true
-    id("org.jetbrains.dokka") version "1.4.30" apply true
+    kotlin("jvm") version "1.7.21" apply true
+    id("org.jetbrains.intellij") version "1.10.0" apply true
+    id("org.jetbrains.dokka") version "1.7.20" apply true
     id("org.jlleitschuh.gradle.ktlint") version "10.0.0" apply true
 }
 
@@ -33,9 +33,9 @@ allprojects {
         implementation(platform("org.jetbrains.kotlin:kotlin-reflect:1.5.10"))
 
         // Logging
-        implementation("org.apache.logging.log4j:log4j-api:2.17.0")
-        implementation("org.apache.logging.log4j:log4j-core:2.17.0")
-        implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.0")
+        implementation("org.apache.logging.log4j:log4j-api:2.19.0")
+        implementation("org.apache.logging.log4j:log4j-core:2.19.0")
+        implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
 
         // Plugin utilities modules
         implementation("$utilitiesProjectName:plugin-utilities-core") {
@@ -72,11 +72,11 @@ allprojects {
 
     tasks {
         withType<JavaCompile> {
-            sourceCompatibility = "11"
-            targetCompatibility = "11"
+            sourceCompatibility = "17"
+            targetCompatibility = "17"
         }
         withType<KotlinCompile> {
-            kotlinOptions.jvmTarget = "11"
+            kotlinOptions.jvmTarget = "17"
         }
         withType<org.jetbrains.intellij.tasks.BuildSearchableOptionsTask>()
             .forEach { it.enabled = false }
