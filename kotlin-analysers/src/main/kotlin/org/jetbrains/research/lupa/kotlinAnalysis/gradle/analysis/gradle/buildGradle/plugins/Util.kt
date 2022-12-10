@@ -33,7 +33,7 @@ internal inline fun <reified T : PsiElement> PsiElement.findFirstChild(
 internal fun PsiElement.pluginVersion(childrenCount: Int): String? {
     return if (GradleConstants.VERSION.key in this.text) {
         require(this.children.size == childrenCount) { "Incorrect PSI for ${this.text} with specified version" }
-        this.children.last()?.text?.trim('\'')?.trim('"')
+        this.children.lastOrNull()?.text?.trim('\'')?.trim('"')
     } else null
 }
 
