@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.groovy.lang.psi.impl.GroovyFileImpl
@@ -40,7 +41,9 @@ sealed class BuildGradlePsiFile(psiFile: PsiFile) : PsiFile by psiFile {
 class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
 
     override fun extractBuildGradleDependencies(): Set<BuildGradleDependency> {
-        return KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
+        return ApplicationManager.getApplication().runReadAction<Set<BuildGradleDependency>> {
+            KtsBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
+        }
     }
 
     override fun extractBuildGradlePlugins() = KtsBuildGradlePluginsAnalyzer.analyze(this).toSet()
@@ -53,7 +56,9 @@ class BuildGradleKtsPsiFile(psiFile: KtFile) : BuildGradlePsiFile(psiFile) {
 class BuildGradleGroovyPsiFile(psiFile: GroovyFileImpl) : BuildGradlePsiFile(psiFile) {
 
     override fun extractBuildGradleDependencies(): Set<BuildGradleDependency> {
-        return GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
+        return ApplicationManager.getApplication().runReadAction<Set<BuildGradleDependency>> {
+            GroovyBuildGradleDependenciesAnalyzer.analyze(this, GradleBlockContext())
+        }
     }
 
     override fun extractBuildGradlePlugins() = GroovyBuildGradlePluginsAnalyzer.analyze(this).toSet()

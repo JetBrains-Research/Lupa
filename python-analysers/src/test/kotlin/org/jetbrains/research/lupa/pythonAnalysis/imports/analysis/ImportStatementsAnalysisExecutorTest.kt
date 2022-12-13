@@ -13,6 +13,7 @@ open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
         "importStatementsAnalysisExecutorData",
     ),
 ) {
+    override fun runInDispatchThread() = false
 
     companion object {
         @JvmStatic

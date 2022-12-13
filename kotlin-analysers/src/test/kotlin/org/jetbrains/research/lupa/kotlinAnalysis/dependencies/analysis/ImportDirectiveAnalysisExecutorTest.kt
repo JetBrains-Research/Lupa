@@ -10,6 +10,8 @@ import org.junit.runners.Parameterized
 open class ImportDirectiveAnalysisExecutorTest :
     ParametrizedGoldenFileTest(getResourcesRootPath(::ImportDirectiveAnalysisExecutorTest)) {
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")

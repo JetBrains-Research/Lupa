@@ -11,6 +11,8 @@ import org.junit.runners.Parameterized
 open class ExtractGradlePropertiesTest :
     ParametrizedGoldenFileTest(getResourcesRootPath(::ExtractGradlePropertiesTest)) {
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")

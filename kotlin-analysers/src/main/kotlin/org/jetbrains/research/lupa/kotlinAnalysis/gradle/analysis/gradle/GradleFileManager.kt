@@ -1,6 +1,7 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle
 
 import com.intellij.lang.properties.psi.impl.PropertiesFileImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
@@ -108,8 +109,10 @@ class GradleFileManager {
 
         /** Extracts root Gradle build file from given [project]. */
         fun extractRootBuildGradleFileFromProject(project: Project): BuildGradlePsiFile? {
-            return project.findPsiFile { file -> file.name in BUILD_GRADLE_SCRIPT_NAMES }
-                ?.run(Companion::toBuildGradlePsiFile)
+            return ApplicationManager.getApplication().runReadAction<BuildGradlePsiFile?> {
+                project.findPsiFile { file -> file.name in BUILD_GRADLE_SCRIPT_NAMES }
+                    ?.run(Companion::toBuildGradlePsiFile)
+            }
         }
 
         /** Extracts all Gradle settings files from given [module]. */
@@ -132,11 +135,13 @@ class GradleFileManager {
 
         /** Extracts all gradle.properties files from given [project]. */
         fun extractGradlePropertiesFilesFromProject(project: Project): List<GradlePropertiesPsiFile> {
-            return extractGradleFilesFromProject(
-                project,
-                GRADLE_PROPERTIES_SCRIPT_NAMES,
-                Companion::toGradlePropertiesPsiFile
-            )
+            return ApplicationManager.getApplication().runReadAction<List<GradlePropertiesPsiFile>> {
+                extractGradleFilesFromProject(
+                    project,
+                    GRADLE_PROPERTIES_SCRIPT_NAMES,
+                    Companion::toGradlePropertiesPsiFile
+                )
+            }
         }
     }
 }
