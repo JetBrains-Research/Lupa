@@ -4,5 +4,5 @@ data class InternalUsagesAnalysisResult(
     val declarationFqName: String,
     val usageFqName: String,
     val moduleName: String?,
-    val sourceSet: String?
+    val sourceSet: String?,
 )

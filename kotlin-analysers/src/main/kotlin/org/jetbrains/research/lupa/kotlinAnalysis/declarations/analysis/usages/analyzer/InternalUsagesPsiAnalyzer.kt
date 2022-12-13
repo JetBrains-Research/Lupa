@@ -2,9 +2,9 @@ package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.usages.
 
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.configuration.sourceSetName
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.base.psi.kotlinFqName
+import org.jetbrains.kotlin.idea.base.util.module
+import org.jetbrains.kotlin.idea.gradleJava.configuration.sourceSetName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
@@ -16,12 +16,12 @@ object InternalUsagesPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, List<Internal
     private fun UsageInfo.getFqName(declarationFqName: String): InternalUsagesAnalysisResult? {
         this.element?.let { psi ->
             for (parent in psi.parents) {
-                parent.getKotlinFqName()?.let {
+                parent.kotlinFqName?.let {
                     return InternalUsagesAnalysisResult(
                         declarationFqName,
                         it.toString(),
                         parent.module?.name,
-                        parent.module?.sourceSetName
+                        parent.module?.sourceSetName,
                     )
                 }
             }

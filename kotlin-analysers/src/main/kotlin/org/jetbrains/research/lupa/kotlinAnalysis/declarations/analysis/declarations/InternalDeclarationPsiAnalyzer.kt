@@ -1,7 +1,7 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.declarations.analysis.declarations
 
-import org.jetbrains.kotlin.idea.configuration.sourceSetName
-import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.idea.base.util.module
+import org.jetbrains.kotlin.idea.gradleJava.configuration.sourceSetName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
@@ -12,7 +12,7 @@ data class InternalDeclarationAnalysisResult(
     val isExpect: Boolean,
     val isActual: Boolean,
     val moduleName: String?,
-    val sourceSet: String?
+    val sourceSet: String?,
 )
 
 object InternalDeclarationPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, InternalDeclarationAnalysisResult?> {
@@ -26,7 +26,7 @@ object InternalDeclarationPsiAnalyzer : PsiAnalyzer<KtNamedDeclaration, Internal
                 isExpect,
                 isActual,
                 psiElement.module?.name,
-                psiElement.module?.sourceSetName
+                psiElement.module?.sourceSetName,
             )
         }
         return null

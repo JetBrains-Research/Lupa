@@ -44,5 +44,5 @@ data class BuildGradleDependency(
     val artifactId: String,
     val configuration: BuildGradleDependencyConfiguration?,
     val version: String?,
-    var allProjects: Boolean = false
+    var allProjects: Boolean = false,
 )
