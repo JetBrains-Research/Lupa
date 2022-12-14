@@ -81,7 +81,9 @@ class RangesAnalysisExecutor(
      */
     private fun saveOtherContextStats(
         elementToRangeAndContext: Map<KtExpressionImpl, Pair<RangeType, ContextType>>,
-        smallContextNParents: Int = 3, contextNParents: Int = 6, nParentsTypes: Int = 10,
+        smallContextNParents: Int = 3,
+        contextNParents: Int = 6,
+        nParentsTypes: Int = 10,
     ) {
         val elements = elementToRangeAndContext.filter { it.value.second == ContextType.OTHER }.keys
         elements.forEach { psiElement ->

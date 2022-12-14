@@ -23,6 +23,8 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
 ) {
     private lateinit var sdk: Sdk
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
@@ -35,15 +37,19 @@ open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     }
 
     private fun setupSdk(project: Project) {
-        val projectManager = ProjectRootManager.getInstance(project)
-        sdk = PythonMockSdk(testDataPath).create("3.8")
-        val sdkConfigurer = SdkConfigurer(project, projectManager)
-        sdkConfigurer.setProjectSdk(sdk)
+        ApplicationManager.getApplication().invokeAndWait {
+            val projectManager = ProjectRootManager.getInstance(project)
+            sdk = PythonMockSdk(testDataPath).create("3.8")
+            val sdkConfigurer = SdkConfigurer(project, projectManager)
+            sdkConfigurer.setProjectSdk(sdk)
+        }
     }
 
     override fun tearDown() {
-        ApplicationManager.getApplication().runWriteAction {
-            ProjectJdkTable.getInstance().removeJdk(sdk)
+        ApplicationManager.getApplication().invokeAndWait {
+            ApplicationManager.getApplication().runWriteAction {
+                ProjectJdkTable.getInstance().removeJdk(sdk)
+            }
         }
         super.tearDown()
     }

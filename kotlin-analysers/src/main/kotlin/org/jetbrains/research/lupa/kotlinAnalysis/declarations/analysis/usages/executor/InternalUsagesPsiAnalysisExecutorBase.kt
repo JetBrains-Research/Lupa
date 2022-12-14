@@ -21,7 +21,7 @@ abstract class InternalUsagesPsiAnalysisExecutorBase(
     outputDir: Path,
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
-        RepositoryOpenerUtil.Companion::openReloadKotlinJavaRepositoryOpener
+        RepositoryOpenerUtil.Companion::openReloadKotlinJavaRepositoryOpener,
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val internalUsagesDataWriter = PrintWriterResourceManager(
@@ -32,7 +32,7 @@ abstract class InternalUsagesPsiAnalysisExecutorBase(
             "declaration",
             "usage",
             "source_set",
-            "file_path"
+            "file_path",
         )
             .joinToString(separator = ",")
     )
@@ -59,7 +59,7 @@ abstract class InternalUsagesPsiAnalysisExecutorBase(
                                     r.declarationFqName,
                                     r.usageFqName,
                                     r.sourceSet,
-                                    relativePath
+                                    relativePath,
                                 ).joinToString(separator = ",")
                             )
                         }

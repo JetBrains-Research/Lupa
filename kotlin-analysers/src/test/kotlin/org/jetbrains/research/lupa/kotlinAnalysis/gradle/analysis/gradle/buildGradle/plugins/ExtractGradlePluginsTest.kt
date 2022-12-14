@@ -11,12 +11,15 @@ import org.junit.runners.Parameterized
 open class ExtractGradlePluginsTest :
     ParametrizedGoldenFileTest(getResourcesRootPath(::ExtractGradlePluginsTest)) {
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::ExtractGradlePluginsTest,
-            inExtension = Extension.EMPTY, outExtension = Extension.TXT,
+            inExtension = Extension.EMPTY,
+            outExtension = Extension.TXT,
         )
     }
 

@@ -54,7 +54,7 @@ class AnalysisOrchestrator(
         symbolicCopyOnlyRequiredExtensions(
             fromDirectory = projectPath.toRealPath(),
             toDirectory = projectTmpFolderPath,
-            analysisExecutor.requiredFileExtensions
+            analysisExecutor.requiredFileExtensions,
         )
         println("Start executing...")
         val isSuccessful = analysisExecutor.execute(projectTmpFolderPath)
