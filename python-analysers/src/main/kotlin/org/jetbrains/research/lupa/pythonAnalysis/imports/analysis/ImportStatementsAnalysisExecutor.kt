@@ -41,7 +41,7 @@ class ImportStatementsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
-        val importStatements = ApplicationManager.getApplication().runReadAction<List<PyImportStatement>>{
+        val importStatements = ApplicationManager.getApplication().runReadAction<List<PyImportStatement>> {
             project.extractPyElementsOfType(PyImportStatement::class.java)
         }
         logger.info("${importStatements.size} import statements were extracted.")

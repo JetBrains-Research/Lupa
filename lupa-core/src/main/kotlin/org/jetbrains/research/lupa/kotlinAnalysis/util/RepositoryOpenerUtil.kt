@@ -21,13 +21,8 @@ class RepositoryOpenerUtil {
             repositoryRoot: Path,
             action: (Project) -> Boolean,
         ): Boolean {
-            if (getKotlinJavaRepositoryOpener().openRepository(
-                    repositoryRoot.toFile(),
-                ) { project ->
-                    action(project)
-                }
-            ) {
-                println("All projects from $repositoryRoot were opened successfully")
+            if (getKotlinJavaRepositoryOpener().openRepository(repositoryRoot.toFile(), action)) {
+                logger.info("All projects from $repositoryRoot were opened successfully")
                 return true
             }
             return false
@@ -42,13 +37,8 @@ class RepositoryOpenerUtil {
             projectPath: Path,
             action: (Project) -> Boolean,
         ): Boolean {
-            if (getKotlinJavaRepositoryOpener().openSingleProject(
-                    projectPath,
-                ) { project ->
-                    action(project)
-                }
-            ) {
-                println("All projects from $projectPath were opened successfully")
+            if (getKotlinJavaRepositoryOpener().openSingleProject(projectPath, action)) {
+                logger.info("All projects from $projectPath were opened successfully")
                 return true
             }
             return false
