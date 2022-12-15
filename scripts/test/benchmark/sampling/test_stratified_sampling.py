@@ -14,8 +14,8 @@ def _assert_df_equals(actual: Optional[pd.DataFrame], expected: Optional[pd.Data
         assert expected is None
     else:
         pd.testing.assert_frame_equal(
-            actual.reindex(sorted(actual.columns), axis=1),
-            expected.reindex(sorted(expected.columns), axis=1),
+            actual.reindex(sorted(actual.columns), axis=1).sort_index(),
+            expected.reindex(sorted(expected.columns), axis=1).sort_index(),
         )
 
 
