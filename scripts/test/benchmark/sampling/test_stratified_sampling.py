@@ -13,7 +13,10 @@ def _assert_df_equals(actual: Optional[pd.DataFrame], expected: Optional[pd.Data
         # assert_frame_equal(None, None) will raise an error, but None equals None
         assert expected is None
     else:
-        pd.testing.assert_frame_equal(actual.sort_index(), expected.sort_index())
+        pd.testing.assert_frame_equal(
+            actual.reindex(sorted(actual.columns), axis=1),
+            expected.reindex(sorted(expected.columns), axis=1),
+        )
 
 
 READ_METRICS_TEST_DATA = [
