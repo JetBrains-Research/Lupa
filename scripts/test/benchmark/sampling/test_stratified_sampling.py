@@ -8,15 +8,23 @@ from test.benchmark.sampling import STRATIFIED_SAMPLING_TEST_DATA_FOLDER
 from utils.language import Language
 
 
-def _assert_df_equals(actual: Optional[pd.DataFrame], expected: Optional[pd.DataFrame]) -> None:
+def _assert_df_equals(
+    actual: Optional[pd.DataFrame],
+    expected: Optional[pd.DataFrame],
+    sort_by_column: Optional[str] = None,
+) -> None:
     if actual is None:
         # assert_frame_equal(None, None) will raise an error, but None equals None
         assert expected is None
     else:
-        pd.testing.assert_frame_equal(
-            actual.reindex(sorted(actual.columns), axis=1).sort_index(),
-            expected.reindex(sorted(expected.columns), axis=1).sort_index(),
-        )
+        if sort_by_column is not None:
+            actual = actual.sort_values(by=[sort_by_column]).reset_index(drop=True)
+            expected = expected.sort_values(by=[sort_by_column]).reset_index(drop=True)
+
+        actual = actual.reindex(sorted(actual.columns), axis=1)
+        expected = expected.reindex(sorted(expected.columns), axis=1)
+
+        pd.testing.assert_frame_equal(actual, expected)
 
 
 READ_METRICS_TEST_DATA = [
@@ -71,7 +79,7 @@ READ_METRICS_TEST_DATA = [
 @pytest.mark.parametrize(('dataset_name', 'language', 'expected_metrics'), READ_METRICS_TEST_DATA)
 def test_read_metrics(dataset_name: str, language: Language, expected_metrics: Optional[pd.DataFrame]) -> None:
     dataset_path = STRATIFIED_SAMPLING_TEST_DATA_FOLDER / dataset_name
-    _assert_df_equals(read_metrics(dataset_path, language), expected_metrics)
+    _assert_df_equals(read_metrics(dataset_path, language), expected_metrics, 'project')
 
 
 DATAFRAME_CONTENT = {
