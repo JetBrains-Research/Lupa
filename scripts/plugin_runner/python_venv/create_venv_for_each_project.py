@@ -4,6 +4,7 @@ This script creates a virtual environment for each project from the dataset.
 It accepts
     * path to the folder with python projects.
     * flag that allows you not to install dependencies for each package (--no-deps flag for pip).
+    * flag that allows you not to cache packages (--no-cache-dir flag for pip).
     * flag that allows you to install requirements individually.
 
 The virtual environment is created in the root of the project in the folder named ".venv".
@@ -34,6 +35,14 @@ def configure_arguments(parser: argparse.ArgumentParser) -> None:
         help=(
             'If specified, no dependencies will be installed for each package '
             '(the --no-deps flag will be passed to pip).'
+        ),
+        action='store_true',
+    )
+
+    parser.add_argument(
+        '--no-cache',
+        help=(
+            'If specified, the downloaded packages will not be cached (the --no-cache-dir flag will be passed to pip).'
         ),
         action='store_true',
     )
@@ -73,6 +82,7 @@ def main() -> bool:
                 requirements_file,
                 args.no_package_dependencies,
                 args.pip_for_each,
+                args.no_cache,
             )
 
             # If we have an error when installing requirements from some file,
