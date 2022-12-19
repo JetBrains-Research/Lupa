@@ -114,7 +114,9 @@ class CallExpressionsAnalysisExecutor(
      */
     private fun tryToSetupVenv(project: Project, venvPath: Path?): Boolean {
         if (venvPath != null && venvPath.exists()) {
-            setSdkToProject(project, venvPath.toString())
+            ApplicationManager.getApplication().invokeAndWait {
+                setSdkToProject(project, venvPath.toString())
+            }
             return true
         }
 
