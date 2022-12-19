@@ -73,9 +73,7 @@ abstract class AnalysisExecutor(
         val isSuccessful: Boolean
         init(relativePathBuilder(projectPath))
         try {
-            println("Start open the project")
             isSuccessful = repositoryOpener(projectPath, ::analyseWithResult)
-            println("The project was opened successfully")
             if (isSuccessful) {
                 executorHelper?.postExecuteAction(GitRepository(projectPath))
             }

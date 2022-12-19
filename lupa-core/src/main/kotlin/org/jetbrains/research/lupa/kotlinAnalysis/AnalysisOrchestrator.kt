@@ -56,9 +56,7 @@ class AnalysisOrchestrator(
             toDirectory = projectTmpFolderPath,
             analysisExecutor.requiredFileExtensions,
         )
-        println("Start executing...")
         val isSuccessful = analysisExecutor.execute(projectTmpFolderPath)
-        println("End executing...")
         projectTmpFolderPath.delete(true)
         return isSuccessful
     }
