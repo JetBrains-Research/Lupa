@@ -2,10 +2,12 @@ package org.jetbrains.research.lupa.pythonAnalysis.imports.analysis
 
 import org.jetbrains.research.lupa.kotlinAnalysis.util.ParametrizedGoldenFileTest
 import org.jetbrains.research.pluginUtilities.util.Extension
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Ignore
 @RunWith(Parameterized::class)
 open class ImportStatementsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     getResourcesRootPath(

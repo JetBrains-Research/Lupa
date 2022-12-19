@@ -10,10 +10,12 @@ import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.pluginUtilities.sdk.PythonMockSdk
 import org.jetbrains.research.pluginUtilities.sdk.SdkConfigurer
 import org.jetbrains.research.pluginUtilities.util.Extension
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@Ignore
 @RunWith(Parameterized::class)
 open class CallExpressionsAnalysisExecutorTest : ParametrizedGoldenFileTest(
     getResourcesRootPath(
