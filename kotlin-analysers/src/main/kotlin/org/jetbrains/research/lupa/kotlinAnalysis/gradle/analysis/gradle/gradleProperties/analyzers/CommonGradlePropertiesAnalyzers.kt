@@ -25,5 +25,5 @@ object GradlePropertiesAggregator : AnalyzersAggregatorIgnoreContext<GradlePrope
 /** [PsiMainAnalyzer] implementation which run properties in gradle.properties file analysis. */
 object GradlePropertiesAnalyzer : PsiMainAnalyzer<GradleProperty, List<GradleProperty>>(
     listOf(GradlePropertyAnalyzer),
-    GradlePropertiesAggregator
+    GradlePropertiesAggregator,
 )

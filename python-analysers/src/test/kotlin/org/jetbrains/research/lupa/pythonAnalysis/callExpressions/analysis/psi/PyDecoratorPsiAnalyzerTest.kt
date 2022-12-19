@@ -13,8 +13,8 @@ import java.io.File
 class PyDecoratorPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
     getResourcesRootPath(
         ::PyDecoratorPsiAnalyzerTest,
-        resourcesRootName = "decoratorPsiAnalyzerTestData"
-    )
+        resourcesRootName = "decoratorPsiAnalyzerTestData",
+    ),
 ) {
     @JvmField
     @Parameterized.Parameter(0)

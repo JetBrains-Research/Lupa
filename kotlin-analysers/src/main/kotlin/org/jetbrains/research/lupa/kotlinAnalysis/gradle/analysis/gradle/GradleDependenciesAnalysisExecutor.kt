@@ -1,10 +1,12 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
 import org.jetbrains.research.lupa.kotlinAnalysis.PrintWriterResourceManager
 import org.jetbrains.research.lupa.kotlinAnalysis.ResourceManager
+import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.buildGradle.BuildGradlePsiFile
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.settingsGradle.modules.GradleDependenciesCollector
 import org.jetbrains.research.lupa.kotlinAnalysis.gradle.analysis.gradle.settingsGradle.modules.ModulesGraph
 import org.jetbrains.research.lupa.kotlinAnalysis.psi.extentions.extractModules
@@ -82,7 +84,9 @@ class GradleDependenciesAnalysisExecutor(
     override val controlledResourceManagers: Set<ResourceManager> = setOf(gradleDependenciesDataWriter)
 
     override fun analyse(project: Project) {
-        val gradleFiles = GradleFileManager.extractBuildGradleFilesFromProject(project)
+        val gradleFiles = ApplicationManager.getApplication().runReadAction<List<BuildGradlePsiFile>> {
+            GradleFileManager.extractBuildGradleFilesFromProject(project)
+        }
         gradleFiles.forEach { gradleFile ->
             val gradleDependencies = gradleFile.extractBuildGradleDependencies()
             gradleDependencies.forEach {
@@ -92,7 +96,7 @@ class GradleDependenciesAnalysisExecutor(
                         it.groupId,
                         it.artifactId,
                         it.configuration?.key ?: "-",
-                        it.version ?: "-"
+                        it.version ?: "-",
                     ).joinToString(separator = ",")
                 )
             }

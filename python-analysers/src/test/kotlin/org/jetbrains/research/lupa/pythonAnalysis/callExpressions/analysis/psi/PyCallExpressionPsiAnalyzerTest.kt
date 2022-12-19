@@ -13,8 +13,8 @@ import java.io.File
 class PyCallExpressionPsiAnalyzerTest : ParametrizedBaseWithPythonSdkTest(
     getResourcesRootPath(
         ::PyCallExpressionPsiAnalyzerTest,
-        resourcesRootName = "callExpressionPsiAnalyzerTestData"
-    )
+        resourcesRootName = "callExpressionPsiAnalyzerTestData",
+    ),
 ) {
     @JvmField
     @Parameterized.Parameter(0)

@@ -28,7 +28,7 @@ class ReflectionAnalysisExecutorTest :
         fun getTestData() = getInAndOutArray(
             ::ReflectionAnalysisExecutorTest,
             inExtension = Extension.KT,
-            outExtension = Extension.CSV
+            outExtension = Extension.CSV,
         )
     }
 

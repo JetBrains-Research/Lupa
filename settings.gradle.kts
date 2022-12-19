@@ -1,3 +1,5 @@
+@file:Suppress("trailing-comma-on-call-site", "trailing-comma-on-declaration-site")
+
 import java.net.URI
 
 rootProject.name = "lupa"

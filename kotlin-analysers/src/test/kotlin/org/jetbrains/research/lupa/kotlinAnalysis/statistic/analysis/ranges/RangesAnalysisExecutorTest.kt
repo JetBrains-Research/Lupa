@@ -28,7 +28,7 @@ open class RangesAnalysisExecutorTest :
         fun getTestData() = getInAndOutArray(
             ::RangesAnalysisExecutorTest,
             inExtension = Extension.KT,
-            outExtension = Extension.CSV
+            outExtension = Extension.CSV,
         )
     }
 
