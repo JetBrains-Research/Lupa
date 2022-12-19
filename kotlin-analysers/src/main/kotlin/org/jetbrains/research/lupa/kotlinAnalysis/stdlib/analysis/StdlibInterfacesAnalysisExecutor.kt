@@ -27,6 +27,10 @@ class StdlibInterfacesAnalysisExecutor(
         outputDir, filename,
         listOf(
             "project_name",
+            "interface_path",
+            "interface_name",
+            "function_name",
+            "base_interfaces",
         )
             .joinToString(separator = ","),
     )
@@ -47,6 +51,10 @@ class StdlibInterfacesAnalysisExecutor(
                                 stdlibInterfacesDataWriter.writer.println(
                                     listOf(
                                         project.name,
+                                        relativePath,
+                                        r.interfaceName,
+                                        r.functionName,
+                                        r.baseInterfaces.joinToString(";")
                                     ).joinToString(separator = ","),
                                 )
                             }
