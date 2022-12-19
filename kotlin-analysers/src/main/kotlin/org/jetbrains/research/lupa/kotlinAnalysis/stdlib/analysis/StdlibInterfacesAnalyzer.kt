@@ -30,10 +30,10 @@ object StdlibInterfacesAnalyzer : PsiAnalyzer<KtClass, List<StdlibInterfacesAnal
         "kotlin.time.ComparableTimeMark",
     )
 
-    private fun KtClass.getSuperTypes(): List<ClassDescriptor> =
+    private fun KtClass.hasSuperTypes(): Boolean =
         this.resolveToDescriptorIfAny()?.getAllSuperClassifiers()?.filterIsInstance<ClassDescriptor>()?.filter {
             it.fqNameOrNull().toString() in baseInterfaces
-        }?.toList() ?: error("Can not resolve descriptor for class ${this.name}")
+        }?.toList()?.isNotEmpty() ?: error("Can not resolve descriptor for class ${this.name}")
 
     private fun FunctionDescriptor.overriddenFqNames() =
         overriddenDescriptors.map { it.containingDeclaration.fqNameSafe.toString() }
@@ -49,29 +49,26 @@ object StdlibInterfacesAnalyzer : PsiAnalyzer<KtClass, List<StdlibInterfacesAnal
     }
 
     override fun analyze(psiElement: KtClass): List<StdlibInterfacesAnalysisResult>? {
-        if (psiElement.isInterface()) {
-            val supertypes = psiElement.getSuperTypes()
-            if (supertypes.isNotEmpty()) {
-                val functions =
-                    (psiElement.resolveToDescriptorIfAny() as LazyClassDescriptor)
-                        .declaredCallableMembers
-                        .filterIsInstance<FunctionDescriptor>()
-                        .filter { it.containsSuperCalls() }
-
-                if (functions.isEmpty()) {
-                    return null
-                }
-
-                return functions.map {
-                    StdlibInterfacesAnalysisResult(
-                        interfaceName = psiElement.fqName?.asString() ?: "Anonymous interface",
-                        functionName = it.name.toString(),
-                        baseInterfaces = it.overriddenFqNames(),
-                    )
-                }
-            }
+        if (!psiElement.isInterface() || !psiElement.hasSuperTypes()) {
             return null
         }
-        return null
+
+        val functions =
+            (psiElement.resolveToDescriptorIfAny() as LazyClassDescriptor)
+                .declaredCallableMembers
+                .filterIsInstance<FunctionDescriptor>()
+                .filter { it.containsSuperCalls() }
+
+        if (functions.isEmpty()) {
+            return null
+        }
+
+        return functions.map {
+            StdlibInterfacesAnalysisResult(
+                interfaceName = psiElement.fqName?.asString() ?: "Anonymous interface",
+                functionName = it.name.toString(),
+                baseInterfaces = it.overriddenFqNames(),
+            )
+        }
     }
 }

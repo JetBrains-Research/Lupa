@@ -34,6 +34,7 @@ AVAILABLE_ANALYZERS = [
     Analyzer('kotlin-gradle-plugins', 'gradle_plugins_data.csv', Language.KOTLIN),
     Analyzer('kotlin-project-metrics', 'project_metrics_data.csv', Language.KOTLIN),
     Analyzer('java-reflections', 'reflection_data.csv', Language.KOTLIN),
+    Analyzer('kotlin-stdlib-interfaces', 'stdlib_interfaces_data.csv', Language.KOTLIN),
 
     Analyzer('python-imports', 'import_statements_data.csv', Language.PYTHON),
     Analyzer('python-call-expressions', 'call_expressions_data.csv', Language.PYTHON),
