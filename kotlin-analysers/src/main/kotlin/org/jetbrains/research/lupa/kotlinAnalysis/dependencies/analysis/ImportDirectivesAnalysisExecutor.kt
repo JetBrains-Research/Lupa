@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.dependencies.analysis
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPackageDirective
@@ -36,12 +37,24 @@ class ImportDirectivesAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = KOTLIN_EXTENSIONS
 
     override fun analyse(project: Project) {
-        val packageDirectives = project.extractKtElementsOfType(KtPackageDirective::class.java)
-            .filter { !it.isRoot }
-        val projectPackageFqNames = packageDirectives.map { PackageDirectivePsiAnalyzer.analyze(it) }.toSet()
-        val importDirectives = project.extractKtElementsOfType(KtImportDirective::class.java)
+        val packageDirectives = ApplicationManager.getApplication().runReadAction<List<KtPackageDirective>> {
+            project.extractKtElementsOfType(KtPackageDirective::class.java)
+                .filter { !it.isRoot }
+        }
+        val projectPackageFqNames = packageDirectives.map {
+            ApplicationManager.getApplication().runReadAction<String> {
+                PackageDirectivePsiAnalyzer.analyze(it)
+            }
+        }.toSet()
+        val importDirectives = ApplicationManager.getApplication().runReadAction<List<KtImportDirective>> {
+            project.extractKtElementsOfType(KtImportDirective::class.java)
+        }
         val results = importDirectives
-            .map { ImportDirectivePsiAnalyzer.analyze(it) }
+            .map {
+                ApplicationManager.getApplication().runReadAction<String> {
+                    ImportDirectivePsiAnalyzer.analyze(it)
+                }
+            }
             .filter { importDirective -> !projectPackageFqNames.any { importDirective.startsWith(it) } }
         results.ifNotEmpty {
             dependenciesDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {

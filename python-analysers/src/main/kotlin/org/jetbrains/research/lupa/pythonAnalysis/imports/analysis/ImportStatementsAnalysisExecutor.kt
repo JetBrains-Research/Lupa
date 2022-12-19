@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.pythonAnalysis.imports.analysis
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.python.psi.PyFromImportStatement
 import com.jetbrains.python.psi.PyImportStatement
@@ -31,7 +32,8 @@ class ImportStatementsAnalysisExecutor(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val dependenciesDataWriter = PrintWriterResourceManager(
-        outputDir, filename,
+        outputDir,
+        filename,
         header = listOf("project_name", "import").joinToString(separator = ","),
     )
 
@@ -39,12 +41,16 @@ class ImportStatementsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
-        val importStatements = project.extractPyElementsOfType(PyImportStatement::class.java)
+        val importStatements = ApplicationManager.getApplication().runReadAction<List<PyImportStatement>> {
+            project.extractPyElementsOfType(PyImportStatement::class.java)
+        }
         logger.info("${importStatements.size} import statements were extracted.")
 
         val fqNames = importStatements.flatMap { ImportStatementPsiAnalyzer.analyze(it) }.toMutableSet()
 
-        val fromImportStatements = project.extractPyElementsOfType(PyFromImportStatement::class.java)
+        val fromImportStatements = ApplicationManager.getApplication().runReadAction<List<PyFromImportStatement>> {
+            project.extractPyElementsOfType(PyFromImportStatement::class.java)
+        }
         logger.info("${importStatements.size} from import statements were extracted.")
 
         fqNames.addAll(

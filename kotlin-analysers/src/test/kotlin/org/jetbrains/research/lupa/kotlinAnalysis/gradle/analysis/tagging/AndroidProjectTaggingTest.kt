@@ -9,12 +9,15 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 open class AndroidProjectTaggingTest : ParametrizedGoldenFileTest(getResourcesRootPath(::AndroidProjectTaggingTest)) {
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::AndroidProjectTaggingTest,
-            inExtension = Extension.EMPTY, outExtension = Extension.TXT
+            inExtension = Extension.EMPTY,
+            outExtension = Extension.TXT,
         )
     }
 
