@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.util.python
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -20,9 +21,12 @@ object PyPackageUtil {
      * The path starts with the package root and is separated by a dot.
      */
     fun gatherPackageNames(project: Project): Set<String> {
-        val contentRoots = project.modules.flatMap { ModuleRootManager.getInstance(it).contentRoots.toList() }.toSet()
-        val packageRoots = contentRoots.flatMap { collectPackageRoots(project, it) }.toSet()
-        return packageRoots.flatMap { collectPackageNames(project, it) }.toSet()
+        return ApplicationManager.getApplication().runReadAction<Set<String>> {
+            val contentRoots =
+                project.modules.flatMap { ModuleRootManager.getInstance(it).contentRoots.toList() }.toSet()
+            val packageRoots = contentRoots.flatMap { collectPackageRoots(project, it) }.toSet()
+            packageRoots.flatMap { collectPackageNames(project, it) }.toSet()
+        }
     }
 
     /**
@@ -38,16 +42,19 @@ object PyPackageUtil {
         val packageRoots = mutableListOf<VirtualFile>()
 
         val fileIndex = ProjectRootManager.getInstance(project).fileIndex
-        VfsUtilCore.visitChildrenRecursively(contentRoot, object : VirtualFileVisitor<Unit>() {
-            override fun visitFile(file: VirtualFile): Boolean {
-                return if (isPackage(file, fileIndex) && file != contentRoot) {
-                    packageRoots.add(file)
-                    false
-                } else {
-                    true
+        VfsUtilCore.visitChildrenRecursively(
+            contentRoot,
+            object : VirtualFileVisitor<Unit>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    return if (isPackage(file, fileIndex) && file != contentRoot) {
+                        packageRoots.add(file)
+                        false
+                    } else {
+                        true
+                    }
                 }
-            }
-        })
+            },
+        )
 
         return packageRoots
     }
@@ -59,19 +66,22 @@ object PyPackageUtil {
         val packageNames = mutableListOf<String>()
 
         val fileIndex = ProjectRootManager.getInstance(project).fileIndex
-        VfsUtilCore.visitChildrenRecursively(packageRoot, object : VirtualFileVisitor<Unit>() {
-            override fun visitFile(file: VirtualFile): Boolean {
-                return if (file == packageRoot) {
-                    true
-                } else if (isPackage(file, fileIndex)) {
-                    VfsUtilCore.getRelativePath(file, packageRoot, '.')
-                        ?.let { packageNames.add("${packageRoot.name}.$it") }
-                    true
-                } else {
-                    false
+        VfsUtilCore.visitChildrenRecursively(
+            packageRoot,
+            object : VirtualFileVisitor<Unit>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    return if (file == packageRoot) {
+                        true
+                    } else if (isPackage(file, fileIndex)) {
+                        VfsUtilCore.getRelativePath(file, packageRoot, '.')
+                            ?.let { packageNames.add("${packageRoot.name}.$it") }
+                        true
+                    } else {
+                        false
+                    }
                 }
-            }
-        })
+            },
+        )
 
         packageNames.add(packageRoot.name)
 

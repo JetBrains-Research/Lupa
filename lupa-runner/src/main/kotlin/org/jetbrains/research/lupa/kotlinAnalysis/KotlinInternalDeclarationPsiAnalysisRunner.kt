@@ -14,7 +14,7 @@ object KotlinInternalDeclarationPsiAnalysisRunner : BaseRunner<IORunnerArgs, IOR
             listOf(
                 InternalDeclarationPsiAnalysisExecutor(args.outputDir),
                 InternalUsagesPsiAnalysisExecutor(args.outputDir),
-                InternalUsagesWithResolvePsiAnalysisExecutor(args.outputDir)
+                InternalUsagesWithResolvePsiAnalysisExecutor(args.outputDir),
             ),
         ).execute(args.inputDir, args.outputDir)
     }

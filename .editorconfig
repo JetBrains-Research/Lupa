@@ -6,4 +6,6 @@ indent_style = space
 insert_final_newline=true
 max_line_length = 120
 tab_width = 4
-disabled_rules=no-wildcard-imports,experimental:spacing-between-declarations-with-comments
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+disabled_rules=no-wildcard-imports,experimental:spacing-between-declarations-with-comments,trailing-comma-on-call-site,trailing-comma-on-declaration-site

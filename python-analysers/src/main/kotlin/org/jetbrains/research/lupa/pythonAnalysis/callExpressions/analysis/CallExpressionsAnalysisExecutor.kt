@@ -1,15 +1,13 @@
 package org.jetbrains.research.lupa.pythonAnalysis.callExpressions.analysis
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.util.io.exists
 import com.jetbrains.python.actions.PyQualifiedNameProvider
 import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyDecorator
 import com.jetbrains.python.psi.resolve.PyResolveContext
-import com.jetbrains.python.psi.types.PyClassType
-import com.jetbrains.python.psi.types.PyFunctionType
-import com.jetbrains.python.psi.types.PyUnionType
-import com.jetbrains.python.psi.types.TypeEvalContext
+import com.jetbrains.python.psi.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
@@ -57,7 +55,9 @@ class CallExpressionsAnalysisExecutor(
 
         val analyzerContext = CallExpressionAnalyzerContext(pyResolveContext, fqNamesProvider)
 
-        val callExpressions = project.extractPyElementsOfType(PyCallExpression::class.java)
+        val callExpressions = ApplicationManager.getApplication().runReadAction<List<PyCallExpression>> {
+            project.extractPyElementsOfType(PyCallExpression::class.java)
+        }
         logger.info("${callExpressions.size} call expressions were extracted.")
 
         val packageNames = PyPackageUtil.gatherPackageNames(project)
@@ -133,7 +133,7 @@ class CallExpressionsAnalysisExecutor(
             fqNames.removeAll { fqName ->
                 PyPackageUtil.isFqNameInAnyPackage(
                     fqName,
-                    packageNames
+                    packageNames,
                 )
             }
         }
@@ -149,9 +149,11 @@ class CallExpressionsAnalysisExecutor(
     ) {
         fqNamesByCategory.forEach { (category, fqNames) ->
             fqNames.ifNotEmpty {
-                expressionsDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                    listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
-                })
+                expressionsDataWriter.writer.println(
+                    joinToString(separator = System.getProperty("line.separator")) {
+                        listOf(project.name, it, category.name.lowercase()).joinToString(separator = ",")
+                    },
+                )
             }
             logger.info("In the $category category were collected ${fqNames.size} unique full qualified names.")
         }
@@ -172,7 +174,10 @@ class CallExpressionsAnalysisExecutor(
                     return DECORATOR
                 }
 
-                var calleeType = callExpression.callee?.let { context.getType(it) } ?: return UNKNOWN
+                var calleeType = ApplicationManager.getApplication().runReadAction<PyType?> {
+                    callExpression.callee?.let { context.getType(it) }
+                }
+                calleeType ?: return UNKNOWN
 
                 if (calleeType is PyUnionType) {
                     calleeType = calleeType.members.firstOrNull() ?: return UNKNOWN
