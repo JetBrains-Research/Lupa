@@ -9,10 +9,10 @@ This repository contains sources of:
 
 We love contributions! We are happy to see new analyzers and improvements of our core functionality, 
 and even supporting of new languages. 
-The current tasks can be found in the [open issues](https://github.com/JetBrains-Research/Lupa/issues) in the project.
+The current tasks can be found in the [open issues](https://github.com/nbirillo/Lupa/issues) in the project.
 If you have some questions or feature requests, please do not hesitate to open new ones.
 
-If you want to find some issues to start off with, please, [filter](https://github.com/JetBrains-Research/Lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) issues by the `good first issue` label.
+If you want to find some issues to start off with, please, [filter](https://github.com/nbirillo/Lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) issues by the `good first issue` label.
 
 Please, add a comment to the issue, if you're starting work on it.
 
@@ -46,6 +46,6 @@ Before submitting the pull request, make sure that you can say "YES" to each poi
 - You ran the build locally and verified new functionality/analyzers;
 - You ran related tests locally (or add new ones) and they passed;
 - You don't have code-style problems according the GitHub Actions 
-  (for [Kotlin](https://github.com/JetBrains-Research/Lupa/blob/main/.github/workflows/kotlin-build.yml) 
-  and for [Python](https://github.com/JetBrains-Research/Lupa/blob/main/.github/workflows/python-build.yml));
+  (for [Kotlin](https://github.com/nbirillo/Lupa/blob/main/.github/workflows/kotlin-build.yml) 
+  and for [Python](https://github.com/nbirillo/Lupa/blob/main/.github/workflows/python-build.yml));
 - You do not have merge conflicts in the pull request.
