@@ -3,7 +3,7 @@ import os
 import shutil
 from enum import Enum, unique
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Union
 
 
 class Extensions(str, enum.Enum):
@@ -13,12 +13,12 @@ class Extensions(str, enum.Enum):
     PNG = 'png'
 
 
-def create_directory(path: str):
+def create_directory(path: Union[str, Path]):
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def clear_directory(dir_path: str):
+def clear_directory(dir_path: Union[str, Path]):
     if not os.path.exists(dir_path):
         return
 
