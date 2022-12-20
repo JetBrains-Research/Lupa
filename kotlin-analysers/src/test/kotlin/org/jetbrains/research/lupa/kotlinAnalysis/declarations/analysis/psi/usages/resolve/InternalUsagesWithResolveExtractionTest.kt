@@ -28,7 +28,7 @@ class InternalUsagesWithResolveExtractionTest :
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::InternalUsagesExtractionTest,
-            outExtension = Extension.TXT
+            outExtension = Extension.TXT,
         )
     }
 

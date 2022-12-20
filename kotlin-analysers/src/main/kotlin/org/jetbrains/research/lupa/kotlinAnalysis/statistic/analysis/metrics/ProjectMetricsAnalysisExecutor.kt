@@ -23,14 +23,14 @@ class ProjectMetricsAnalysisExecutor(
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-    filename: String = "project_metrics_data.csv"
+    filename: String = "project_metrics_data.csv",
 ) :
     AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val projectMetricsDataWriter = PrintWriterResourceManager(
         outputDir, filename,
         listOf("project_name", "module_name", "files_count", "lines_count", "symbols_count")
-            .joinToString(separator = ",")
+            .joinToString(separator = ","),
     )
 
     override val controlledResourceManagers: Set<ResourceManager> = setOf(projectMetricsDataWriter)
@@ -48,8 +48,8 @@ class ProjectMetricsAnalysisExecutor(
                         module.name,
                         files.size,
                         files.sumOf { file -> documentManager.getDocument(file)?.lineCount ?: 0 },
-                        files.sumOf { file -> file.textLength }
-                    ).joinToString(separator = ",")
+                        files.sumOf { file -> file.textLength },
+                    ).joinToString(separator = ","),
                 )
             }
     }

@@ -21,7 +21,7 @@ class ReflectionAnalysisExecutor(
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-    reflectionFilename: String = "reflection_data.csv"
+    reflectionFilename: String = "reflection_data.csv",
 ) : AnalysisExecutor(executorHelper, repositoryOpener) {
 
     private val reflectionDataWriter = PrintWriterResourceManager(outputDir, reflectionFilename, "project")

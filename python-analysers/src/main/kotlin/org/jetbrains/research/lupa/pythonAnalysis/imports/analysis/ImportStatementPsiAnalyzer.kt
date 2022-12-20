@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.pythonAnalysis.imports.analysis
 
+import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.python.psi.PyImportStatement
 import org.jetbrains.research.lupa.kotlinAnalysis.PsiAnalyzer
 
@@ -11,6 +12,8 @@ object ImportStatementPsiAnalyzer : PsiAnalyzer<PyImportStatement, List<String>>
 
     /** Get fully qualified name of given [import statement][PyImportStatement]. */
     override fun analyze(psiElement: PyImportStatement): List<String> {
-        return psiElement.fullyQualifiedObjectNames
+        return ApplicationManager.getApplication().runReadAction<List<String>> {
+            psiElement.fullyQualifiedObjectNames
+        }
     }
 }

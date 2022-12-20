@@ -10,13 +10,15 @@ import org.junit.runners.Parameterized
 open class ImportDirectiveAnalysisExecutorTest :
     ParametrizedGoldenFileTest(getResourcesRootPath(::ImportDirectiveAnalysisExecutorTest)) {
 
+    override fun runInDispatchThread() = false
+
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: ({0}, {1})")
         fun getTestData() = getInAndOutArray(
             ::ImportDirectiveAnalysisExecutorTest,
             inExtension = Extension.EMPTY,
-            outExtension = Extension.TXT
+            outExtension = Extension.TXT,
         )
     }
 
