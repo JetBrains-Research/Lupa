@@ -1,9 +1,7 @@
-import json
 from enum import Enum, unique
 
 from benchmark.batching.batcher import BatcherArgument, BatcherName
 from benchmark.metrics_collection.metrics import MetricName
-from utils.config_utils import check_config
 from utils.language import Language
 
 

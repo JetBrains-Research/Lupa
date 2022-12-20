@@ -4,13 +4,13 @@ from typing import Dict, List, Type
 import pytest
 
 from benchmark.batching.batcher import (
+    BatcherArgument,
     DummyBatcher,
     OneDimensionalAnyFitBatcher,
     OneDimensionalBestFitDecreasingBatcher,
     OneDimensionalFirstFitDecreasingBatcher,
     OneDimensionalNextFitDecreasingBatcher,
     OneDimensionalWorstFitDecreasingBatcher,
-    BatcherArgument,
 )
 from benchmark.batching.config import ConfigField
 from benchmark.metrics_collection.metrics import MetricName
@@ -245,7 +245,7 @@ DUMMY_BATCHER_TEST_DATA = [
                 Path('project6'),
                 Path('oversized_project'),
                 Path('project_without_number_of_files'),
-            ]
+            ],
         ],
     ),
     (
@@ -271,7 +271,7 @@ DUMMY_BATCHER_TEST_DATA = [
                 Path('project6'),
                 Path('oversized_project'),
                 Path('project_without_number_of_files'),
-            ]
+            ],
         ],
     ),
 ]

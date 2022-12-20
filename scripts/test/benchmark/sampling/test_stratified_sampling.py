@@ -9,7 +9,7 @@ from benchmark.sampling.stratified_sampling import (
     read_metrics,
     read_project_metrics,
 )
-from test.benchmark.sampling import DATASETS_DATA_FOLDER, STRATIFIED_SAMPLING_TEST_DATA_FOLDER, PROJECTS_DATA_FOLDER
+from test.benchmark.sampling import DATASETS_DATA_FOLDER, PROJECTS_DATA_FOLDER
 from utils.language import Language
 
 

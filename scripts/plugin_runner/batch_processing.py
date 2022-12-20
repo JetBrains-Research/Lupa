@@ -30,7 +30,6 @@ from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 from plugin_runner.merge_data import merge
 from utils.config_utils import check_config
-
 from utils.file_utils import Extensions, clear_directory, create_directory, get_subdirectories
 from utils.language import Language
 from utils.run_process_utils import run_in_subprocess
@@ -84,7 +83,7 @@ def main():
         if len(projects) != len(projects_for_batching):
             logging.warning(
                 f'{len(projects) - len(projects_for_batching)} projects '
-                f'without the {metric_name} metric will be skipped.'
+                f'without the {metric_name} metric will be skipped.',
             )
 
         batch_constraints = {metric_name: batching_config[ConfigField.BATCH_CONSTRAINTS.value][metric_name]}
