@@ -16,7 +16,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, Dict, List
 
 import yaml
 
@@ -41,7 +41,10 @@ logger = logging.getLogger(__name__)
 def main():
     logging.basicConfig(level=logging.DEBUG)
 
-    args = parse_args()
+    parser = argparse.ArgumentParser()
+    configure_parser(parser)
+
+    args = parser.parse_args()
     additional_arguments = AdditionalArguments.parse_additional_arguments(args.kwargs)
 
     with open(args.batching_config) as file:
@@ -53,48 +56,13 @@ def main():
         logger.error(json.dumps(errors, indent=4))
         return
 
-    batcher_config = batching_config[ConfigField.BATCHER_CONFIG.value]
-    batcher = BatcherName(batcher_config.pop(ConfigField.NAME.value))
+    projects_paths = [
+        Path(project)
+        for project in get_subdirectories(args.input)
+        if filter_repositories_predicate(args.use_db)(project)
+    ]
 
-    metric_name = batching_config.get(ConfigField.METRIC.value, None)
-    if metric_name is None:
-        projects_for_batching = {
-            Path(project): {}
-            for project in get_subdirectories(args.input)
-            if filter_repositories_predicate(args.use_db)(project)
-        }
-        batch_constraints = {}
-    else:
-        projects = {
-            Path(project): read_project_metrics(
-                Path(project),
-                Language(batching_config[ConfigField.LANGUAGE.value]),
-            )
-            for project in get_subdirectories(args.input)
-            if filter_repositories_predicate(args.use_db)(project)
-        }
-
-        projects_for_batching = {
-            project: metrics
-            for project, metrics in projects.items()
-            if metrics is not None and metrics.get(metric_name) is not None
-        }
-
-        if len(projects) != len(projects_for_batching):
-            logging.warning(
-                f'{len(projects) - len(projects_for_batching)} projects '
-                f'without the {metric_name} metric will be skipped.',
-            )
-
-        batch_constraints = {metric_name: batching_config[ConfigField.BATCH_CONSTRAINTS.value][metric_name]}
-
-    batches = batcher.execute(
-        projects_for_batching,
-        batch_constraints,
-        batching_config.get(ConfigField.IGNORE_OVERSIZED_PROJECTS.value, False),
-        **batcher_config,
-    )
-
+    batches = split_into_batches(projects_paths, batching_config)
     batch_paths = split_into_directories(batches, args.output / 'batches')
 
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
@@ -147,6 +115,42 @@ def run_analyzer_on_batch(
         run_in_subprocess(command, ROOT, stdout_file=log_file, stderr_file=log_file)
 
 
+def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List[List[Path]]:
+    batcher_config = batching_config[ConfigField.BATCHER_CONFIG.value]
+    batcher = BatcherName(batcher_config.pop(ConfigField.NAME.value))
+
+    metric_name = batching_config.get(ConfigField.METRIC.value, None)
+
+    projects_for_batching = {project: {} for project in project_paths}
+    batch_constraints = {}
+
+    # Since batching_config is valid, if the 'metric' field is not None,
+    # then the 'language' and 'batch_constraints' fields are not None either.
+    if metric_name is not None:
+        projects = {
+            project: read_project_metrics(project, Language(batching_config[ConfigField.LANGUAGE.value]))
+            for project in project_paths
+        }
+
+        projects_for_batching = {
+            project: metrics for project, metrics in projects.items() if metrics is not None
+        }
+
+        if len(projects) != len(projects_for_batching):
+            logging.warning(
+                f'{len(projects) - len(projects_for_batching)} projects without the metric file will be skipped.',
+            )
+
+        batch_constraints = {metric_name: batching_config[ConfigField.BATCH_CONSTRAINTS.value][metric_name]}
+
+    return batcher.execute(
+        projects_for_batching,
+        batch_constraints,
+        batching_config.get(ConfigField.IGNORE_OVERSIZED_PROJECTS.value, False),
+        **batcher_config,
+    )
+
+
 def split_into_directories(batches: List[List[Path]], output: Path) -> List[Path]:
     clear_directory(output)
 
@@ -177,9 +181,7 @@ def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
     return lambda path: os.path.basename(path) in repositories_to_analyse_names
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-
+def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         'input',
         type=lambda value: Path(value),
@@ -191,9 +193,6 @@ def parse_args() -> argparse.Namespace:
         type=lambda value: Path(value),
         help='Path to the output directory',
     )
-
-    analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
-    parser.add_argument('data', help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
 
     parser.add_argument(
         'batching_config',
@@ -211,6 +210,13 @@ def parse_args() -> argparse.Namespace:
         type=int,
     )
 
+    configure_analysis_arguments(parser)
+
+
+def configure_analysis_arguments(parser: argparse.ArgumentParser) -> None:
+    analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
+    parser.add_argument('data', help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
+
     parser.add_argument(
         '--task-name',
         help='The plugin task name',
@@ -226,8 +232,6 @@ def parse_args() -> argparse.Namespace:
         nargs='*',
         action=AdditionalArguments,
     )
-
-    return parser.parse_args()
 
 
 if __name__ == '__main__':
