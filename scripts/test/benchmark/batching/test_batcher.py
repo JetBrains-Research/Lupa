@@ -199,10 +199,10 @@ def test_one_dimensional_any_fit_batcher(
     kwargs: Dict,
     expected_batches: List[List[str]],
 ) -> None:
-    assert batcher().split_into_batches(projects, batches_constraints, **kwargs) == expected_batches
+    assert batcher.split_into_batches(projects, batches_constraints, **kwargs) == expected_batches
 
 
-ONE_DIMENSIONAL_ANY_FIT_BATCHER_INVALID_METRIC_CONSTRAINTS_TEST_DATA = [
+ONE_DIMENSIONAL_ANY_FIT_BATCHER_INVALID_BATCH_CONSTRAINTS_TEST_DATA = [
     # Empty batch constraints
     (OneDimensionalFirstFitDecreasingBatcher, EMPTY_BATCH_CONSTRAINTS),
     (OneDimensionalBestFitDecreasingBatcher, EMPTY_BATCH_CONSTRAINTS),
@@ -218,14 +218,14 @@ ONE_DIMENSIONAL_ANY_FIT_BATCHER_INVALID_METRIC_CONSTRAINTS_TEST_DATA = [
 
 @pytest.mark.parametrize(
     ('batcher', 'batch_constraints'),
-    ONE_DIMENSIONAL_ANY_FIT_BATCHER_INVALID_METRIC_CONSTRAINTS_TEST_DATA,
+    ONE_DIMENSIONAL_ANY_FIT_BATCHER_INVALID_BATCH_CONSTRAINTS_TEST_DATA,
 )
 def test_one_dimensional_any_fit_batcher_invalid_batch_constraints(
     batcher: Type[OneDimensionalAnyFitBatcher],
     batch_constraints: Dict[str, int],
 ) -> None:
     with pytest.raises(ValueError):
-        batcher().split_into_batches(COMMON_PROJECTS, {})
+        batcher.split_into_batches(COMMON_PROJECTS, batch_constraints)
 
 
 DUMMY_BATCHER_TEST_DATA = [
@@ -283,4 +283,4 @@ def test_dummy_batcher(
     kwargs: Dict,
     expected_batches: List[List[str]],
 ) -> None:
-    assert DummyBatcher().split_into_batches(projects, {}, **kwargs) == expected_batches
+    assert DummyBatcher.split_into_batches(projects, {}, **kwargs) == expected_batches
