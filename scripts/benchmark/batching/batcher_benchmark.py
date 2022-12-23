@@ -6,6 +6,7 @@ import logging
 import time
 from pathlib import Path
 
+import pandas as pd
 import yaml
 from typing import List
 
@@ -18,8 +19,16 @@ from plugin_runner.batch_processing import (
     split_into_batches,
     split_into_directories,
 )
+from plugin_runner.merge_data import merge_csv
 from utils.config_utils import check_config
-from utils.file_utils import Extensions, FileSystemItem, create_directory, get_all_file_system_items
+from utils.file_utils import (
+    Extensions,
+    FileSystemItem,
+    clear_directory,
+    create_directory,
+    get_all_file_system_items,
+    get_subdirectories,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +71,15 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
         type=int,
         help='Index of batch to start processing from.',
         default=0,
+    )
+
+    parser.add_argument(
+        '--save-data',
+        help=(
+            'If specified, the analysis data for all batches will be saved, '
+            'otherwise only the data for the last batch will be saved.'
+        ),
+        action='store_true',
     )
 
     parser.add_argument(
@@ -129,33 +147,55 @@ def main() -> None:
     batches = split_into_batches(projects_paths, batching_config)
     batch_paths = split_into_directories(batches, args.output / 'batches')
 
+    benchmark_output_dir = args.output / 'benchmark'
+
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
-    for batch_path in batch_paths:
-        warmup_run_data = []
-        benchmark_run_data = []
+    data = pd.DataFrame()
+    for batch_index, batch_path in enumerate(batch_paths[args.start_from :], start=args.start_from):
+        logger.info(f'Processing batch №{batch_index}...')
 
-        for _ in range(args.warmup_runs):
+        analyzer_output_dir = args.output / 'output' / (f'batch_{batch_index}' if args.save_data else '')
+        clear_directory(analyzer_output_dir)
+
+        warmup_time_data = []
+        for i in range(args.warmup_runs):
+            logger.info(f'Warmup run №{i}')
             warmup_run_time = run_analysis(
                 args.task_name,
                 analyser,
                 batch_path,
-                args.output / 'output',
+                analyzer_output_dir,
                 additional_arguments,
             )
+            warmup_time_data.append(warmup_run_time)
 
-            warmup_run_data.append(warmup_run_time)
+        warmup_data = pd.DataFrame.from_dict({'batch': batch_index, 'type': 'warmup', 'time': warmup_time_data})
+        data = pd.concat([data, warmup_data])
 
-        for _ in range(args.benchmark_runs):
+        benchmark_time_data = []
+        for i in range(args.benchmark_runs):
+            logger.info(f'Benchmark run №{i}')
             benchmark_run_time = run_analysis(
                 args.task_name,
                 analyser,
                 batch_path,
-                args.output / 'output',
+                analyzer_output_dir,
                 additional_arguments,
             )
+            benchmark_time_data.append(benchmark_run_time)
 
-            benchmark_run_data.append(benchmark_run_time)
+        benchmark_data = pd.DataFrame.from_dict(
+            {'batch': batch_index, 'type': 'benchmark', 'time': benchmark_time_data},
+        )
+        data = pd.concat([data, benchmark_data])
+
+        batch_output_dir = benchmark_output_dir / f'batch_{batch_index}'
+        clear_directory(batch_output_dir)
+
+        data.to_csv(batch_output_dir / f'benchmark_data.{Extensions.CSV.value}', index=False)
+
+    merge_csv(get_subdirectories(benchmark_output_dir), 'benchmark_data', args.output)
 
 
 if __name__ == '__main__':
