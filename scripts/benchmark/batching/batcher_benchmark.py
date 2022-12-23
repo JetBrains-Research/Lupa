@@ -10,7 +10,7 @@ import pandas as pd
 import yaml
 from typing import List
 
-from benchmark.batching.config import BATCHING_SCHEMA
+from plugin_runner.batching_config import BATCHING_SCHEMA
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 from plugin_runner.batch_processing import (

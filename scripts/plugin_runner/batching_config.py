@@ -1,6 +1,6 @@
 from enum import Enum, unique
 
-from benchmark.batching.batcher import BatcherArgument, BatcherName
+from plugin_runner.batcher import BatcherArgument, BatcherName
 from benchmark.metrics_collection.metrics import MetricName
 from utils.language import Language
 

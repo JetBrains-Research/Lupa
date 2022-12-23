@@ -3,7 +3,7 @@ from typing import Dict, List, Type
 
 import pytest
 
-from benchmark.batching.batcher import (
+from plugin_runner.batcher import (
     BatcherArgument,
     DummyBatcher,
     OneDimensionalAnyFitBatcher,
@@ -12,7 +12,7 @@ from benchmark.batching.batcher import (
     OneDimensionalNextFitDecreasingBatcher,
     OneDimensionalWorstFitDecreasingBatcher,
 )
-from benchmark.batching.config import ConfigField
+from plugin_runner.batching_config import ConfigField
 from benchmark.metrics_collection.metrics import MetricName
 
 

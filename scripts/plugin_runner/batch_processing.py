@@ -20,8 +20,8 @@ from typing import Callable, Dict, List
 
 import yaml
 
-from benchmark.batching.batcher import BatcherName
-from benchmark.batching.config import BATCHING_SCHEMA, ConfigField
+from plugin_runner.batcher import BatcherName
+from plugin_runner.batching_config import BATCHING_SCHEMA, ConfigField
 from benchmark.sampling.stratified_sampling import read_project_metrics
 from data_collection.db_connect import DatabaseConn
 from data_collection.repositories_table import RepositoriesTable
