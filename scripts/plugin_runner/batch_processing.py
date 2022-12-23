@@ -165,7 +165,7 @@ def split_into_directories(batches: List[List[Path]], output: Path) -> List[Path
             if not os.path.exists(project_sym_link):
                 os.symlink(project, project_sym_link)
 
-        logging.info(f'Create batch №{index}/{len(batches)}')
+        logging.info(f'Create batch №{index}')
 
     return batch_paths
 
