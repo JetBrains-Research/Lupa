@@ -178,7 +178,7 @@ def main() -> None:
         warmup_data = pd.DataFrame.from_dict({'batch': batch_index, 'type': 'warmup', 'time': warmup_time_data})
         data = pd.concat([data, warmup_data])
 
-        logger.info(f'Benchmarking...')
+        logger.info('Benchmarking...')
         benchmark_time_data = run_analysis(
             args.task_name,
             analyser,
