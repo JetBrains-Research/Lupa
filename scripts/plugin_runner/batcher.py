@@ -104,7 +104,12 @@ class OneDimensionalAnyFitBatcher(Batcher):
                 logger.warning(f'{len(oversized_batches)} oversized projects will be placed in separate batches.')
 
         heuristic_result = cls.heuristic_split(projects_for_batching, constraint_value, **kwargs)
-        return [[project for project, _ in result_bin] for result_bin in heuristic_result.bins] + oversized_batches
+
+        batches = [
+            [project for project, _ in result_bin] for result_bin in heuristic_result.bins if len(result_bin) > 0
+        ]
+
+        return batches + oversized_batches
 
 
 class NamedNumberBin(NumberBin):
