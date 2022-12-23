@@ -1,8 +1,7 @@
 # Lupa 🔍
 
-[![JetBrains Research](https://jb.gg/badges/research.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![Kotlin build](https://github.com/JetBrains-Research/Lupa/actions/workflows/kotlin-build.yml/badge.svg)](https://github.com/JetBrains-Research/Lupa/actions/workflows/kotlin-build.yml)
-[![Python build](https://github.com/JetBrains-Research/Lupa/actions/workflows/python-build.yml/badge.svg)](https://github.com/JetBrains-Research/Lupa/actions/workflows/python-build.yml)
+[![Kotlin build](https://github.com/nbirillo/Lupa/actions/workflows/kotlin-build.yml/badge.svg)](https://github.com/nbirillo/Lupa/actions/workflows/kotlin-build.yml)
+[![Python build](https://github.com/nbirillo/Lupa/actions/workflows/python-build.yml/badge.svg)](https://github.com/nbirillo/Lupa/actions/workflows/python-build.yml)
 
 Lupa 🔍 is an extendable framework for analyzing fine-grained language usage on the base of the [IntelliJ Platform](https://www.jetbrains.com/opensource/idea/).
 Lupa 🔍 is a command line tool that uses the power of the IntelliJ Platform under 
@@ -50,7 +49,7 @@ To get more information see these modules (each of them has a README file).
 
 ## Installation
 
-Clone the repo by `git clone https://github.com/JetBrains-Research/Lupa.git`.
+Clone the repo by `git clone https://github.com/nbirillo/Lupa.git`.
    
 For analyzers modules and core architecture you should have Kotlin at least `1.5.21` version.
 For functionality for data gathering, processing and visualization ([`scripts`](./scripts/README.md) module) 
