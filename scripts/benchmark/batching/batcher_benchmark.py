@@ -74,7 +74,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
     parser.add_argument(
-        '--save-data',
+        '--save-analysis-data',
         help=(
             'If specified, the analysis data for all batches will be saved, '
             'otherwise only the data for the last batch will be saved.'
@@ -97,7 +97,8 @@ def run_analysis(
     batch_path: Path,
     output_dir: Path,
     additional_arguments: List[str],
-) -> float:
+    number_of_runs: int,
+) -> List[float]:
     batch_output_path = output_dir / 'data'
     create_directory(batch_output_path)
 
@@ -106,18 +107,23 @@ def run_analysis(
 
     log_file_path = logs_dir / f'log_batch.{Extensions.TXT}'
 
-    start_time = time.time()
-    run_analyzer_on_batch(
-        task_name,
-        analyser,
-        batch_path,
-        batch_output_path,
-        log_file_path,
-        additional_arguments,
-    )
-    end_time = time.time()
+    time_data = []
+    for i in range(number_of_runs):
+        start_time = time.time()
+        run_analyzer_on_batch(
+            task_name,
+            analyser,
+            batch_path,
+            batch_output_path,
+            log_file_path,
+            additional_arguments,
+        )
+        end_time = time.time()
+        time_data.append(end_time - start_time)
 
-    return end_time - start_time
+        logger.info(f'№{i + 1}. Time: {end_time - start_time}')
+
+    return time_data
 
 
 def main() -> None:
@@ -151,39 +157,36 @@ def main() -> None:
 
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
-    data = pd.DataFrame()
     for batch_index, batch_path in enumerate(batch_paths[args.start_from :], start=args.start_from):
+        data = pd.DataFrame()
+
         logger.info(f'Processing batch №{batch_index}...')
 
-        analyzer_output_dir = args.output / 'output' / (f'batch_{batch_index}' if args.save_data else '')
-        clear_directory(analyzer_output_dir)
+        analysis_output_dir = args.output / 'analysis' / (f'batch_{batch_index}' if args.save_analysis_data else '')
+        clear_directory(analysis_output_dir)
 
-        warmup_time_data = []
-        for i in range(args.warmup_runs):
-            logger.info(f'Warmup run №{i}')
-            warmup_run_time = run_analysis(
-                args.task_name,
-                analyser,
-                batch_path,
-                analyzer_output_dir,
-                additional_arguments,
-            )
-            warmup_time_data.append(warmup_run_time)
+        logger.info('Warming up...')
+        warmup_time_data = run_analysis(
+            args.task_name,
+            analyser,
+            batch_path,
+            analysis_output_dir,
+            additional_arguments,
+            args.warmup_runs,
+        )
 
         warmup_data = pd.DataFrame.from_dict({'batch': batch_index, 'type': 'warmup', 'time': warmup_time_data})
         data = pd.concat([data, warmup_data])
 
-        benchmark_time_data = []
-        for i in range(args.benchmark_runs):
-            logger.info(f'Benchmark run №{i}')
-            benchmark_run_time = run_analysis(
-                args.task_name,
-                analyser,
-                batch_path,
-                analyzer_output_dir,
-                additional_arguments,
-            )
-            benchmark_time_data.append(benchmark_run_time)
+        logger.info(f'Benchmarking...')
+        benchmark_time_data = run_analysis(
+            args.task_name,
+            analyser,
+            batch_path,
+            analysis_output_dir,
+            additional_arguments,
+            args.benchmark_runs,
+        )
 
         benchmark_data = pd.DataFrame.from_dict(
             {'batch': batch_index, 'type': 'benchmark', 'time': benchmark_time_data},
@@ -191,11 +194,12 @@ def main() -> None:
         data = pd.concat([data, benchmark_data])
 
         batch_output_dir = benchmark_output_dir / f'batch_{batch_index}'
+        create_directory(batch_output_dir)
         clear_directory(batch_output_dir)
 
         data.to_csv(batch_output_dir / f'benchmark_data.{Extensions.CSV.value}', index=False)
 
-    merge_csv(get_subdirectories(benchmark_output_dir), 'benchmark_data', args.output)
+    merge_csv(get_subdirectories(benchmark_output_dir), f'benchmark_data.{Extensions.CSV.value}', args.output)
 
 
 if __name__ == '__main__':
