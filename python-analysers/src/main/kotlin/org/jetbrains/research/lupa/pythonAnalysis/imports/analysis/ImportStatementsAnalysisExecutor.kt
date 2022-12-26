@@ -26,7 +26,7 @@ class ImportStatementsAnalysisExecutor(
     executorHelper: ExecutorHelper? = null,
     repositoryOpener: (Path, (Project) -> Boolean) -> Boolean =
         RepositoryOpenerUtil.Companion::standardRepositoryOpener,
-    filename: String = "import_statements_data.csv"
+    filename: String = "import_statements_data.csv",
 ) :
     AnalysisExecutor(executorHelper, repositoryOpener) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -59,7 +59,7 @@ class ImportStatementsAnalysisExecutor(
                     it,
                     ignoreRelativeImports = true,
                 )
-            }
+            },
         )
 
         val packageNames = PyPackageUtil.gatherPackageNames(project)
@@ -68,9 +68,11 @@ class ImportStatementsAnalysisExecutor(
         fqNames.removeAll { importName -> PyPackageUtil.isFqNameInAnyPackage(importName, packageNames) }
 
         fqNames.ifNotEmpty {
-            dependenciesDataWriter.writer.println(joinToString(separator = System.getProperty("line.separator")) {
-                listOf(project.name, it).joinToString(separator = ",")
-            })
+            dependenciesDataWriter.writer.println(
+                joinToString(separator = System.getProperty("line.separator")) {
+                    listOf(project.name, it).joinToString(separator = ",")
+                },
+            )
             logger.info("$size unique full qualified names were collected.")
         }
     }
