@@ -1,5 +1,6 @@
 package org.jetbrains.research.lupa.kotlinAnalysis.stdlib.analysis
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -18,6 +19,8 @@ data class StdlibInterfacesAnalysisResult(
 )
 
 object StdlibInterfacesAnalyzer : PsiAnalyzer<KtClass, List<StdlibInterfacesAnalysisResult>?> {
+    private val logger: Logger = Logger.getInstance(StdlibInterfacesAnalyzer::class.java)
+
     private val baseInterfaces = listOf(
         "kotlin.coroutines.ContinuationInterceptor",
         "kotlin.coroutines.CoroutineContext",
@@ -49,9 +52,11 @@ object StdlibInterfacesAnalyzer : PsiAnalyzer<KtClass, List<StdlibInterfacesAnal
     }
 
     override fun analyze(psiElement: KtClass): List<StdlibInterfacesAnalysisResult>? {
+        logger.info("Start analyzing ${psiElement.name} class")
         if (!psiElement.isInterface() || !psiElement.hasSuperTypes()) {
             return null
         }
+        logger.info("${psiElement.name} is valid, start checking functions....")
 
         val functions =
             (psiElement.resolveToDescriptorIfAny() as LazyClassDescriptor)
@@ -60,6 +65,7 @@ object StdlibInterfacesAnalyzer : PsiAnalyzer<KtClass, List<StdlibInterfacesAnal
                 .filter { it.containsSuperCalls() }
 
         if (functions.isEmpty()) {
+            logger.info("Functions list with super calls is empty")
             return null
         }
 
