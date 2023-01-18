@@ -27,11 +27,10 @@ def preprocess_dataset(dataset_path: str, sdk_path: str):
     for project in projects:
         full_path = os.path.join(dataset_path, project)
         properties_path = os.path.join(full_path, LOCAL_PROPERTIES_FILE_NAME)
-        content = f'{SDK_PROPERTY_NAME}={sdk_path}{os.linesep}'
         if os.path.exists(properties_path):
             replace_sdk_path(properties_path, sdk_path)
         else:
-            write_to_file(properties_path, content)
+            write_to_file(properties_path, f'{get_new_sdk_path(sdk_path)}{os.linesep}')
 
 
 def main():
