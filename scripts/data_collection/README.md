@@ -39,7 +39,15 @@ Run the following command to update the dataset:
 python3 -m data_collection.update_dataset /path/to/cleaned/data/dir/results.csv /path/to/dataset/dir
 ```
 The optional argument ```--save-to-db``` is used to save the date of last pull for each repository to the database.
-In this case, you need to add "database.ini" to the project a file, containing config settings for some postgres database. 
+In this case, you need to add "database.ini" to the project a file, containing config settings for some postgres database.
+
+
+#### 5. Preprocess Android projects
+
+Add `local.properties` file with Android ask into each project. Run the following command:
+``` 
+python3 -m data_collection.preprocess_android_projects /path/to/folder/with/projects /absolute/path/to/android/sdk
+```
 
 
 ### Save GitHub metrics
