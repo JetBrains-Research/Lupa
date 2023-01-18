@@ -2,10 +2,10 @@ import argparse
 import os
 from pathlib import Path
 
-from utils.file_utils import write_to_file, get_file_content
+from utils.file_utils import get_file_content, write_to_file
 
-LOCAL_PROPERTIES_FILE_NAME = "local.properties"
-SDK_PROPERTY_NAME = "sdk.dir"
+LOCAL_PROPERTIES_FILE_NAME = 'local.properties'
+SDK_PROPERTY_NAME = 'sdk.dir'
 
 
 def get_new_sdk_path(sdk_path: str) -> str:
