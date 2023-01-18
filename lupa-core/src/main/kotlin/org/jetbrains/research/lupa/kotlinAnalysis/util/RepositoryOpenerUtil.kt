@@ -2,6 +2,8 @@ package org.jetbrains.research.lupa.kotlinAnalysis.util
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.jetbrains.python.inspections.PythonPluginCommandLineInspectionProjectConfigurator
+import org.jetbrains.research.pluginUtilities.openRepository.RepositoryOpener
 import org.jetbrains.research.pluginUtilities.openRepository.getKotlinJavaRepositoryOpener
 import java.nio.file.Path
 
@@ -42,6 +44,17 @@ class RepositoryOpenerUtil {
                 return true
             }
             return false
+        }
+
+        // This function will work correctly ONLY IF venv will be created and moved
+        // into the root folder of the project
+        fun pythonRepositoryOpenerWithResolve(
+            projectPath: Path,
+            action: (Project) -> Boolean,
+        ): Boolean {
+            return RepositoryOpener(emptyList()).openProjectWithResolve(projectPath, action) {
+                PythonPluginCommandLineInspectionProjectConfigurator()
+            }
         }
     }
 }
