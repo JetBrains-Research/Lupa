@@ -52,10 +52,9 @@ class RepositoryOpenerUtil {
             projectPath: Path,
             action: (Project) -> Boolean,
         ): Boolean {
-            return RepositoryOpener(emptyList()).openProjectWithResolve(
-                projectPath,
-                action,
-            ) { PythonPluginCommandLineInspectionProjectConfigurator() }
+            return RepositoryOpener(emptyList()).openProjectWithResolve(projectPath, action) {
+                PythonPluginCommandLineInspectionProjectConfigurator()
+            }
         }
     }
 }
