@@ -1,5 +1,3 @@
-# TODO: docs
-
 import argparse
 import json
 import logging
@@ -17,7 +15,7 @@ from plugin_runner.batch_processing import (
     configure_analysis_arguments,
     run_analyzer_on_batch,
     split_into_batches,
-    split_into_directories,
+    create_batches,
 )
 from plugin_runner.merge_data import merge_csv
 from utils.config_utils import check_config
@@ -91,7 +89,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     configure_analysis_arguments(parser)
 
 
-def run_analysis(
+def run_benchmark(
     task_name: str,
     analyser: Analyzer,
     batch_path: Path,
@@ -151,7 +149,7 @@ def main() -> None:
     projects_paths = get_all_file_system_items(args.dataset, item_type=FileSystemItem.SUBDIR, with_subdirs=False)
 
     batches = split_into_batches(projects_paths, batching_config)
-    batch_paths = split_into_directories(batches, args.output / 'batches')
+    batch_paths = create_batches(batches, args.output / 'batches')
 
     benchmark_output_dir = args.output / 'benchmark'
 
@@ -166,7 +164,7 @@ def main() -> None:
         clear_directory(analysis_output_dir)
 
         logger.info('Warming up...')
-        warmup_time_data = run_analysis(
+        warmup_time_data = run_benchmark(
             args.task_name,
             analyser,
             batch_path,
@@ -179,7 +177,7 @@ def main() -> None:
         data = pd.concat([data, warmup_data])
 
         logger.info('Benchmarking...')
-        benchmark_time_data = run_analysis(
+        benchmark_time_data = run_benchmark(
             args.task_name,
             analyser,
             batch_path,
