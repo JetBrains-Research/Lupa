@@ -3,7 +3,7 @@ import os
 import shutil
 from enum import Enum, unique
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Union
 
 
 class Extensions(str, enum.Enum):
@@ -44,7 +44,7 @@ def get_file_lines(path: str) -> List[str]:
         return fin.readlines()
 
 
-def write_to_file(path: str, content: str, mode: str = 'w+'):
+def write_to_file(path: Union[Path, str], content: str, mode: str = 'w+'):
     with open(path, mode) as file:
         file.write(content)
 
