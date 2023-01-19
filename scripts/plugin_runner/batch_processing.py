@@ -1,14 +1,17 @@
-# TODO: fix docs and add new ones
-
 """
 This script allows to run IntelliJ IDEA plugin using batch processing.
 
-It accepts
-    * path to input directory containing kotlin projects
-    * path to the output directory, where all methods extracted from input projects will be saved
-    * data to analyse using the plugin (clones or ranges)
+It accepts:
+    * path to the dataset with the projects;
+    * path to the output directory;
+    * path to a yaml config. More information about the config can be found in the README file;
+    * data to analyse using the plugin.
+
+It also optionally accepts:
+    * flag that specifies whether the database should be used to analyse only updated repositories (default is false).
     * batch size (default is 300)
-    * index of batch to start from
+    * plugin task name: cli or pythin-cli (default is cli).
+    * additional plugin arguments.
 """
 import argparse
 import json
@@ -63,7 +66,7 @@ def main():
     ]
 
     batches = split_into_batches(projects_paths, batching_config)
-    batch_paths = split_into_directories(batches, args.output / 'batches')
+    batch_paths = create_batches(batches, args.output / 'batches')
 
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
@@ -116,6 +119,14 @@ def run_analyzer_on_batch(
 
 
 def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List[List[Path]]:
+    """
+    Split projects into batches using a batcher specified in a batching config.
+
+    :param project_paths: The project paths.
+    :param batching_config: The batching config. Must be valid: use ``BATCHING_SCHEMA`` from ``batching_config.py`` for
+    validation.
+    :return: List of batches. Each batch is a list of project paths included in that batch.
+    """
     batcher_config = batching_config[ConfigField.BATCHER_CONFIG.value]
     batcher = BatcherName(batcher_config.pop(ConfigField.NAME.value))
 
@@ -151,7 +162,13 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
     )
 
 
-def split_into_directories(batches: List[List[Path]], output: Path) -> List[Path]:
+def create_batches(batches: List[List[Path]], output: Path) -> List[Path]:
+    """
+    For each batch, creates a folder containing links to the projects included in that batch.
+
+    :param batches: List of batches. Each batch is a list of project paths included in that batch.
+    :param output: Directory where batches will be created.
+    """
     clear_directory(output)
 
     batch_paths = []
@@ -185,13 +202,13 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         'input',
         type=lambda value: Path(value),
-        help='Path to the dataset containing kotlin projects',
+        help='Path to the dataset with the projects.',
     )
 
     parser.add_argument(
         'output',
         type=lambda value: Path(value),
-        help='Path to the output directory',
+        help='Path to the output directory.',
     )
 
     parser.add_argument(
@@ -200,11 +217,11 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
         help='Path to a yaml config. More information about the config can be found in the README file.',
     )
 
-    parser.add_argument('--use-db', help='Use database to analyse only updated repositories', action='store_true')
+    parser.add_argument('--use-db', help='Use database to analyse only updated repositories.', action='store_true')
 
     parser.add_argument(
         '--start-from',
-        help='Index of batch to start processing from (not for using with --use-db flag)',
+        help='Index of batch to start processing from (not for using with --use-db flag).',
         nargs='?',
         default=0,
         type=int,
@@ -215,11 +232,11 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
 
 def configure_analysis_arguments(parser: argparse.ArgumentParser) -> None:
     analyzers_names = Analyzer.get_analyzers_names(AVAILABLE_ANALYZERS)
-    parser.add_argument('data', help=f"Data to analyse: {', '.join(analyzers_names)}", choices=analyzers_names)
+    parser.add_argument('data', help=f"Data to analyse: {', '.join(analyzers_names)}.", choices=analyzers_names)
 
     parser.add_argument(
         '--task-name',
-        help='The plugin task name',
+        help='The plugin task name.',
         nargs='?',
         default='cli',
         type=str,
@@ -228,7 +245,7 @@ def configure_analysis_arguments(parser: argparse.ArgumentParser) -> None:
 
     parser.add_argument(
         '--kwargs',
-        help='Map of additional plugin arguments. Usage example: --kwargs venv=path/to/venv',
+        help='Map of additional plugin arguments. Usage example: `--kwargs venv=path/to/venv`.',
         nargs='*',
         action=AdditionalArguments,
     )
