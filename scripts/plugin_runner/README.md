@@ -111,7 +111,6 @@ batch_constraints:
     number_of_lines: 10000
     
 language: python
-
 metric: file_size
 
 batcher_config:
