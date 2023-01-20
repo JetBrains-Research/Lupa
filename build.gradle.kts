@@ -24,10 +24,12 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven("https://packages.jetbrains.team/maven/p/big-code/bigcode")
     }
 
-    val utilitiesProjectName = "org.jetbrains.research.pluginUtilities"
-    val utilitiesProjectBranch = "main"
+    val utilitiesProjectVersion = "1.0"
+    val utilitiesProjectId = "org.jetbrains.research"
+
     dependencies {
         val log4jVersion = "2.19.0"
         // Logging
@@ -36,21 +38,9 @@ allprojects {
         implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
 
         // Plugin utilities modules
-        implementation("$utilitiesProjectName:plugin-utilities-core") {
-            version {
-                branch = utilitiesProjectBranch
-            }
-        }
-        implementation("$utilitiesProjectName:plugin-utilities-python") {
-            version {
-                branch = utilitiesProjectBranch
-            }
-        }
-        implementation("$utilitiesProjectName:plugin-utilities-test") {
-            version {
-                branch = utilitiesProjectBranch
-            }
-        }
+        implementation("$utilitiesProjectId:plugin-utilities-core:$utilitiesProjectVersion")
+        implementation("$utilitiesProjectId:plugin-utilities-test:$utilitiesProjectVersion")
+        implementation("$utilitiesProjectId:plugin-utilities-python:$utilitiesProjectVersion")
     }
 
     intellij {
