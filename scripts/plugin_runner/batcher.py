@@ -77,7 +77,7 @@ class DummyBatcher(Batcher):
             logger.warning('Batch constraints will be ignored.')
 
         batch_size = kwargs.get(BatcherArgument.BATCH_SIZE.value, 50)
-        return [list(projects.keys())[i : i + batch_size] for i in range(0, len(projects), batch_size)]
+        return [list(projects.keys())[i:(i + batch_size)] for i in range(0, len(projects), batch_size)]
 
 
 class OneDimensionalAnyFitBatcher(Batcher):

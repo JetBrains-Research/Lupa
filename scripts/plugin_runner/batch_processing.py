@@ -74,7 +74,7 @@ def main():
     create_directory(logs_dir)
 
     batch_output_paths = []
-    for index, batch_path in enumerate(batch_paths[args.start_from :], start=args.start_from):
+    for index, batch_path in enumerate(batch_paths[args.start_from:], start=args.start_from):
         batch_output_path = args.output / 'output' / f'batch_{index}'
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)

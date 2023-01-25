@@ -175,7 +175,7 @@ def main() -> None:
 
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
-    for batch_index, batch_path in enumerate(batch_paths[args.start_from :], start=args.start_from):
+    for batch_index, batch_path in enumerate(batch_paths[args.start_from:], start=args.start_from):
         data = pd.DataFrame()
 
         logger.info(f'Processing batch №{batch_index}...')

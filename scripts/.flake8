@@ -20,6 +20,5 @@ ignore=WPS, # TODO: Do not ignore WPS inspections
        P103, # Other string does contain unindexed parameters.
        I201,
        I100,
-       E203, # Whitespace before ':'
 
 exclude=venv,test/resources,
