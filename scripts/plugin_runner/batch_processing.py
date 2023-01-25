@@ -8,9 +8,9 @@ It accepts:
     * data to analyse using the plugin.
 
 It also optionally accepts:
-    * flag that specifies whether the database should be used to analyse only updated repositories (default is false).
-    * batch size (default is 300)
-    * plugin task name: cli or pythin-cli (default is cli).
+    * flag that specifies whether the database should be used to analyse only updated repositories (default is false);
+    * index of batch to start from (default is 0);
+    * plugin task name: cli or pythin-cli (default is cli);
     * additional plugin arguments.
 """
 import argparse
@@ -115,7 +115,7 @@ def run_analyzer_on_batch(
     ]
 
     with open(logs_path, 'w+') as log_file:
-        run_in_subprocess(command, ROOT, stdout_file=log_file, stderr_file=log_file)
+        run_in_subprocess(command, cwd=ROOT, stdout_file=log_file, stderr_file=log_file)
 
 
 def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List[List[Path]]:
@@ -130,7 +130,7 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
     batcher_config = batching_config[ConfigField.BATCHER_CONFIG.value]
     batcher = BatcherName(batcher_config.pop(ConfigField.NAME.value))
 
-    metric_name = batching_config.get(ConfigField.METRIC.value, None)
+    metric_name = batching_config.get(ConfigField.METRIC.value)
 
     projects_for_batching = {project: {} for project in project_paths}
     batch_constraints = {}
@@ -157,7 +157,7 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
     return batcher.execute(
         projects_for_batching,
         batch_constraints,
-        batching_config.get(ConfigField.IGNORE_OVERSIZED_PROJECTS.value, False),
+        batching_config.get(ConfigField.IGNORE_OVERSIZED_PROJECTS.value, True),
         **batcher_config,
     )
 
@@ -168,6 +168,7 @@ def create_batches(batches: List[List[Path]], output: Path) -> List[Path]:
 
     :param batches: List of batches. Each batch is a list of project paths included in that batch.
     :param output: Directory where batches will be created.
+    :return: List of batch paths.
     """
     clear_directory(output)
 
@@ -201,19 +202,19 @@ def filter_repositories_predicate(use_db: bool) -> Callable[[str], bool]:
 def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         'input',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to the dataset with the projects.',
     )
 
     parser.add_argument(
         'output',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to the output directory.',
     )
 
     parser.add_argument(
         'batching_config',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to a yaml config. More information about the config can be found in the README file.',
     )
 
@@ -245,7 +246,7 @@ def configure_analysis_arguments(parser: argparse.ArgumentParser) -> None:
 
     parser.add_argument(
         '--kwargs',
-        help='Map of additional plugin arguments. Usage example: `--kwargs venv=path/to/venv`.',
+        help='Map of additional plugin arguments. Usage example: "--kwargs venv=path/to/venv".',
         nargs='*',
         action=AdditionalArguments,
     )
