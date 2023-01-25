@@ -24,7 +24,7 @@ Run the [batch_processing.py](batch_processing.py) with the arguments from comma
 
 - `input` — Path to the dataset with the projects.
 - `output` — Path to the output directory.
-- `batching_config` — Path to a yaml config. More information about the config can be found in [this](#batch-processing)
+- `batching_config` — Path to a yaml config. More information about the config can be found in [this](#batching-config)
   section.
 
 **Analysis-specific required arguments**:
@@ -86,7 +86,7 @@ If you selected a batcher that uses project metrics, then additional fields must
 You can also specify additional arguments:
 
 - `ignore_oversized_projects` — Whether to ignore projects whose metrics values exceed the batch constraints. By
-  default, false, which means that each of such projects will be placed in a separate batch. This argument works only if
+  default, true. False means that each of such projects will be placed in a separate batch. This argument works only if
   you have selected a batcher that uses project metrics.
 
 If you chose a batcher that uses project metrics, a file with project metrics must contain in each project from your
