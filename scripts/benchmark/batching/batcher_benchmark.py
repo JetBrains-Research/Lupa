@@ -1,3 +1,23 @@
+"""
+This script will allow you to benchmark different batching algorithms.
+
+It accepts:
+    * path to the dataset with the projects;
+    * path to the output directory;
+    * path to a yaml config. More information about the config can be found in the README file;
+    * data to analyse using the plugin.
+
+It also optionally accepts:
+    * number of warmup runs (default is 2);
+    * number of benchmark runs (default is 3);
+    * index of batch to start from (default is 0);
+    * flag which specifies whether analysis data should be saved for every batch
+      (by default, false, i.e. the data of the last batch will be saved);
+    * path to the logs file (by default, the logs will be written to stderr.);
+    * plugin task name: cli or pythin-cli (default is cli);
+    * additional plugin arguments.
+"""
+
 import argparse
 import json
 import logging
@@ -13,9 +33,9 @@ from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 from plugin_runner.batch_processing import (
     configure_analysis_arguments,
+    create_batches,
     run_analyzer_on_batch,
     split_into_batches,
-    create_batches,
 )
 from plugin_runner.merge_data import merge_csv
 from utils.config_utils import check_config
@@ -34,26 +54,26 @@ logger = logging.getLogger(__name__)
 def configure_parser(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         'dataset',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to a dataset with projects.',
     )
 
     parser.add_argument(
         'output',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to the output directory.',
     )
 
     parser.add_argument(
         'batching_config',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to a yaml config. More information about the config can be found in the README file.',
     )
 
     parser.add_argument(
         '--warmup-runs',
         type=int,
-        help='Number of warm-up starts.',
+        help='Number of warm-up runs.',
         default=2,
     )
 
@@ -82,7 +102,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
 
     parser.add_argument(
         '--logs-path',
-        type=lambda value: Path(value),
+        type=lambda value: Path(value).absolute(),
         help='Path to a file where you want to save the logs. By default, the logs will be written to stderr.',
     )
 
