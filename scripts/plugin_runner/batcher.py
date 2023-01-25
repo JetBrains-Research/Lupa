@@ -1,5 +1,3 @@
-# TODO: docs
-
 import logging
 from abc import ABC, abstractmethod
 from enum import Enum, unique
@@ -13,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class Batcher(ABC):
+    """An abstract class for all batchers."""
     @classmethod
     @abstractmethod
     def split_into_batches(
@@ -22,6 +21,16 @@ class Batcher(ABC):
         ignore_oversized_projects: bool = True,
         **kwargs,
     ) -> List[List[Path]]:
+        """
+        Splits projects into batches, using batch constraints.
+
+        :param projects: Dictionary where for each project metrics are specified.
+        :param batch_constraints: Dictionary where for each metric batch constraint is specified.
+        :param ignore_oversized_projects: Whether to ignore projects that do not fit fully into one batch. By default,
+        false.
+        :param kwargs: Additional arguments.
+        :return: List of batches. Each batch is a list of project paths included in that batch.
+        """
         raise NotImplementedError
 
 
@@ -32,6 +41,13 @@ class BatcherArgument(Enum):
 
 
 class DummyBatcher(Batcher):
+    """
+    A class implementing a simple sequential batching strategy.
+
+    It splits projects into batches using following algorithm:
+        1. Projects are grouped into batches of ``n`` projects in the order in which they are passed on.
+        2. If there are less than ``n`` projects in the last batch, they make up the final batch of the smaller one.
+    """
     @classmethod
     def split_into_batches(
         cls,
@@ -40,6 +56,15 @@ class DummyBatcher(Batcher):
         ignore_oversized_projects: bool = True,
         **kwargs,
     ) -> List[List[Path]]:
+        """
+        Splits projects into batches, using a sequential batching strategy.
+
+        :param projects: Dictionary with projects passed on as keys. Dictionary values will be ignored.
+        :param batch_constraints: Will be ignored.
+        :param ignore_oversized_projects: Will be ignored.
+        :param kwargs: Will be ignored.
+        :return: List of batches. Each batch is a list of project paths included in that batch.
+        """
         if batch_constraints:
             logger.warning('Batch constraints will be ignored.')
 
@@ -48,6 +73,7 @@ class DummyBatcher(Batcher):
 
 
 class OneDimensionalAnyFitBatcher(Batcher):
+    """An abstract class implementing a one dimensional any fit batching strategy"""
     @classmethod
     @abstractmethod
     def heuristic_split(
@@ -56,6 +82,14 @@ class OneDimensionalAnyFitBatcher(Batcher):
         batch_constraint: int,
         **kwargs,
     ) -> BPResult:
+        """
+        Splits projects into batches using an any fit heuristic.
+
+        :param projects: List of tuples where for each project metric is specified.
+        :param batch_constraint: Batch constraint.
+        :param kwargs: Additional arguments.
+        :return: Instance of ``BPResult``.
+        """
         raise NotImplementedError
 
     @classmethod
@@ -120,24 +154,56 @@ class NamedNumberBin(NumberBin):
 
 
 class OneDimensionalFirstFitDecreasingBatcher(OneDimensionalAnyFitBatcher):
+    """
+    A class implementing an 1D First Fit Decreasing batching strategy.
+
+    It splits projects into batches using following algorithm:
+        1. Sort all project metrics in descending order.
+        2. Use First Fit algorithm: https://en.wikipedia.org/wiki/First-fit_bin_packing.
+    """
     @classmethod
     def heuristic_split(cls, projects: List[Tuple[Path, int]], batch_constraint: int, **kwargs) -> BPResult:
         return Fit.ffd(NamedNumberBin, batch_constraint, projects)
 
 
 class OneDimensionalBestFitDecreasingBatcher(OneDimensionalAnyFitBatcher):
+    """
+    A class implementing an 1D Best Fit Decreasing batching strategy.
+
+    It splits projects into batches using following algorithm:
+        1. Sort all project metrics in descending order.
+        2. Use Best Fit algorithm: https://en.wikipedia.org/wiki/Best-fit_bin_packing.
+    """
     @classmethod
     def heuristic_split(cls, projects: List[Tuple[Path, int]], batch_constraint: int, **kwargs) -> BPResult:
         return Fit.bfd(NamedNumberBin, batch_constraint, projects)
 
 
 class OneDimensionalWorstFitDecreasingBatcher(OneDimensionalAnyFitBatcher):
+    """
+    A class implementing an 1D Worst Fit Decreasing batching strategy.
+
+    It splits projects into batches using following algorithm:
+        1. Sort all project metrics in descending order.
+        2. Use Worst Fit algorithm: https://en.wikipedia.org/wiki/Bin_packing_problem#Online_heuristics.
+    """
     @classmethod
     def heuristic_split(cls, projects: List[Tuple[Path, int]], batch_constraint: int, **kwargs) -> BPResult:
         return Fit.wfd(NamedNumberBin, batch_constraint, projects)
 
 
 class OneDimensionalNextFitDecreasingBatcher(OneDimensionalAnyFitBatcher):
+    """
+    A class implementing an 1D Next Fit Decreasing batching strategy.
+
+    It splits projects into batches using following algorithm:
+        1. Sort all project metrics in descending order.
+        2. Use Next Fit algorithm: https://en.wikipedia.org/wiki/Next-fit_bin_packing.
+
+    It accepts the following additional arguments:
+        * max_open_batches -- Maximum number of open batches. If the value is greater than 1, the Next-k-Fit algorithm
+          is used. By default, it equals 1.
+    """
     @classmethod
     def heuristic_split(cls, projects: List[Tuple[Path, int]], batch_constraint: int, **kwargs) -> BPResult:
         return Fit.fit(
