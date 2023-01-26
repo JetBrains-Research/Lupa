@@ -1,0 +1,12 @@
+number_of_lines:
+  python: 42
+  kotlin: 20
+  total: 62
+number_of_files:
+  python: 10
+  kotlin: 53
+  total: 63
+file_size:
+  python: 24
+  kotlin: 74
+  total: 98
