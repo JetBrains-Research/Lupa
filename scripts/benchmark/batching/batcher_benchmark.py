@@ -8,6 +8,7 @@ It accepts:
     * data to analyse using the plugin.
 
 It also optionally accepts:
+    * path to a csv file with a sample of projects (if not specified, the entire dataset will be used);
     * number of warmup runs (default is 2);
     * number of benchmark runs (default is 3);
     * index of batch to start from (default is 0);
@@ -28,6 +29,7 @@ import pandas as pd
 import yaml
 from typing import List
 
+from benchmark.sampling.stratified_sampling import PROJECT_COLUMN
 from plugin_runner.batching_config import BATCHING_SCHEMA
 from plugin_runner.additional_arguments import AdditionalArguments
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
@@ -68,6 +70,16 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
         'batching_config',
         type=lambda value: Path(value).absolute(),
         help='Path to a yaml config. More information about the config can be found in the README file.',
+    )
+
+    parser.add_argument(
+        '--sample',
+        type=lambda value: Path(value).absolute(),
+        help=(
+            'Path to a csv file with a sample of projects. '
+            'Must consist of one column "project" containing the project names. '
+            'If not specified, the entire dataset will be used for the benchmark.'
+        ),
     )
 
     parser.add_argument(
@@ -167,6 +179,11 @@ def main() -> None:
         return
 
     projects_paths = get_all_file_system_items(args.dataset, item_type=FileSystemItem.SUBDIR, with_subdirs=False)
+    if args.sample is not None:
+        sample = pd.read_csv(args.sample)
+        projects_paths = [
+            project_path for project_path in projects_paths if project_path.name in sample[PROJECT_COLUMN].values
+        ]
 
     batches = split_into_batches(projects_paths, batching_config)
     batch_paths = create_batches(batches, args.output / 'batches')
