@@ -26,6 +26,6 @@ def test_python_call_expressions() -> None:
             kwargs=f'venv={venv_path}',
         )
 
-        print(run_in_subprocess(command_builder.build(), cwd=SCRIPT_PATH.parent))
+        run_in_subprocess(command_builder.build())
 
         assert get_file_content(Path(tmpdir) / analyzer.output_file) == get_file_content(CALL_EXPRESSIONS_OUTPUT)

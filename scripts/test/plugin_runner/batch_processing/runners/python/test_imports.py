@@ -21,6 +21,6 @@ def test_python_imports() -> None:
             analyzer.name,
         )
 
-        run_in_subprocess(command_builder.build(), cwd=SCRIPT_PATH.parent)
+        run_in_subprocess(command_builder.build())
 
         assert get_file_content(Path(tmpdir) / analyzer.output_file) == get_file_content(IMPORTS_DATASET_OUTPUT)
