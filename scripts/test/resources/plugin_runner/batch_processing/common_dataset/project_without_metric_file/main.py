@@ -1,0 +1,1 @@
+from project_without_metric_file import some_package

@@ -31,7 +31,7 @@ class CommandBuilder:
             command.append('--use-db')
 
         if self.start_from is not None:
-            command.extend(['--start-from', self.start_from])
+            command.extend(['--start-from', str(self.start_from)])
 
         if self.task_name is not None:
             command.extend(['--task-name', self.task_name])
