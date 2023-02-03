@@ -1,10 +1,11 @@
+from distutils.version import StrictVersion
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import pandas as pd
 
 from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
-from plugin_runner.python_venv.common import create_venv
+from plugin_runner.python_venv.common import create_requirements_file, create_venv, install_requirements
 from test.plugin_runner.batch_processing import DUMMY_CONFIG
 from test.plugin_runner.batch_processing.command_builder import CommandBuilder
 from test.plugin_runner.batch_processing.runners.python import CALL_EXPRESSIONS_DATASET, CALL_EXPRESSIONS_OUTPUT
@@ -18,6 +19,9 @@ def test_python_call_expressions() -> None:
     with TemporaryDirectory() as tmpdir:
         venv_path = Path(tmpdir) / '.venv'
         create_venv(venv_path)
+
+        requirements_file = create_requirements_file({'streamlit': StrictVersion('1.13.0')}, Path(tmpdir))
+        install_requirements(venv_path, requirements_file, no_package_dependencies=True, no_cache=True, for_each=False)
 
         command_builder = CommandBuilder(
             CALL_EXPRESSIONS_DATASET,
