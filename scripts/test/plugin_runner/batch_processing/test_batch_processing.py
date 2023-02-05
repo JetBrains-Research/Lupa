@@ -16,14 +16,14 @@ from utils.language import Language
 from utils.run_process_utils import run_in_subprocess
 
 START_FROM_TEST_DATA = [
-    (0, 9),  # start_from = 0, expected_number_of_projects = 8 projects + 1 header rows
-    (3, 6),  # start_from = 3, expected_number_of_projects = 5 projects + 1 header rows
-    (10, 0),  # start_from = 10, expected_number_of_projects = 0 projects + 0 header rows
+    (0, 9),  # start_from = 0, expected_number_of_rows = 8 projects + 1 header row
+    (3, 6),  # start_from = 3, expected_number_of_rows = 5 projects + 1 header row
+    (10, 0),  # start_from = 10, expected_number_of_rows = 0 projects + 0 header rows
 ]
 
 
-@pytest.mark.parametrize(('start_from', 'expected_number_of_projects'), START_FROM_TEST_DATA)
-def test_start_from(start_from: int, expected_number_of_projects: int) -> None:
+@pytest.mark.parametrize(('start_from', 'expected_number_of_rows'), START_FROM_TEST_DATA)
+def test_start_from(start_from: int, expected_number_of_rows: int) -> None:
     analyzer = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, 'python-imports')
 
     with TemporaryDirectory() as tmpdir:
@@ -38,7 +38,7 @@ def test_start_from(start_from: int, expected_number_of_projects: int) -> None:
         run_in_subprocess(command_builder.build())
 
         output = get_file_content(Path(tmpdir) / analyzer.output_file).strip()
-        assert len(output.splitlines()) == expected_number_of_projects
+        assert len(output.splitlines()) == expected_number_of_rows
 
 
 SPLIT_INTO_BATCHES_TEST_DATA = [
@@ -124,9 +124,9 @@ SPLIT_INTO_BATCHES_TEST_DATA = [
 ]
 
 
-@pytest.mark.parametrize(('batching_config', 'batches'), SPLIT_INTO_BATCHES_TEST_DATA)
-def test_split_into_batches(batching_config: Dict, batches: List[List[str]]) -> None:
-    expected_batches = [[COMMON_DATASET / project for project in batch] for batch in batches]
+@pytest.mark.parametrize(('batching_config', 'expected_batches'), SPLIT_INTO_BATCHES_TEST_DATA)
+def test_split_into_batches(batching_config: Dict, expected_batches: List[List[str]]) -> None:
+    expected_batches = [[COMMON_DATASET / project for project in batch] for batch in expected_batches]
 
     projects = sorted(Path(project) for project in get_subdirectories(str(COMMON_DATASET)))
     actual_batches = split_into_batches(projects, batching_config)
