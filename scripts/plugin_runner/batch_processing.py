@@ -92,7 +92,7 @@ def main():
         )
         end_time = time.time()
 
-        logging.info(f'Finished batch {index} processing in {end_time - start_time}s')
+        logger.info(f'Finished batch {index} processing in {end_time - start_time}s')
 
     merge(batch_output_paths, args.output, args.data)
 
@@ -148,7 +148,7 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
         }
 
         if len(projects) != len(projects_for_batching):
-            logging.warning(
+            logger.warning(
                 f'{len(projects) - len(projects_for_batching)} projects without the metric file will be skipped.',
             )
 
@@ -183,7 +183,7 @@ def create_batches(batches: List[List[Path]], output: Path) -> List[Path]:
             if not os.path.exists(project_sym_link):
                 os.symlink(project, project_sym_link)
 
-        logging.info(f'Create batch №{index}')
+        logger.info(f'Create batch №{index}')
 
     return batch_paths
 
