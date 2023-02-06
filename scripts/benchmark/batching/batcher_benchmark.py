@@ -104,10 +104,10 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
     parser.add_argument(
-        '--save-analysis-data',
+        '--save-every-run',
         help=(
-            'If specified, the analysis data for all batches will be saved, '
-            'otherwise only the data for the last batch will be saved.'
+            'If specified, the analysis data for all runs will be saved, '
+            'otherwise only the data for the last run will be saved.'
         ),
         action='store_true',
     )
@@ -128,17 +128,18 @@ def run_benchmark(
     output_dir: Path,
     additional_arguments: List[str],
     number_of_runs: int,
+    save_every_run: bool,
 ) -> List[float]:
-    batch_output_path = output_dir / 'data'
-    create_directory(batch_output_path)
-
-    logs_dir = output_dir / 'logs'
-    create_directory(logs_dir)
-
-    log_file_path = logs_dir / f'log_batch.{Extensions.TXT}'
-
     time_data = []
     for i in range(number_of_runs):
+        batch_output_path = output_dir / (f'run_{i}' if save_every_run else '') / 'data'
+        create_directory(batch_output_path)
+
+        logs_dir = output_dir / (f'run_{i}' if save_every_run else '') / 'logs'
+        create_directory(logs_dir)
+
+        log_file_path = logs_dir / f'log_batch.{Extensions.TXT}'
+
         start_time = time.time()
         run_analyzer_on_batch(
             task_name,
@@ -166,7 +167,8 @@ def main() -> None:
     logging.basicConfig(
         filename=args.logs_path,
         level=logging.INFO,
-        format='%(asctime)s | %(levelname)s | %(message)s',
+        format='%(asctime)s | %(levelname)s | %(name)s | %(message)s',
+        force=True,
     )
 
     with open(args.batching_config) as file:
@@ -192,12 +194,12 @@ def main() -> None:
 
     analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
-    for batch_index, batch_path in enumerate(batch_paths[args.start_from:], start=args.start_from):
+    for batch_index, batch_path in enumerate(batch_paths[args.start_from :], start=args.start_from):
         data = pd.DataFrame()
 
         logger.info(f'Processing batch №{batch_index}...')
 
-        analysis_output_dir = args.output / 'analysis' / (f'batch_{batch_index}' if args.save_analysis_data else '')
+        analysis_output_dir = args.output / 'analysis' / f'batch_{batch_index}'
         clear_directory(analysis_output_dir)
 
         logger.info('Warming up...')
@@ -205,9 +207,10 @@ def main() -> None:
             args.task_name,
             analyser,
             batch_path,
-            analysis_output_dir,
+            analysis_output_dir / 'warming',
             additional_arguments,
             args.warmup_runs,
+            args.save_every_run,
         )
 
         warmup_data = pd.DataFrame.from_dict({'batch': batch_index, 'type': 'warmup', 'time': warmup_time_data})
@@ -218,9 +221,10 @@ def main() -> None:
             args.task_name,
             analyser,
             batch_path,
-            analysis_output_dir,
+            analysis_output_dir / 'benchmarking',
             additional_arguments,
             args.benchmark_runs,
+            args.save_every_run,
         )
 
         benchmark_data = pd.DataFrame.from_dict(
