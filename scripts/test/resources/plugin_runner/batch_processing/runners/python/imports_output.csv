@@ -1,0 +1,8 @@
+project_name,import
+project_with_imports,itertools
+project_with_imports,plotly.express
+project_with_imports,math.sin
+project_with_imports,math.cos
+project_with_imports,math.pow
+project_with_non_root_packages,math.sin
+project_with_non_root_packages,math.cos

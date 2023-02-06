@@ -1,0 +1,3 @@
+batcher_config:
+  name: dummy_batcher
+  batch_size: 1

@@ -44,6 +44,7 @@ jobs:
       - name: Run tests
         run: |
           source ./scripts/venv/bin/activate
+          export PYTHONPATH=$PYTHONPATH:$GITHUB_WORKSPACE/scripts
           pytest ./scripts/ -vv
 
 

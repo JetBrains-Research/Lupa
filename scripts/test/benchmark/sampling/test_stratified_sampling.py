@@ -10,26 +10,8 @@ from benchmark.sampling.stratified_sampling import (
     read_project_metrics,
 )
 from test.benchmark.sampling import DATASETS_DATA_FOLDER, PROJECTS_DATA_FOLDER
+from utils.df_utils import assert_df_equals
 from utils.language import Language
-
-
-def _assert_df_equals(
-    actual: Optional[pd.DataFrame],
-    expected: Optional[pd.DataFrame],
-    sort_by_column: Optional[str] = None,
-) -> None:
-    if actual is None:
-        # assert_frame_equal(None, None) will raise an error, but None equals None
-        assert expected is None
-    else:
-        if sort_by_column is not None:
-            actual = actual.sort_values(by=[sort_by_column]).reset_index(drop=True)
-            expected = expected.sort_values(by=[sort_by_column]).reset_index(drop=True)
-
-        actual = actual.reindex(sorted(actual.columns), axis=1)
-        expected = expected.reindex(sorted(expected.columns), axis=1)
-
-        pd.testing.assert_frame_equal(actual, expected)
 
 
 READ_PROJECT_METRICS_TEST_DATA = [
@@ -114,7 +96,7 @@ READ_METRICS_TEST_DATA = [
 @pytest.mark.parametrize(('dataset_name', 'language', 'expected_metrics'), READ_METRICS_TEST_DATA)
 def test_read_metrics(dataset_name: str, language: Language, expected_metrics: Optional[pd.DataFrame]) -> None:
     dataset_path = DATASETS_DATA_FOLDER / dataset_name
-    _assert_df_equals(read_metrics(dataset_path, language), expected_metrics, 'project')
+    assert_df_equals(read_metrics(dataset_path, language), expected_metrics, ['project'])
 
 
 DATAFRAME_CONTENT = {
@@ -271,7 +253,7 @@ CONVERT_TO_INTERVALS_TEST_DATA = [
 
 @pytest.mark.parametrize(('data', 'column_bins', 'expected_data'), CONVERT_TO_INTERVALS_TEST_DATA)
 def test_convert_to_intervals(data: pd.DataFrame, column_bins: Dict[str, Any], expected_data: pd.DataFrame) -> None:
-    _assert_df_equals(convert_to_intervals(data, column_bins), expected_data)
+    assert_df_equals(convert_to_intervals(data, column_bins), expected_data)
 
 
 COMMON_DATAFRAME = pd.DataFrame.from_dict(
@@ -383,4 +365,4 @@ GET_STRATIFIED_SAMPLE_TEST_DATA = [
 
 @pytest.mark.parametrize(('data', 'strata', 'size', 'expected_sample'), GET_STRATIFIED_SAMPLE_TEST_DATA)
 def test_get_stratified_sample(data: pd.DataFrame, strata: List[str], size: int, expected_sample: pd.DataFrame) -> None:
-    _assert_df_equals(get_stratified_sample(data, strata, size, 42), expected_sample)
+    assert_df_equals(get_stratified_sample(data, strata, size, 42), expected_sample)

@@ -1,7 +1,0 @@
-project_name,fq_name,category
-in_1_project_only_builtins,input,function
-in_1_project_only_builtins,int.__new__,class
-in_1_project_only_builtins,list.__init__,class
-in_1_project_only_builtins,print,function
-in_1_project_only_builtins,range.__init__,class
-in_1_project_only_builtins,sum,function

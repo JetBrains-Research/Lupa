@@ -1,12 +1,12 @@
 import logging
 import subprocess
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 
 def run_in_subprocess(
     command: List[str],
-    cwd: Union[str, Path],
+    cwd: Optional[Union[str, Path]] = None,
     stdout_file=subprocess.PIPE,
     stderr_file=subprocess.PIPE,
 ) -> Tuple[int, str]:
