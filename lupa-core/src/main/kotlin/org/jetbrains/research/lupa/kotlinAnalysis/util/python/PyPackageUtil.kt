@@ -52,9 +52,9 @@ object PyPackageUtil {
             object : VirtualFileVisitor<Unit>() {
                 override fun visitFile(file: VirtualFile): Boolean {
                     return if (
-                        isPackage(file, fileIndex)
-                        && file != contentRoot
-                        && !(ignoreVenvFolder && file.isPythonVirtualEnvironmentFile())
+                        isPackage(file, fileIndex) &&
+                        file != contentRoot &&
+                        !(ignoreVenvFolder && file.isPythonVirtualEnvironmentFile())
                     ) {
                         packageRoots.add(file)
                         false
