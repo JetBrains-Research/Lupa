@@ -27,7 +27,7 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/big-code/bigcode")
     }
 
-    val utilitiesProjectVersion = "1.0"
+    val utilitiesProjectVersion = "1.1"
     val utilitiesProjectId = "org.jetbrains.research"
 
     dependencies {

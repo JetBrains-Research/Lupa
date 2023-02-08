@@ -76,11 +76,13 @@ abstract class AnalysisExecutor(
             isSuccessful = repositoryOpener(projectPath, ::analyseWithResult)
             if (isSuccessful) {
                 executorHelper?.postExecuteAction(GitRepository(projectPath))
+            } else {
+                return false
             }
         } finally {
             close()
         }
-        return isSuccessful
+        return true
     }
 
     /** Executes analysis for all projects in [given directory][projectsDir].

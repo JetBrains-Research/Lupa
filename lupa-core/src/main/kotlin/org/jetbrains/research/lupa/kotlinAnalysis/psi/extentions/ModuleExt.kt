@@ -13,7 +13,7 @@ fun Module.findPsiFileByName(name: String): PsiFile? {
 /** Finds [PsiFile] in module by given file extension. */
 fun Module.findPsiFilesByExtension(extension: String): List<PsiFile> {
     val psiManager = PsiManager.getInstance(project)
-    return FilenameIndex.getAllFilesByExt(project, extension, moduleContentScope)
+    return FilenameIndex.getAllFilesByExt(project, extension, getModuleScope(true))
         .mapNotNull { psiManager.findFile(it) }
         .toList()
 }
