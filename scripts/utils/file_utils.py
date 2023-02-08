@@ -106,7 +106,7 @@ def get_file_content(file_path: Union[str, Path]) -> str:
 
 def get_files_by_name(dir_path: Union[str, Path], file_name: str) -> List[str]:
     file_paths = []
-    for root, dirs, files in os.walk(dir_path):
+    for root, _, files in os.walk(dir_path):
         for file in files:
             file_path = os.path.join(root, file)
             if os.path.isfile(file_path) and os.path.basename(file_path) == file_name:
