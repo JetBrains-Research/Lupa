@@ -207,6 +207,7 @@ def get_sample(
 def compare_histograms(
     data: pd.DataFrame,
     sample: pd.DataFrame,
+    target_sample_size: int,
     metric: str,
     bins: BINS,
 ) -> None:
@@ -216,7 +217,7 @@ def compare_histograms(
 
     fig.add_bar(
         x=get_middle_of_bins(bin_edges),
-        y=np.round(values * len(sample) / len(data)),
+        y=values * target_sample_size / len(data),
         name='Target',
     )
 
@@ -259,7 +260,7 @@ def main():
 
         for metric in metrics:
             with st.expander(metric):
-                compare_histograms(data, sample, metric, metric_bins[metric])
+                compare_histograms(data, sample, sample_size, metric, metric_bins[metric])
 
         st.download_button('Download sample', sample[PROJECT_COLUMN].to_csv(index=False), 'sample.csv', 'text/csv')
 
