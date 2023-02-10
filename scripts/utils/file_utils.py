@@ -13,12 +13,12 @@ class Extensions(str, enum.Enum):
     PNG = 'png'
 
 
-def create_directory(path: Union[str, Path]) -> None:
+def create_directory(path: Union[str, Path]):
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def clear_directory(dir_path: Union[str, Path]) -> None:
+def clear_directory(dir_path: Union[str, Path]):
     if not os.path.exists(dir_path):
         return
 
@@ -44,7 +44,7 @@ def get_file_lines(path: Union[str, Path]) -> List[str]:
         return fin.readlines()
 
 
-def write_to_file(path: Union[str, Path], content: str, mode: str = 'w+') -> None:
+def write_to_file(path: Union[str, Path], content: str, mode: str = 'w+'):
     with open(path, mode) as file:
         file.write(content)
 
