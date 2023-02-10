@@ -30,7 +30,7 @@ def clear_directory(dir_path: Union[str, Path]):
             os.remove(path)
 
 
-def get_subdirectories(path: str) -> List[str]:
+def get_subdirectories(path: Union[str, Path]) -> List[str]:
     dirs = []
     for name in os.listdir(path):
         fullname = os.path.join(path, name)
@@ -39,12 +39,12 @@ def get_subdirectories(path: str) -> List[str]:
     return dirs
 
 
-def get_file_lines(path: str) -> List[str]:
+def get_file_lines(path: Union[str, Path]) -> List[str]:
     with open(path) as fin:
         return fin.readlines()
 
 
-def write_to_file(path: Union[Path, str], content: str, mode: str = 'w+'):
+def write_to_file(path: Union[str, Path], content: str, mode: str = 'w+'):
     with open(path, mode) as file:
         file.write(content)
 
@@ -57,10 +57,10 @@ class FileSystemItem(Enum):
 
 
 def get_all_file_system_items(
-        root: Path,
-        item_condition: Callable[[str], bool] = lambda name: True,
-        item_type: FileSystemItem = FileSystemItem.FILE,
-        with_subdirs: bool = True,
+    root: Union[str, Path],
+    item_condition: Callable[[str], bool] = lambda name: True,
+    item_type: FileSystemItem = FileSystemItem.FILE,
+    with_subdirs: bool = True,
 ) -> List[Path]:
     """
     Return the paths to all file system items from the root that satisfy the condition.
@@ -74,7 +74,11 @@ def get_all_file_system_items(
 
     :return: List of paths.
     """
-    if not root.is_dir():
+    if item_type == FileSystemItem.PATH:
+        # FileSystemItem.PATH cannot be used, due to the meaninglessness of the result.
+        raise ValueError(f'Only {FileSystemItem.FILE} or {FileSystemItem.SUBDIR} are allowed.')
+
+    if not os.path.isdir(root):
         raise ValueError(f'The {root} is not a directory.')
 
     items = []
@@ -89,7 +93,7 @@ def get_all_file_system_items(
     return items
 
 
-def get_file_content(file_path: Path) -> str:
+def get_file_content(file_path: Union[str, Path]) -> str:
     """
     Get the content of the file.
 
@@ -100,10 +104,9 @@ def get_file_content(file_path: Path) -> str:
         return file.read()
 
 
-def get_files_by_name(dir_path: str, file_name: str) -> List[str]:
+def get_files_by_name(dir_path: Union[str, Path], file_name: str) -> List[str]:
     file_paths = []
-    for root, dirs, files in os.walk(dir_path):
-        print(root, dirs, files)
+    for root, _, files in os.walk(dir_path):
         for file in files:
             file_path = os.path.join(root, file)
             if os.path.isfile(file_path) and os.path.basename(file_path) == file_name:

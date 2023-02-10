@@ -128,7 +128,7 @@ SPLIT_INTO_BATCHES_TEST_DATA = [
 def test_split_into_batches(batching_config: Dict, expected_batches: List[List[str]]) -> None:
     expected_batches = [[COMMON_DATASET / project for project in batch] for batch in expected_batches]
 
-    projects = sorted(Path(project) for project in get_subdirectories(str(COMMON_DATASET)))
+    projects = sorted(Path(project) for project in get_subdirectories(COMMON_DATASET))
     actual_batches = split_into_batches(projects, batching_config)
 
     assert actual_batches == expected_batches
@@ -147,7 +147,7 @@ def test_create_batches(batches: List[List[str]]):
     with TemporaryDirectory() as tmpdir:
         actual_batch_paths = create_batches(expected_batch_paths, Path(tmpdir))
         resolved_actual_batch_paths = [
-            sorted(Path(project).resolve() for project in get_subdirectories(str(batch)))
+            sorted(Path(project).resolve() for project in get_subdirectories(batch))
             for batch in actual_batch_paths
         ]
 

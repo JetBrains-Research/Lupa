@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.jetbrains.python.statistics.modules
+import org.jetbrains.research.lupa.kotlinAnalysis.util.isPythonVirtualEnvironmentFile
 
 /**
  * A set of functions for working with packages in python projects.
@@ -20,11 +21,11 @@ object PyPackageUtil {
      * Returns a list of paths to all found packages in the [project].
      * The path starts with the package root and is separated by a dot.
      */
-    fun gatherPackageNames(project: Project): Set<String> {
+    fun gatherPackageNames(project: Project, ignoreVenvFolder: Boolean = true): Set<String> {
         return ApplicationManager.getApplication().runReadAction<Set<String>> {
             val contentRoots =
                 project.modules.flatMap { ModuleRootManager.getInstance(it).contentRoots.toList() }.toSet()
-            val packageRoots = contentRoots.flatMap { collectPackageRoots(project, it) }.toSet()
+            val packageRoots = contentRoots.flatMap { collectPackageRoots(project, it, ignoreVenvFolder) }.toSet()
             packageRoots.flatMap { collectPackageNames(project, it) }.toSet()
         }
     }
@@ -38,7 +39,11 @@ object PyPackageUtil {
     /**
      * Finds the packages that are closest to the [content root][contentRoot] in the [project].
      */
-    private fun collectPackageRoots(project: Project, contentRoot: VirtualFile): List<VirtualFile> {
+    private fun collectPackageRoots(
+        project: Project,
+        contentRoot: VirtualFile,
+        ignoreVenvFolder: Boolean = true,
+    ): List<VirtualFile> {
         val packageRoots = mutableListOf<VirtualFile>()
 
         val fileIndex = ProjectRootManager.getInstance(project).fileIndex
@@ -46,7 +51,11 @@ object PyPackageUtil {
             contentRoot,
             object : VirtualFileVisitor<Unit>() {
                 override fun visitFile(file: VirtualFile): Boolean {
-                    return if (isPackage(file, fileIndex) && file != contentRoot) {
+                    return if (
+                        isPackage(file, fileIndex) &&
+                        file != contentRoot &&
+                        !(ignoreVenvFolder && file.isPythonVirtualEnvironmentFile())
+                    ) {
                         packageRoots.add(file)
                         false
                     } else {

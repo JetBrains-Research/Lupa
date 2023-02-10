@@ -57,7 +57,7 @@ Below is a list of supported batchers and their arguments:
   This batcher does not use project metrics for grouping.<br/>
   **Arguments**:
     - `batch_size` — Maximum number of projects that can be contained in a batch. By default, 50.
-- `1d_first_fit_decreasing` — Batcher, based on
+- `1d_next_fit_decreasing` — Batcher, based on
   the [Next Fit](https://en.wikipedia.org/wiki/Bin_packing_problem#Single-class_algorithms) algorithm, which is applied
   to a list of projects sorted in descending order. This batcher uses project metrics for grouping.<br/>
   **Arguments**:
