@@ -23,6 +23,7 @@ import argparse
 import json
 import logging
 import time
+from enum import Enum
 from pathlib import Path
 
 import pandas as pd
@@ -51,6 +52,29 @@ from utils.file_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class BenchmarkResultColumn(Enum):
+    BATCH = 'batch'
+    TYPE = 'type'
+    TIME = 'time'
+
+    @classmethod
+    def values(cls) -> List[str]:
+        return [column.value for column in cls]
+
+    @classmethod
+    def metrics(cls) -> List[str]:
+        return [cls.TIME.value]
+
+
+class RunType(Enum):
+    WARMUP = 'warmup'
+    BENCHMARK = 'benchmark'
+
+    @classmethod
+    def values(cls) -> List[str]:
+        return [run_type.value for run_type in cls]
 
 
 def configure_parser(parser: argparse.ArgumentParser) -> None:
@@ -213,7 +237,13 @@ def main() -> None:
             args.save_every_run,
         )
 
-        warmup_data = pd.DataFrame.from_dict({'batch': batch_index, 'type': 'warmup', 'time': warmup_time_data})
+        warmup_data = pd.DataFrame.from_dict(
+            {
+                BenchmarkResultColumn.BATCH.value: batch_index,
+                BenchmarkResultColumn.TYPE.value: RunType.WARMUP.value,
+                BenchmarkResultColumn.TIME.value: warmup_time_data,
+            },
+        )
         data = pd.concat([data, warmup_data])
 
         logger.info('Benchmarking...')
@@ -228,7 +258,11 @@ def main() -> None:
         )
 
         benchmark_data = pd.DataFrame.from_dict(
-            {'batch': batch_index, 'type': 'benchmark', 'time': benchmark_time_data},
+            {
+                BenchmarkResultColumn.BATCH.value: batch_index,
+                BenchmarkResultColumn.TYPE.value: RunType.BENCHMARK.value,
+                BenchmarkResultColumn.TIME.value: benchmark_time_data,
+            },
         )
         data = pd.concat([data, benchmark_data])
 
