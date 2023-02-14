@@ -44,7 +44,7 @@ def get_file_lines(path: Union[str, Path]) -> List[str]:
         return fin.readlines()
 
 
-def write_to_file(path: Union[str, Path], content: str, mode: str = 'w+') -> None:
+def write_to_file(path: Union[str, Path], content: str, mode: str = 'w+'):
     with open(path, mode) as file:
         file.write(content)
 
