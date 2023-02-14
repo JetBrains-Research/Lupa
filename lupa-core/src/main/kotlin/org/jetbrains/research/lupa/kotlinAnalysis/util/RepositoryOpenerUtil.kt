@@ -23,7 +23,7 @@ class RepositoryOpenerUtil {
             repositoryRoot: Path,
             action: (Project) -> Boolean,
         ): Boolean {
-            if (getKotlinJavaRepositoryOpener().openRepository(repositoryRoot.toFile(), action)) {
+            if (getKotlinJavaRepositoryOpener().openProjectWithResolve(repositoryRoot, action)) {
                 logger.info("All projects from $repositoryRoot were opened successfully")
                 return true
             }
