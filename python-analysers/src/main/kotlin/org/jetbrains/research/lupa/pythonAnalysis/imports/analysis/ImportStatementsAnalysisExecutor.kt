@@ -41,18 +41,22 @@ class ImportStatementsAnalysisExecutor(
     override val requiredFileExtensions: Set<FileExtension> = PYTHON_EXTENSIONS
 
     override fun analyse(project: Project) {
+        logger.info("Extracting import statements.")
         val importStatements = ApplicationManager.getApplication().runReadAction<List<PyImportStatement>> {
             project.extractPyElementsOfType(PyImportStatement::class.java)
         }
         logger.info("${importStatements.size} import statements were extracted.")
 
+        logger.info("Analyzing import statements.")
         val fqNames = importStatements.flatMap { ImportStatementPsiAnalyzer.analyze(it) }.toMutableSet()
 
+        logger.info("Extracting from import statements.")
         val fromImportStatements = ApplicationManager.getApplication().runReadAction<List<PyFromImportStatement>> {
             project.extractPyElementsOfType(PyFromImportStatement::class.java)
         }
         logger.info("${importStatements.size} from import statements were extracted.")
 
+        logger.info("Analysing from import statements.")
         fqNames.addAll(
             fromImportStatements.flatMap {
                 FromImportStatementPsiAnalyzer.analyze(
@@ -62,11 +66,14 @@ class ImportStatementsAnalysisExecutor(
             },
         )
 
+        logger.info("Gathering package names.")
         val packageNames = PyPackageUtil.gatherPackageNames(project)
         logger.info("${packageNames.size} package names were gathered.")
 
+        logger.info("Filtering local FQ names.")
         fqNames.removeAll { importName -> PyPackageUtil.isFqNameInAnyPackage(importName, packageNames) }
 
+        logger.info("Writing FQ names.")
         fqNames.ifNotEmpty {
             dependenciesDataWriter.writer.println(
                 joinToString(separator = System.getProperty("line.separator")) {

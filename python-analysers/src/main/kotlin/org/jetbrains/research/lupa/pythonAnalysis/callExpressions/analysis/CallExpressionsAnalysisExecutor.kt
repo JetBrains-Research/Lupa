@@ -55,18 +55,23 @@ class CallExpressionsAnalysisExecutor(
 
         val analyzerContext = CallExpressionAnalyzerContext(pyResolveContext, fqNamesProvider)
 
+        logger.info("Extracting call expressions.")
         val callExpressions = ApplicationManager.getApplication().runReadAction<List<PyCallExpression>> {
             project.extractPyElementsOfType(PyCallExpression::class.java)
         }
         logger.info("${callExpressions.size} call expressions were extracted.")
 
+        logger.info("Gathering package names.")
         val packageNames = PyPackageUtil.gatherPackageNames(project)
         logger.info("${packageNames.size} package names were gathered.")
 
+        logger.info("Categorizing call expressions.")
         val callExpressionsByCategory = callExpressions.groupBy { ExpressionCategory.getCategory(it, typeEvalContext) }
         callExpressionsByCategory[ExpressionCategory.UNKNOWN]
             ?.let { logger.info("${it.size} call expressions were not categorized.") }
+            ?: logger.info("All call expressions were categorized.")
 
+        logger.info("Analyzing call expressions.")
         val fqNamesByCategory = callExpressionsByCategory.mapValues { (_, callExpressions) ->
             callExpressions.mapNotNull {
                 when (it) {
@@ -131,6 +136,7 @@ class CallExpressionsAnalysisExecutor(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
         packageNames: Set<String>,
     ) {
+        logger.info("Filtering local FQ names.")
         fqNamesByCategory.forEach { (_, fqNames) ->
             fqNames.removeAll { fqName ->
                 PyPackageUtil.isFqNameInAnyPackage(
@@ -149,6 +155,7 @@ class CallExpressionsAnalysisExecutor(
         fqNamesByCategory: Map<ExpressionCategory, MutableSet<String>>,
         project: Project,
     ) {
+        logger.info("Writing FQ names.")
         fqNamesByCategory.forEach { (category, fqNames) ->
             fqNames.ifNotEmpty {
                 expressionsDataWriter.writer.println(
