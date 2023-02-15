@@ -47,7 +47,7 @@ def plot_per_batch_stats(
         fig.add_scatter(
             x=overall_stats[BenchmarkResultColumn.BATCH.value],
             y=overall_stats[by_column.value],
-            name=f'Overall',
+            name='Overall',
             mode='lines+markers',
         )
 
@@ -178,7 +178,7 @@ def main() -> None:
 
                 If the results contain several run types, the stats for the specific run type will be shown in addition
                 to the overall stats.
-                
+
                 The minimum values of each statistic are highlighted in yellow.
                 """,
             )
