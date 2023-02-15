@@ -24,11 +24,11 @@ def plot_per_batch_stats(
     fig = go.Figure()
 
     for run_type in RunType.values():
-        stats = stats_by_type[stats_by_type[BenchmarkResultColumn.TYPE.value] == run_type]
+        type_stats = stats_by_type[stats_by_type[BenchmarkResultColumn.TYPE.value] == run_type]
 
         fig.add_scatter(
-            x=stats[BenchmarkResultColumn.BATCH.value],
-            y=stats[by_column.value],
+            x=type_stats[BenchmarkResultColumn.BATCH.value],
+            y=type_stats[by_column.value],
             name=f'{run_type} (aggregated)',
             mode='lines+markers',
         )
@@ -39,6 +39,16 @@ def plot_per_batch_stats(
             name=f'{run_type} (all)',
             mode='markers',
             marker={'size': 4},
+        )
+
+    if len(stats_by_type[BenchmarkResultColumn.TYPE.value].unique()) > 1:
+        overall_stats = result.groupby(BenchmarkResultColumn.BATCH.value, as_index=False).agg(aggregate_function.value)
+
+        fig.add_scatter(
+            x=overall_stats[BenchmarkResultColumn.BATCH.value],
+            y=overall_stats[by_column.value],
+            name=f'Overall',
+            mode='lines+markers',
         )
 
     fig.update_layout(xaxis_title='Batch', yaxis_title=by_column.value)
@@ -168,6 +178,8 @@ def main() -> None:
 
                 If the results contain several run types, the stats for the specific run type will be shown in addition
                 to the overall stats.
+                
+                The minimum values of each statistic are highlighted in yellow.
                 """,
             )
 
