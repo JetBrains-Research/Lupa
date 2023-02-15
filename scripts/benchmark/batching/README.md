@@ -31,3 +31,14 @@ The analysis-specific required arguments are the same as those used in the [plug
 **Analysis-specific optional arguments**:
 
 The analysis-specific optional arguments are the same as those used in the [plugin_runner](../../plugin_runner) module.
+
+### Benchmark results comparison
+
+You can visually compare several benchmark runs. To do this, run the following command:
+```bash
+streamlit run results_comparison.py
+```
+
+This visualization takes a folder with benchmark results as input and compares them by different stats.
+An example of working with visualization is shown below:
+
