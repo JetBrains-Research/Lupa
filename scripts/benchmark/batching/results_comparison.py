@@ -61,26 +61,23 @@ def get_result_stats(
 
     stats = {}
 
-    for run_type in RunType.values():
-        if run_type in total_stats_by_type.index:
-            stats[f'{run_type}_total'] = total_stats_by_type.loc[run_type, by_column.value]
+    for run_type, row in total_stats_by_type.iterrows():
+        stats[f'{run_type}_total'] = row[by_column.value]
 
     if len(total_stats_by_type) > 1:
         stats['total'] = (
             result.groupby(BenchmarkResultColumn.BATCH.value)[by_column.value].agg(aggregate_function.value).sum()
         )
 
-    for run_type in RunType.values():
-        if run_type in total_stats_by_type.index:
-            stats[f'{run_type}_per_project'] = stats[f'{run_type}_total'] / sample_size
+    for run_type in total_stats_by_type.index:
+        stats[f'{run_type}_per_project'] = stats[f'{run_type}_total'] / sample_size
 
     if len(total_stats_by_type) > 1:
         stats['per_project'] = stats['total'] / sample_size
 
     if dataset_size != sample_size:
-        for run_type in RunType.values():
-            if run_type in total_stats_by_type.index:
-                stats[f'{run_type}_dataset'] = stats[f'{run_type}_per_project'] * dataset_size
+        for run_type in total_stats_by_type.index:
+            stats[f'{run_type}_dataset'] = stats[f'{run_type}_per_project'] * dataset_size
 
         if len(total_stats_by_type) > 1:
             stats['dataset'] = stats['per_project'] * dataset_size
@@ -160,18 +157,18 @@ def main() -> None:
         with st.expander('Table description:'):
             st.markdown(
                 r"""
-            There are 3 types of stats:
-            - `total` — Sum of the metric for all the batches (the metric are pre-aggregated within each batch).
-            - `per_project` — Approximate time it will take to analyze one project. Calculated by the formula:
-              $$\texttt{total} \div \texttt{Sample size}$$.
-            - `dataset` — Approximate time it will take to analyze the entire dataset. Calculated by the formula:
-              $$\texttt{per\_project} \cdot \texttt{Sample size}$$.
+                There are 3 types of stats:
+                - `total` — Sum of the metric for all the batches (the metric are pre-aggregated within each batch).
+                - `per_project` — Approximate time it will take to analyze one project. Calculated by the formula:
+                  $$\texttt{total} \div \texttt{Sample size}$$.
+                - `dataset` — Approximate time it will take to analyze the entire dataset. Calculated by the formula:
+                  $$\texttt{per\_project} \cdot \texttt{Sample size}$$.
 
-              If the dataset size is equal to the sample size, this statistic is omitted.
+                  If the dataset size is equal to the sample size, this statistic is omitted.
 
-            If the results contain several run types, the stats for the specific run type will be shown in addition to
-            the overall stats.
-            """,
+                If the results contain several run types, the stats for the specific run type will be shown in addition
+                to the overall stats.
+                """,
             )
 
         st.header('Per batch stats')
