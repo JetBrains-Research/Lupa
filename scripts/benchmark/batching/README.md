@@ -41,4 +41,5 @@ streamlit run results_comparison.py
 
 This visualization takes a folder with benchmark results as input and compares them by different stats.
 An example of working with visualization is shown below:
+https://user-images.githubusercontent.com/55441714/218960060-aa6f6060-f08a-4af3-8546-ca50980ea0d6.mp4
 
