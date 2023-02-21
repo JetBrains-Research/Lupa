@@ -4,9 +4,12 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 
+PROJECT_ROOT = Path(__file__).parents[2]
+
+
 def run_in_subprocess(
     command: List[str],
-    cwd: Optional[Union[str, Path]] = None,
+    cwd: Optional[Union[str, Path]] = PROJECT_ROOT,
     stdout_file=subprocess.PIPE,
     stderr_file=subprocess.PIPE,
 ) -> Tuple[int, str]:
