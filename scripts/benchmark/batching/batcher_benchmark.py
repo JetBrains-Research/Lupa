@@ -22,7 +22,6 @@ It also optionally accepts:
 import argparse
 import json
 import logging
-import time
 from enum import Enum
 from pathlib import Path
 
@@ -37,7 +36,7 @@ from plugin_runner.analyzers import AVAILABLE_ANALYZERS, Analyzer
 from plugin_runner.batch_processing import (
     configure_analysis_arguments,
     create_batches,
-    run_analyzer_on_batch,
+    get_analyzer_command,
     split_into_batches,
 )
 from plugin_runner.merge_data import merge_csv
@@ -50,6 +49,9 @@ from utils.file_utils import (
     get_all_file_system_items,
     get_subdirectories,
 )
+from utils.run_process_utils import run_in_subprocess
+
+from tempfile import NamedTemporaryFile
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +60,7 @@ class BenchmarkResultColumn(Enum):
     BATCH = 'batch'
     TYPE = 'type'
     TIME = 'time'
+    RSS = 'rss'
 
     @classmethod
     def values(cls) -> List[str]:
@@ -65,7 +68,7 @@ class BenchmarkResultColumn(Enum):
 
     @classmethod
     def metrics(cls) -> List[str]:
-        return [cls.TIME.value]
+        return [cls.TIME.value, cls.RSS.value]
 
 
 class RunType(Enum):
@@ -110,7 +113,7 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
         '--warmup-runs',
         type=int,
         help='Number of warm-up runs.',
-        default=2,
+        default=1,
     )
 
     parser.add_argument(
@@ -145,6 +148,18 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     configure_analysis_arguments(parser)
 
 
+def wrap_with_benchmark(command: List[str], benchmark_output: Path) -> List[str]:
+    wrapper = [
+        '/usr/bin/time',
+        '-f',
+        f'{BenchmarkResultColumn.TIME.value},{BenchmarkResultColumn.RSS.value}\n%e,%M',
+        '-o',
+        str(benchmark_output),
+    ]
+
+    return wrapper + command
+
+
 def run_benchmark(
     task_name: str,
     analyser: Analyzer,
@@ -153,32 +168,33 @@ def run_benchmark(
     additional_arguments: List[str],
     number_of_runs: int,
     save_every_run: bool,
-) -> List[float]:
-    time_data = []
+) -> pd.DataFrame:
+    benchmark_data = []
     for i in range(number_of_runs):
-        batch_output_path = output_dir / (f'run_{i}' if save_every_run else '') / 'data'
+        batch_output_path = output_dir / (f'run_{i + 1}' if save_every_run else '') / 'data'
         create_directory(batch_output_path)
 
-        logs_dir = output_dir / (f'run_{i}' if save_every_run else '') / 'logs'
+        logs_dir = output_dir / (f'run_{i + 1}' if save_every_run else '') / 'logs'
+        log_file_path = logs_dir / f'log_batch.{Extensions.TXT}'
         create_directory(logs_dir)
 
-        log_file_path = logs_dir / f'log_batch.{Extensions.TXT}'
+        with NamedTemporaryFile() as metric_file:
+            command = get_analyzer_command(task_name, analyser, batch_path, batch_output_path, additional_arguments)
+            command = wrap_with_benchmark(command, Path(metric_file.name))
 
-        start_time = time.time()
-        run_analyzer_on_batch(
-            task_name,
-            analyser,
-            batch_path,
-            batch_output_path,
-            log_file_path,
-            additional_arguments,
-        )
-        end_time = time.time()
-        time_data.append(end_time - start_time)
+            with open(log_file_path, 'w+') as log_file:
+                run_in_subprocess(command, stdout_file=log_file, stderr_file=log_file)
 
-        logger.info(f'№{i + 1}. Time: {end_time - start_time}')
+            run_data = pd.read_csv(metric_file)
+            logger.info(
+                f'№{i + 1}. '
+                f'Time: {run_data.loc[0, BenchmarkResultColumn.TIME.value]} sec, '
+                f'RSS: {run_data.loc[0, BenchmarkResultColumn.RSS.value]} KB',
+            )
 
-    return time_data
+            benchmark_data.append(run_data)
+
+    return pd.concat(benchmark_data)
 
 
 def main() -> None:
@@ -227,7 +243,7 @@ def main() -> None:
         clear_directory(analysis_output_dir)
 
         logger.info('Warming up...')
-        warmup_time_data = run_benchmark(
+        warmup_data = run_benchmark(
             args.task_name,
             analyser,
             batch_path,
@@ -237,17 +253,12 @@ def main() -> None:
             args.save_every_run,
         )
 
-        warmup_data = pd.DataFrame.from_dict(
-            {
-                BenchmarkResultColumn.BATCH.value: batch_index,
-                BenchmarkResultColumn.TYPE.value: RunType.WARMUP.value,
-                BenchmarkResultColumn.TIME.value: warmup_time_data,
-            },
-        )
+        warmup_data[BenchmarkResultColumn.BATCH.value] = batch_index
+        warmup_data[BenchmarkResultColumn.TYPE.value] = RunType.WARMUP.value
         data = pd.concat([data, warmup_data])
 
         logger.info('Benchmarking...')
-        benchmark_time_data = run_benchmark(
+        benchmark_data = run_benchmark(
             args.task_name,
             analyser,
             batch_path,
@@ -257,13 +268,8 @@ def main() -> None:
             args.save_every_run,
         )
 
-        benchmark_data = pd.DataFrame.from_dict(
-            {
-                BenchmarkResultColumn.BATCH.value: batch_index,
-                BenchmarkResultColumn.TYPE.value: RunType.BENCHMARK.value,
-                BenchmarkResultColumn.TIME.value: benchmark_time_data,
-            },
-        )
+        benchmark_data[BenchmarkResultColumn.BATCH.value] = batch_index
+        benchmark_data[BenchmarkResultColumn.TYPE.value] = RunType.BENCHMARK.value
         data = pd.concat([data, benchmark_data])
 
         batch_output_dir = benchmark_output_dir / f'batch_{batch_index}'
