@@ -131,10 +131,7 @@ def show_time_comparison_table(
         )
 
 
-def show_rss_comparison_table(
-    results: Dict[str, pd.DataFrame],
-    aggregate_function: AggregationFunction,
-) -> None:
+def show_rss_comparison_table(results: Dict[str, pd.DataFrame], aggregate_function: AggregationFunction) -> None:
     rows = []
     for name, result in results.items():
         max_stats_by_type = (
