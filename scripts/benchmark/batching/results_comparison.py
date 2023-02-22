@@ -55,9 +55,8 @@ def plot_per_batch_stats(
     return fig
 
 
-def get_result_stats(
+def get_result_time_stats(
     result: pd.DataFrame,
-    by_column: BenchmarkResultColumn,
     aggregate_function: AggregationFunction,
     dataset_size: int,
     sample_size: int,
@@ -72,11 +71,13 @@ def get_result_stats(
     stats = {}
 
     for run_type, row in total_stats_by_type.iterrows():
-        stats[f'{run_type}_total'] = row[by_column.value]
+        stats[f'{run_type}_total'] = row[BenchmarkResultColumn.TIME.value]
 
     if len(total_stats_by_type) > 1:
         stats['total'] = (
-            result.groupby(BenchmarkResultColumn.BATCH.value)[by_column.value].agg(aggregate_function.value).sum()
+            result.groupby(BenchmarkResultColumn.BATCH.value)[BenchmarkResultColumn.TIME.value]
+            .agg(aggregate_function.value)
+            .sum()
         )
 
     for run_type in total_stats_by_type.index:
@@ -95,19 +96,99 @@ def get_result_stats(
     return pd.Series(stats)
 
 
-def compare_results(
+def show_time_comparison_table(
+    results: Dict[str, pd.DataFrame],
+    aggregate_function: AggregationFunction,
+    dataset_size: int,
+    sample_size: int,
+) -> None:
+    rows = []
+    for name, result in results.items():
+        result_stats = get_result_time_stats(result, aggregate_function, dataset_size, sample_size)
+        result_stats.name = name
+        rows.append(result_stats)
+
+    comparison_table = pd.concat(rows, axis=1).T
+    st.write(comparison_table.style.highlight_min().set_precision(2))
+
+    with st.expander('Table description:'):
+        st.markdown(
+            r"""
+            There are 3 types of stats:
+            - `total` — Sum of time for all the batches (the time is pre-aggregated within each batch).
+            - `per_project` — Approximate time it will take to analyze one project. Calculated by the formula:
+              $$\texttt{total} \div \texttt{Sample size}$$.
+            - `dataset` — Approximate time it will take to analyze the entire dataset. Calculated by the formula:
+              $$\texttt{per\_project} \cdot \texttt{Sample size}$$.
+
+              If the dataset size is equal to the sample size, this statistic is omitted.
+
+            If the results contain several run types, the stats for the specific run type will be shown in addition
+            to the overall stats.
+
+            The minimum values of each statistic are highlighted in yellow.
+            """,
+        )
+
+
+def show_rss_comparison_table(
+    results: Dict[str, pd.DataFrame],
+    aggregate_function: AggregationFunction,
+) -> None:
+    rows = []
+    for name, result in results.items():
+        max_stats_by_type = (
+            result.groupby([BenchmarkResultColumn.BATCH.value, BenchmarkResultColumn.TYPE.value])
+            .agg(aggregate_function.value)
+            .groupby(BenchmarkResultColumn.TYPE.value)
+            .max()
+        )
+
+        stats = {}
+
+        for run_type, row in max_stats_by_type.iterrows():
+            stats[f'{run_type}_max'] = row[BenchmarkResultColumn.RSS.value]
+
+        if len(max_stats_by_type) > 1:
+            stats['max'] = (
+                result.groupby(BenchmarkResultColumn.BATCH.value)[BenchmarkResultColumn.RSS.value]
+                .agg(aggregate_function.value)
+                .max()
+            )
+
+        rows.append(pd.Series(stats, name=name))
+
+    comparison_table = pd.concat(rows, axis=1).T
+    st.write(comparison_table.style.highlight_min().set_precision(2))
+
+    with st.expander('Table description:'):
+        st.markdown(
+            """
+            There is one type of stats — `sum`, which is equal to the maximum value of the
+            [resident set size](https://en.wikipedia.org/wiki/Resident_set_size) among all batches
+            (the RSS is pre-aggregated within each batch).
+
+            If the results contain several run types, the stats for the specific run type will be shown in addition
+            to the overall stats.
+
+            The maximum values of each statistic are highlighted in yellow.
+            """,
+        )
+
+
+def show_comparison_table(
     results: Dict[str, pd.DataFrame],
     by_column: BenchmarkResultColumn,
     aggregate_function: AggregationFunction,
     dataset_size: int,
     sample_size: int,
-) -> pd.DataFrame:
-    rows = []
-    for name, result in results.items():
-        result_stats = get_result_stats(result, by_column, aggregate_function, dataset_size, sample_size)
-        result_stats.name = name
-        rows.append(result_stats)
-    return pd.concat(rows, axis=1).T
+) -> None:
+    if by_column == BenchmarkResultColumn.TIME:
+        show_time_comparison_table(results, aggregate_function, dataset_size, sample_size)
+    elif by_column == BenchmarkResultColumn.RSS:
+        show_rss_comparison_table(results, aggregate_function)
+    else:
+        st.error('Comparison by this metric has not yet been implemented.')
 
 
 def main() -> None:
@@ -154,34 +235,13 @@ def main() -> None:
         }
 
         st.header('Comparison table')
-
-        comparison_table = compare_results(
+        show_comparison_table(
             results,
             BenchmarkResultColumn(metric),
             aggregation_function,
             dataset_size,
             sample_size,
         )
-        st.write(comparison_table.style.highlight_min().set_precision(2))
-
-        with st.expander('Table description:'):
-            st.markdown(
-                r"""
-                There are 3 types of stats:
-                - `total` — Sum of the metric for all the batches (the metric are pre-aggregated within each batch).
-                - `per_project` — Approximate time it will take to analyze one project. Calculated by the formula:
-                  $$\texttt{total} \div \texttt{Sample size}$$.
-                - `dataset` — Approximate time it will take to analyze the entire dataset. Calculated by the formula:
-                  $$\texttt{per\_project} \cdot \texttt{Sample size}$$.
-
-                  If the dataset size is equal to the sample size, this statistic is omitted.
-
-                If the results contain several run types, the stats for the specific run type will be shown in addition
-                to the overall stats.
-
-                The minimum values of each statistic are highlighted in yellow.
-                """,
-            )
 
         st.header('Per batch stats')
         result_name = st.selectbox('Result name:', options=results.keys())
