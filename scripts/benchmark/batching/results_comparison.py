@@ -168,7 +168,7 @@ def show_rss_comparison_table(results: Dict[str, pd.DataFrame], aggregate_functi
             If the results contain several run types, the stats for the specific run type will be shown in addition
             to the overall stats.
 
-            The maximum values of each statistic are highlighted in yellow.
+            The minimum values of each statistic are highlighted in yellow.
             """,
         )
 
