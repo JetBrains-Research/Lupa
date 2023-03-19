@@ -1,3 +1,4 @@
+import os
 from typing import Dict
 
 import pandas as pd
@@ -226,10 +227,22 @@ def main() -> None:
         )
 
     if results_dir and dataset_size != 0 and sample_size != 0 and metric != SELECTBOX_DEFAULT_VALUE:
+        if not os.path.exists(results_dir):
+            st.error(f'The {results_dir} does not exist.')
+            st.stop()
+
+        if not os.path.isdir(results_dir):
+            st.error(f'The {results_dir} is not a directory.')
+            st.stop()
+
         results = {
             result_path.stem: pd.read_csv(result_path)
             for result_path in get_all_file_system_items(results_dir, with_subdirs=False)
         }
+
+        if not results:
+            st.error(f'The {results_dir} is empty.')
+            st.stop()
 
         st.header('Comparison table')
         show_comparison_table(
