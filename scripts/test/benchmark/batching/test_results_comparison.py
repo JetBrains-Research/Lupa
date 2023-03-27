@@ -46,7 +46,9 @@ def before_module():
 def before_test(chrome: Chrome):
     chrome.get(f'http://localhost:{PORT}/')
     WebDriverWait(chrome, EXPLICIT_WAIT).until(
-        ec.visibility_of_element_located((By.XPATH, '//input[@aria-label = "Selected mean. Aggregation function:"]')),
+        ec.visibility_of_element_located(
+            (By.XPATH, '//div[contains(@class, "stSelectbox") and .//*[text() = "Aggregation function:"]]')
+        ),
     )
 
 
