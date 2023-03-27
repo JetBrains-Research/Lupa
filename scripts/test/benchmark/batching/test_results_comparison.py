@@ -156,7 +156,9 @@ def test_results_compared(
 
     fill_input_data(chrome, results_dir, dataset_size, sample_size, metric, aggregate_function)
 
-    comparison_table_locator = (By.XPATH, '//div[@data-testid = "stDataFrameResizable"]')
+    chrome.save_screenshot('/home/girz0n/Desktop/screenshot.png')
+
+    comparison_table_locator = (By.XPATH, '//div[contains(@class, "stDataFrame")]')
     WebDriverWait(chrome, EXPLICIT_WAIT).until(ec.visibility_of_element_located(comparison_table_locator))
     assert len(chrome.find_elements(*comparison_table_locator)) == 1
     assert chrome.find_element(*comparison_table_locator).is_displayed()
