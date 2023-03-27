@@ -1,0 +1,5 @@
+time,rss,batch,type
+229.77,104900,0,warmup
+205.35,98236,0,benchmark
+205.84,97208,0,benchmark
+202.86,97372,0,benchmark
