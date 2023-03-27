@@ -11,13 +11,13 @@ def chrome() -> Chrome:
 
     chrome_options = Options()
     options = [
-        "--headless=new",
-        "--disable-gpu",
-        "--window-size=1920,1080",
-        "--ignore-certificate-errors",
-        "--disable-extensions",
-        "--no-sandbox",
-        "--disable-dev-shm-usage",
+        '--headless=new',
+        '--disable-gpu',
+        '--window-size=1920,1080',
+        '--ignore-certificate-errors',
+        '--disable-extensions',
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
     ]
     for option in options:
         chrome_options.add_argument(option)
