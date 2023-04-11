@@ -198,7 +198,7 @@ def run_benchmark(
             with open(log_file_path, 'w+') as log_file:
                 run_in_subprocess(command, stdout_file=log_file, stderr_file=log_file)
 
-            run_data = read_benchmark_output(metric_file)
+            run_data = read_benchmark_output(Path(metric_file.name))
             logger.info(
                 f'№{i + 1}. '
                 f'Time: {run_data.loc[0, BenchmarkResultColumn.TIME.value]} sec, '
