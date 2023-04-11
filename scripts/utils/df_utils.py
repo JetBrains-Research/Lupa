@@ -1,6 +1,18 @@
+from enum import Enum
 from typing import List, Optional
 
 import pandas as pd
+
+
+class AggregationFunction(Enum):
+    MIN = 'min'
+    MAX = 'max'
+    MEAN = 'mean'
+    MEDIAN = 'median'
+
+    @classmethod
+    def values(cls) -> List[str]:
+        return [function.value for function in cls]
 
 
 def assert_df_equals(

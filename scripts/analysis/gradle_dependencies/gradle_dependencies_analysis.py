@@ -75,7 +75,7 @@ def analyze_full_names_stats(path_to_result_dir: str, meta: pd.DataFrame, df: pd
 def get_gradle_dependencies(path_to_dependencies: str, path_to_tagged_projects: str, tags: List[str]) -> pd.DataFrame:
     dependencies = pd.read_csv(path_to_dependencies)
     if path_to_tagged_projects:
-        tagged_projects = {project: tag for project, tag in pd.read_csv(path_to_tagged_projects).values}
+        tagged_projects = dict(pd.read_csv(path_to_tagged_projects).values)
         dependencies = dependencies[
             dependencies[GradleDependenciesColumn.PROJECT_NAME].apply(
                 lambda project_name: tagged_projects[project_name] in tags,

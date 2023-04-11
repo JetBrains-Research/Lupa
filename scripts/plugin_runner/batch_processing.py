@@ -37,7 +37,6 @@ from utils.file_utils import Extensions, clear_directory, create_directory, get_
 from utils.language import Language
 from utils.run_process_utils import run_in_subprocess
 
-ROOT = Path(__file__).parent.parent.parent
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +67,7 @@ def main():
     batches = split_into_batches(projects_paths, batching_config)
     batch_paths = create_batches(batches, args.output / 'batches')
 
-    analyser = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
+    analyzer = Analyzer.get_analyzer_by_name(AVAILABLE_ANALYZERS, args.data)
 
     logs_dir = args.output / 'logs'
     create_directory(logs_dir)
@@ -79,33 +78,27 @@ def main():
         batch_output_paths.append(batch_output_path)
         create_directory(batch_output_path)
 
+        command = get_analyzer_command(args.task_name, analyzer, batch_path, batch_output_path, additional_arguments)
         log_file_path = logs_dir / f'log_batch_{index}.{Extensions.TXT}'
 
-        start_time = time.time()
-        run_analyzer_on_batch(
-            args.task_name,
-            analyser,
-            batch_path,
-            batch_output_path,
-            log_file_path,
-            additional_arguments,
-        )
-        end_time = time.time()
+        with open(log_file_path, 'w+') as log_file:
+            start_time = time.time()
+            run_in_subprocess(command, stdout_file=log_file, stderr_file=log_file)
+            end_time = time.time()
 
         logger.info(f'Finished batch {index} processing in {end_time - start_time}s')
 
     merge(batch_output_paths, args.output, args.data)
 
 
-def run_analyzer_on_batch(
+def get_analyzer_command(
     task_name: str,
     analyzer: Analyzer,
     batch_path: Path,
     batch_output_path: Path,
-    logs_path: Path,
     additional_arguments: List[str],
-):
-    command = [
+) -> List[str]:
+    return [
         './gradlew',
         f':lupa-runner:{task_name}',
         f'-Prunner={analyzer.name}-analysis',
@@ -113,9 +106,6 @@ def run_analyzer_on_batch(
         f'-Poutput={batch_output_path}',
         *additional_arguments,
     ]
-
-    with open(logs_path, 'w+') as log_file:
-        run_in_subprocess(command, cwd=ROOT, stdout_file=log_file, stderr_file=log_file)
 
 
 def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List[List[Path]]:
@@ -143,9 +133,7 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
             for project in project_paths
         }
 
-        projects_for_batching = {
-            project: metrics for project, metrics in projects.items() if metrics is not None
-        }
+        projects_for_batching = {project: metrics for project, metrics in projects.items() if metrics is not None}
 
         if len(projects) != len(projects_for_batching):
             logger.warning(

@@ -25,7 +25,7 @@ def get_packages(full_names: List[str]) -> List[Package]:
         try:
             full_names_range = ','.join(full_names_chunks)
             url = f'{PACKAGE_SEARCH_API_BASE_URL}/{PACKAGE_RANGE_REQUEST_DOMEN}{full_names_range}'
-            response = requests.get(url)
+            response = requests.get(url, timeout=3600)  # Timeout = 1 hour
             response = from_dict(data_class=PackageSearchResponse, data=json.loads(response.content))
             packages += response.packages
             current_loaded += len(response.packages)
