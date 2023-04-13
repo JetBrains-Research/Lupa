@@ -207,6 +207,8 @@ def run_benchmark(
 
             benchmark_data.append(run_data)
 
+        run_in_subprocess(['./gradlew', '--stop'])
+
     return pd.concat(benchmark_data)
 
 
