@@ -21,6 +21,7 @@ BATCHING_SCHEMA = {
     ConfigField.LANGUAGE.value: {
         'type': 'string',
         'required': False,
+        'nullable': True,
         'allowed': Language.values(),
         'dependencies': [ConfigField.METRIC.value, ConfigField.BATCH_CONSTRAINTS.value],
     },

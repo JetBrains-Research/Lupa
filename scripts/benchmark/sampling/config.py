@@ -31,7 +31,7 @@ class BinsEstimator(Enum):
 
 SCHEMA = {
     ConfigField.SAMPLE_SIZE.value: {'required': True, 'type': 'integer', 'min': 1},
-    ConfigField.LANGUAGE.value: {'required': True, 'type': 'string', 'allowed': Language.values()},
+    ConfigField.LANGUAGE.value: {'required': True, 'nullable': True, 'type': 'string', 'allowed': Language.values()},
     ConfigField.STRATA.value: {
         'required': True,
         'type': 'dict',
