@@ -60,6 +60,7 @@ you should have Python 3+ and also run:
 - `pip install -r scripts/requirements-code-style.txt` - for code style checkers (optional)
 
 ## Usage
+
 1. For analyzers:
     - For Kotlin analyzers go to the [`kotlin-analysers`](./kotlin-analysers) module and follow its [README file](./kotlin-analysers/README.md).
     - For Python analyzers go to the [`python-analysers`](./python-analysers) module and follow its [README file](./python-analysers/README.md).
