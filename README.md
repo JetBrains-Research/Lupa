@@ -52,7 +52,7 @@ To get more information see these modules (each of them has a README file).
 
 Clone the repo by `git clone https://github.com/JetBrains-Research/Lupa.git`.
    
-For analyzers modules and core architecture you should `have Kotlin at least `1.5.21` version.
+For analyzers modules and core architecture you should have Kotlin at least `1.5.21` version.
 For functionality for data gathering, processing and visualization ([`scripts`](./scripts/README.md) module) 
 you should have Python 3+ and also run:
 - `pip install -r scripts/requirements.txt`
@@ -60,7 +60,6 @@ you should have Python 3+ and also run:
 - `pip install -r scripts/requirements-code-style.txt` - for code style checkers (optional)
 
 ## Usage
-F
 1. For analyzers:
     - For Kotlin analyzers go to the [`kotlin-analysers`](./kotlin-analysers) module and follow its [README file](./kotlin-analysers/README.md).
     - For Python analyzers go to the [`python-analysers`](./python-analysers) module and follow its [README file](./python-analysers/README.md).
