@@ -435,9 +435,7 @@ def _is_private_name(fq_name: str) -> bool:
     if fq_parts[0] == '_thread':
         return False
 
-    return any(
-        [fq_part.startswith('_') and not __is_dunder_name(fq_part) for fq_part in fq_parts],
-    )
+    return any(fq_part.startswith('_') and not __is_dunder_name(fq_part) for fq_part in fq_parts)
 
 
 def main(
