@@ -41,12 +41,12 @@ jobs:
           path: ./scripts/venv
           key: ${{ runner.os }}-pip-cache-v4-${{ hashFiles('./scripts/requirements*.txt') }}
       
-#       - name: Update Chromium
-#         run: |
-#           sudo apt purge google-chrome-stable
-#           sudo apt purge chromium-browser
-#           sudo apt install -y chromium-browser
-#           chromium --version
+      - name: Update Chromium
+        run: |
+          sudo apt purge google-chrome-stable
+          sudo apt purge chromium-browser
+          sudo apt install -y chromium-browser
+          chromium --version
       
       - name: Run tests
         run: |
