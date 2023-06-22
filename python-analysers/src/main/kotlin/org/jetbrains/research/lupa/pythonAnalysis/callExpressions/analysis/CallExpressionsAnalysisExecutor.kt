@@ -8,6 +8,7 @@ import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyDecorator
 import com.jetbrains.python.psi.resolve.PyResolveContext
 import com.jetbrains.python.psi.types.*
+import com.jetbrains.python.sdk.pythonSdk
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.research.lupa.kotlinAnalysis.AnalysisExecutor
 import org.jetbrains.research.lupa.kotlinAnalysis.ExecutorHelper
@@ -20,6 +21,7 @@ import org.jetbrains.research.lupa.kotlinAnalysis.util.PYTHON_VENV_FOLDER_NAME
 import org.jetbrains.research.lupa.kotlinAnalysis.util.RepositoryOpenerUtil
 import org.jetbrains.research.lupa.kotlinAnalysis.util.python.PyPackageUtil
 import org.jetbrains.research.pluginUtilities.sdk.setSdkToProject
+import org.jetbrains.research.pluginUtilities.sdk.takeDownSdkFromProject
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -79,6 +81,11 @@ class CallExpressionsAnalysisExecutor(
                     else -> PyCallExpressionAnalyzer.analyze(it, analyzerContext)
                 }
             }.toMutableSet()
+        }
+
+        ApplicationManager.getApplication().invokeAndWait {
+            logger.info("Taking down the SDK.")
+            project.pythonSdk?.let { takeDownSdkFromProject(project, it) }
         }
 
         filterLocalFqNames(fqNamesByCategory, packageNames)
