@@ -29,6 +29,7 @@ READ_PROJECT_METRICS_TEST_DATA = [
         Language.KOTLIN,
         {'number_of_lines': 20, 'number_of_files': 53, 'file_size': 74},
     ),
+    ('project_with_several_languages', None, {'number_of_lines': 62, 'number_of_files': 63, 'file_size': 98}),
     ('project_with_several_languages', Language.UNKNOWN, {}),
 ]
 
@@ -36,7 +37,7 @@ READ_PROJECT_METRICS_TEST_DATA = [
 @pytest.mark.parametrize(('project_name', 'language', 'expected_metrics'), READ_PROJECT_METRICS_TEST_DATA)
 def test_read_project_metrics(
     project_name: str,
-    language: Language,
+    language: Optional[Language],
     expected_metrics: Optional[Dict[str, int]],
 ) -> None:
     dataset_path = PROJECTS_DATA_FOLDER / project_name
@@ -53,6 +54,19 @@ READ_METRICS_TEST_DATA = [
     (
         'dataset_with_python',
         Language.PYTHON,
+        pd.DataFrame.from_dict(
+            {
+                'project': ['project_A', 'project_B'],
+                'number_of_lines': [42, None],
+                'number_of_files': [10, None],
+                'number_of_dependencies': [None, 3],
+                'file_size': [None, 93],
+            },
+        ),
+    ),
+    (
+        'dataset_with_python',
+        None,
         pd.DataFrame.from_dict(
             {
                 'project': ['project_A', 'project_B'],
@@ -90,11 +104,28 @@ READ_METRICS_TEST_DATA = [
             },
         ),
     ),
+    (
+        'dataset_with_several_languages',
+        None,
+        pd.DataFrame.from_dict(
+            {
+                'project': ['project_A', 'project_B'],
+                'number_of_lines': [66, None],
+                'number_of_files': [10, 12],
+                'file_size': [24, 93],
+                'number_of_dependencies': [None, 13],
+            },
+        ),
+    ),
 ]
 
 
 @pytest.mark.parametrize(('dataset_name', 'language', 'expected_metrics'), READ_METRICS_TEST_DATA)
-def test_read_metrics(dataset_name: str, language: Language, expected_metrics: Optional[pd.DataFrame]) -> None:
+def test_read_metrics(
+    dataset_name: str,
+    language: Optional[Language],
+    expected_metrics: Optional[pd.DataFrame],
+) -> None:
     dataset_path = DATASETS_DATA_FOLDER / dataset_name
     assert_df_equals(read_metrics(dataset_path, language), expected_metrics, ['project'])
 

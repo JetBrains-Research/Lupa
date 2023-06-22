@@ -36,7 +36,7 @@ class BinsType(Enum):
 
 
 @st.cache
-def _read_data(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
+def _read_data(dataset: Path, language: Optional[Language]) -> Optional[pd.DataFrame]:
     return read_metrics(dataset, language)
 
 
@@ -49,7 +49,7 @@ def read_data_and_metrics() -> Tuple[pd.DataFrame, List[str]]:
     with right_column:
         language = st.selectbox(
             'Language:',
-            options=Language.values(),
+            options=[*Language.values(), None],
             index=Language.values().index(Language.PYTHON.value),
         )
 
@@ -57,7 +57,7 @@ def read_data_and_metrics() -> Tuple[pd.DataFrame, List[str]]:
     if not metrics:
         st.stop()
 
-    raw_data = _read_data(file_path, Language(language))
+    raw_data = _read_data(file_path, Language.from_value(language))
     if raw_data is None:
         st.error('Metrics not found.')
         st.stop()

@@ -2,7 +2,7 @@ import os
 from collections import defaultdict
 from enum import Enum, unique
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 @unique
@@ -25,6 +25,13 @@ class Language(Enum):
             return Language.UNKNOWN
 
         return _EXTENSIONS_TO_LANGUAGE.get(extension, Language.UNKNOWN)
+
+    @classmethod
+    def from_value(cls, value: str, default: Any = None) -> Any:
+        try:
+            return Language(value)
+        except ValueError:
+            return default
 
     @classmethod
     def values(cls) -> List[str]:

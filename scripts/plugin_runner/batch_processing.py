@@ -129,7 +129,7 @@ def split_into_batches(project_paths: List[Path], batching_config: Dict) -> List
     # then the 'language' and 'batch_constraints' fields are not None either.
     if metric_name is not None:
         projects = {
-            project: read_project_metrics(project, Language(batching_config[ConfigField.LANGUAGE.value]))
+            project: read_project_metrics(project, Language.from_value(batching_config[ConfigField.LANGUAGE.value]))
             for project in project_paths
         }
 

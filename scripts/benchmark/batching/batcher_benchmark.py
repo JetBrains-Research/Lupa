@@ -23,6 +23,7 @@ import argparse
 import json
 import logging
 from enum import Enum
+from io import StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -160,6 +161,18 @@ def wrap_with_benchmark(command: List[str], benchmark_output: Path) -> List[str]
     return wrapper + command
 
 
+def read_benchmark_output(benchmark_output: Path) -> pd.DataFrame:
+    with open(benchmark_output) as file:
+        first_line = file.readline()
+        other_lines = file.readlines()
+
+        if first_line.strip() != f'{BenchmarkResultColumn.TIME.value},{BenchmarkResultColumn.RSS.value}':
+            logger.error(f'Benchmark output contains an error message: "{first_line.strip()}".')
+            return pd.read_csv(StringIO(''.join(other_lines)))
+
+        return pd.read_csv(StringIO(''.join([first_line, *other_lines])))
+
+
 def run_benchmark(
     task_name: str,
     analyser: Analyzer,
@@ -185,7 +198,7 @@ def run_benchmark(
             with open(log_file_path, 'w+') as log_file:
                 run_in_subprocess(command, stdout_file=log_file, stderr_file=log_file)
 
-            run_data = pd.read_csv(metric_file)
+            run_data = read_benchmark_output(Path(metric_file.name))
             logger.info(
                 f'№{i + 1}. '
                 f'Time: {run_data.loc[0, BenchmarkResultColumn.TIME.value]} sec, '
@@ -193,6 +206,8 @@ def run_benchmark(
             )
 
             benchmark_data.append(run_data)
+
+        run_in_subprocess(['./gradlew', '--stop'])
 
     return pd.concat(benchmark_data)
 

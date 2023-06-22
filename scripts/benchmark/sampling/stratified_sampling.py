@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from benchmark.metrics_collection.collect_project_metrics import METRICS_FILE
+from benchmark.metrics_collection.collect_project_metrics import METRICS_FILE, TOTAL_FIELD_NAME
 from benchmark.sampling.config import ConfigField, SCHEMA
 from utils.config_utils import check_config
 from utils.file_utils import FileSystemItem, get_all_file_system_items
@@ -60,12 +60,12 @@ def configure_parser(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def read_project_metrics(project: Path, language: Language) -> Optional[Dict[str, int]]:
+def read_project_metrics(project: Path, language: Optional[Language]) -> Optional[Dict[str, int]]:
     """
     Read a metric file from ``project`` into a dictionary.
 
     :param project: Path to the project with the metric file.
-    :param language: Language, the metrics for which must be read.
+    :param language: Language, the metrics for which must be read. If None, the total field will be used.
     :return: Dictionary with the language metrics. If the metric file are not found, None will be returned.
     """
     logger.info(f'Reading {project.name}')
@@ -78,19 +78,21 @@ def read_project_metrics(project: Path, language: Language) -> Optional[Dict[str
     with open(metrics_file_path) as file:
         metric_values = yaml.safe_load(file)
 
+    field = TOTAL_FIELD_NAME if language is None else language.value
+
     return {
-        metric: values[language.value]
+        metric: values[field]
         for metric, values in metric_values.items()
-        if values is not None and values.get(language.value) is not None
+        if values is not None and values.get(field) is not None
     }
 
 
-def read_metrics(dataset: Path, language: Language) -> Optional[pd.DataFrame]:
+def read_metrics(dataset: Path, language: Optional[Language]) -> Optional[pd.DataFrame]:
     """
     Read metric files from ``dataset`` into a dataframe.
 
     :param dataset: Path to the dataset with projects.
-    :param language: Language, the metrics for which must be read.
+    :param language: Language, the metrics for which must be read. if None, the total field will be used.
     :return: Dataframe with the language metrics. If no metrics are found, None will be returned.
     """
     if not dataset.is_dir() or not dataset.exists():
@@ -193,7 +195,7 @@ def main() -> None:
         return
 
     logger.info('Reading metrics.')
-    metrics = read_metrics(args.dataset_path, Language(config[ConfigField.LANGUAGE.value]))
+    metrics = read_metrics(args.dataset_path, Language.from_value(config[ConfigField.LANGUAGE.value]))
     if metrics is None:
         logger.error('Metrics not found.')
         return
